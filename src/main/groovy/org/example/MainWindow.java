@@ -5,8 +5,10 @@ import java.awt.*;
 
 public class MainWindow extends JFrame
 {
-    public static final int DEFAULT_WIDTH = 800;
-    public static final int DEFAULT_HEIGHT = 600;
+    private static final int DEFAULT_WIDTH = 500;
+    private static final int DEFAULT_HEIGHT = 300;
+    private JButton b1;
+    private JButton b2;
 
 
     public MainWindow()
@@ -15,15 +17,17 @@ public class MainWindow extends JFrame
         setSize(DEFAULT_WIDTH, DEFAULT_HEIGHT);
         setJMenuBar(createMenuBar(new JMenuBar()));
 
-        JButton b1 = new JButton("Тест кнопка 1"); //создаем обьект Кнопки
-        b1.setLocation(10, 10); //задаем располажение кнопки
-        b1.setSize(50, 50); //задаем размер кнопки(ширина-высота)
-        add(b1); //добавляем кнопку в JPanel panel
+        Container container = new Container();
+        b1 = new JButton("Тест кнопка 1");
+        b1.setLocation(10, 10);
+        b1.setSize(150, 50);
+        container.add(b1);
 
-        JButton b2 = new JButton("Тест кнопка 2"); //создаем обьект Кнопки
-        b2.setLocation(100, 100); //задаем располажение кнопки
-        b2.setSize(50, 50); //задаем размер кнопки
-        add(b2); //добавляем кнопку в JPanel panel
+        b2 = new JButton("Тест кнопка 2");
+        b2.setLocation(170, 10);
+        b2.setSize(150, 50);
+        container.add(b2);
+        add(container);
     }
 
     public void update()
