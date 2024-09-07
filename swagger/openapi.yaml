@@ -1,0 +1,59 @@
+openapi: 3.0.0
+info:
+  title: Система управления задачами
+  license:
+    name: Apache 2.0
+    url: httpc://www.apache.org/licenses/LICENSE-2.0.html
+  version: 0.0.1
+servers:
+  - url: http://localhost/9000/api/v1
+    description: Dev server
+paths:
+  /tasks:
+    get:
+      summary: Метод получения списка задач
+      description: Метод предназначен для получения списка всех задач, сохраненныйх в БД. 
+      tags:
+        - Task
+      operationId: getAllTasks
+      responses:
+        '200':
+          description: Успешный ответ со списком задач
+          content:
+            application/json:
+              schema:
+                type: array
+                items: 
+                  $ref: "#/components/schemas/Task"
+                
+        '501':
+          description: Метод не реализован в коде
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"
+                
+    post:
+      summary: Метод создания задачи
+      tags:
+        - Task
+      operationId: createTask
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: "#/components/schemas/CreateTaskRequest"
+      responses:
+        '200':
+          description: Успешный ответ с добавленной задачей
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Task"
+        '501':
+          description: Ошибка
+          content:
+            application/json:
+              schema:
+                $ref: "#/components/schemas/Error"    
