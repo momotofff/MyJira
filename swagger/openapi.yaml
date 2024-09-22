@@ -8,11 +8,15 @@ info:
 servers:
   - url: http://localhost/9000/api/v1
     description: Dev server
+
+  - url: http://localhost/5432
+    description: Postgres server
+
 paths:
   /tasks:
     get:
       summary: Метод получения списка задач
-      description: Метод предназначен для получения списка всех задач, сохраненныйх в БД. 
+      description: Метод предназначен для получения списка всех задач, сохраненныйх в БД.
       tags:
         - Task
       operationId: getAllTasks
@@ -23,16 +27,16 @@ paths:
             application/json:
               schema:
                 type: array
-                items: 
-                  $ref: "#/components/schemas/Task"
-                
+                items:
+                  $ref: "/components/schemas/Task"
+
         '501':
           description: Метод не реализован в коде
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"
-                
+                $ref: "/components/schemas/Error"
+
     post:
       summary: Метод создания задачи
       tags:
@@ -43,17 +47,17 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "#/components/schemas/CreateTaskRequest"
+              $ref: "/components/schemas/CreateTaskRequest"
       responses:
         '200':
           description: Успешный ответ с добавленной задачей
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Task"
+                $ref: "/components/schemas/Task"
         '501':
           description: Ошибка
           content:
             application/json:
               schema:
-                $ref: "#/components/schemas/Error"    
+                $ref: "/components/schemas/Error"
