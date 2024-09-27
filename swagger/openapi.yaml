@@ -5,6 +5,7 @@ info:
     name: Apache 2.0
     url: httpc://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.0.1
+
 servers:
   - url: http://localhost/9000/api/v1
     description: Dev server
@@ -22,13 +23,15 @@ paths:
       operationId: getAllTasks
       responses:
         '200':
-          description: Успешный ответ со списком задач
+          description: Список задач
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: "/components/schemas/Task"
+                  $ref: '/components/schemas/Task'
+        default:
+          description: дефолтный ответ
 
         '501':
           description: Метод не реализован в коде
@@ -47,17 +50,231 @@ paths:
         content:
           application/json:
             schema:
-              $ref: "/components/schemas/CreateTaskRequest"
+              $ref: '/components/schemas/CreateTaskRequest'
+        responses:
+          '201':
+            description: Задача создана
+            content:
+              application/json:
+                schema:
+                  $ref: '/components/schemas/Task'
+          default:
+            description: дефолтный ответ
+
+  /tasks/{taskId}:
+    get:
+      summary: Получить задачу по ID
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
       responses:
         '200':
-          description: Успешный ответ с добавленной задачей
+          description: Задача найдена
           content:
             application/json:
               schema:
-                $ref: "/components/schemas/Task"
-        '501':
-          description: Ошибка
+                $ref: '/components/schemas/Task'
+        '404':
+          description: Задача не найдена
+        default:
+          description: дефолтный ответ
+
+    put:
+      summary: Обновить задачу
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '/components/schemas/UpdateTaskRequest'
+      responses:
+        '200':
+          description: Задача обновлена
           content:
             application/json:
               schema:
-                $ref: "/components/schemas/Error"
+                $ref: '/components/schemas/Task'
+        default:
+          description: дефолтный ответ
+        '404':
+          description: Задача не найдена
+
+    delete:
+      summary: Удалить задачу
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: "Задача удалена"
+        default:
+          description: дефолтный ответ
+        '404':
+          description: "Задача не найдена"
+
+  /users:
+    get:
+      summary: Получить список пользователей
+      responses:
+        '200':
+          description: Список пользователей
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/User'
+        default:
+          description: дефолтный ответ
+
+    post:
+      summary: Создать нового пользователя
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        default:
+          description: дефолтный ответ
+
+components:
+  schemas:
+    Task:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        title:
+          type: string
+          example: "Задача 1"
+        description:
+          type: string
+          example: "Описание задачи 1"
+        status:
+          type: string
+          enum: [pending, in_progress, completed]
+          example: "pending"
+        priority:
+          type: string
+          enum: [high, medium, low]
+          example: "high"
+        author:
+          type: string
+          example: "Автор Задачи"
+        assignee:
+          type: string
+          example: "Исполнитель Задачи"
+
+    CreateTaskRequest:
+      type: object
+      required:
+        - title
+        - description
+        - status
+        - priority
+        - author
+        - assignee
+      properties:
+        title:
+          type: string
+          example: "Новая задача"
+        description:
+          type: string
+          example: "Описание новой задачи"
+        status:
+          type: string
+          enum: [pending, in_progress, completed]
+          example: "pending"
+        priority:
+          type: string
+          enum: [high, medium, low]
+          example: "medium"
+        author:
+          type: string
+          example: "Автор"
+        assignee:
+          type: string
+          example: "Исполнитель"
+
+    UpdateTaskRequest:
+      type: object
+      properties:
+        title:
+          type: string
+          example: "Обновленное название задачи"
+        description:
+          type: string
+          example: "Обновленное описание задачи"
+        status:
+          type: string
+          enum: [pending, in_progress, completed]
+          example: "in_progress"
+        priority:
+          type: string
+          enum: [high, medium, low]
+          example: "low"
+        author:
+          type: string
+          example: "Обновленный автор"
+        assignee:
+          type: string
+          example: "Обновленный исполнитель"
+
+    User:
+      type: object
+      properties:
+        id:
+          type: string
+          example: "1"
+        username:
+          type: string
+          example: "username"
+        role:
+          type: string
+          enum: [ admin, editor, viewer ]
+          example: "editor"
+        email:
+          type: string
+          example: "user@example.com"
+
+    CreateUserRequest:
+      type: object
+      required:
+        - username
+        - role
+        - email
+      properties:
+        username:
+          type: string
+          example: "новый_пользователь"
+        role:
+          type: string
+          enum: [ admin, editor, viewer ]
+          example: "editor"
+        email:
+          type: string
+          example: "user@example.com"
+
+security:
+  - bearerAuth: [ ]
