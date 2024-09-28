@@ -95,7 +95,7 @@ json
 
 
 
-ChatGPT (15:59:40): Для взаимодействия с базой данных PostgreSQL в Java, развернутой в Docker-контейнере, вы можете использовать библиотеку JDBC (Java Database Connectivity). Ниже представлены шаги, которые помогут вам настроить подключение к базе данных и выполнить операции добавления новых пользователей (User) и задач (Task).
+Для взаимодействия с базой данных PostgreSQL в Java, развернутой в Docker-контейнере, вы можете использовать библиотеку JDBC (Java Database Connectivity). Ниже представлены шаги, которые помогут вам настроить подключение к базе данных и выполнить операции добавления новых пользователей (User) и задач (Task).
 
 ### 1. Настройка Docker с PostgreSQL
 
@@ -172,30 +172,15 @@ public class DatabaseManager {
     }
 }
 
-
-### 4. Пример использования
-
-Теперь вы можете использовать этот класс для создания пользователей и задач:
-
-java
-public class Main {
-    public static void main(String[] args) {
-        DatabaseManager dbManager = new DatabaseManager();
-
-        // Создание нового пользователя
-        dbManager.createUser("новый_пользователь", "editor", "user@example.com");
-
-        // Создание новой задачи
-        dbManager.createTask("Задача 1", "Описание задачи 1", "pending", "high", "Автор", "Исполнитель");
-    }
-}
-
-
 ### 5. Настройка таблиц в PostgreSQL
 
 Перед запуском приложения убедитесь, что таблицы `users` и `tasks` существуют в базе данных. Вы можете создать их с помощью SQL-запросов, выполненных в вашей базе данных PostgreSQL:
 
 sql
+-- Создание типа 'UserType'
+CREATE TYPE UserType AS ENUM ('Admin', 'User');
+
+-- Создание таблицы 'users'
 CREATE TABLE users (
     id SERIAL PRIMARY KEY,
     username VARCHAR(50) NOT NULL,
@@ -203,6 +188,7 @@ CREATE TABLE users (
     email VARCHAR(100) NOT NULL UNIQUE
 );
 
+-- Создание таблицы 'tasks'
 CREATE TABLE tasks (
     id SERIAL PRIMARY KEY,
     title VARCHAR(100) NOT NULL,

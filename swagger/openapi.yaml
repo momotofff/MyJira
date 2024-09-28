@@ -51,19 +51,21 @@ paths:
           application/json:
             schema:
               $ref: '/components/schemas/CreateTaskRequest'
-        responses:
-          '201':
-            description: Задача создана
-            content:
-              application/json:
-                schema:
-                  $ref: '/components/schemas/Task'
-          default:
-            description: дефолтный ответ
+      responses:
+        '201':
+          description: Задача создана
+          content:
+            application/json:
+              schema:
+                $ref: '/components/schemas/Task'
+        default:
+          description: дефолтный ответ
 
   /tasks/{taskId}:
     get:
       summary: Получить задачу по ID
+      tags:
+        - Task
       parameters:
         - name: taskId
           in: path
@@ -84,6 +86,8 @@ paths:
 
     put:
       summary: Обновить задачу
+      tags:
+        - Task
       parameters:
         - name: taskId
           in: path
@@ -110,6 +114,8 @@ paths:
 
     delete:
       summary: Удалить задачу
+      tags:
+        - Task
       parameters:
         - name: taskId
           in: path
@@ -127,6 +133,8 @@ paths:
   /users:
     get:
       summary: Получить список пользователей
+      tags:
+        - User
       responses:
         '200':
           description: Список пользователей
@@ -141,6 +149,8 @@ paths:
 
     post:
       summary: Создать нового пользователя
+      tags:
+        - User
       requestBody:
         required: true
         content:

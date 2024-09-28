@@ -12,13 +12,5 @@ public class Application
 	{
 		SpringApplication.run(Application.class, args);
 
-		Statement st = conn.createStatement();
-		ResultSet rs = st.executeQuery("SELECT * FROM mytable WHERE columnfoo = 500");
-		while (rs.next()) {
-			System.out.print("Column 1 returned ");
-			System.out.println(rs.getString(1));
-		}
-		rs.close();
-		st.close();
 	}
 }

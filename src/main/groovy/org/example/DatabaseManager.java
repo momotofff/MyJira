@@ -1,19 +1,23 @@
 package org.example;
+
 import java.sql.Connection;
 import java.sql.DriverManager;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 
-public class DatabaseManager {
-    private static final String URL = "jdbc:postgresql://localhost:5432/yourdbname";
-    private static final String USER = "youruser";
-    private static final String PASSWORD = "yourpassword";
+public class DatabaseManager
+{
+    private static final String URL = "jdbc:postgresql://localhost:5432/postgres"; // Убедитесь, что база данных правильно указана
+    private static final String USER = "postgres";
+    private static final String PASSWORD = "postgres";
 
-    public Connection getConnection() throws SQLException {
+    public Connection getConnection() throws SQLException
+    {
         return DriverManager.getConnection(URL, USER, PASSWORD);
     }
 
-    public void createUser(String username, String role, String email) {
+    public void createUser(String username, String role, String email)
+    {
         String sql = "INSERT INTO users (username, role, email) VALUES (?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
@@ -27,7 +31,8 @@ public class DatabaseManager {
         }
     }
 
-    public void createTask(String title, String description, String status, String priority, String author, String assignee) {
+    public void createTask(String title, String description, String status, String priority, String author, String assignee)
+    {
         String sql = "INSERT INTO tasks (title, description, status, priority, author, assignee) VALUES (?, ?, ?, ?, ?, ?)";
         try (Connection conn = getConnection();
              PreparedStatement pstmt = conn.prepareStatement(sql)) {
