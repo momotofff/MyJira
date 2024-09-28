@@ -7,11 +7,8 @@ info:
   version: 0.0.1
 
 servers:
-  - url: http://localhost/9000/api/v1
+  - url: http://localhost:9000/api/v1
     description: Dev server
-
-  - url: http://localhost/5432
-    description: Postgres server
 
 paths:
   /tasks:
@@ -255,8 +252,8 @@ components:
       type: object
       properties:
         id:
-          type: string
-          example: "1"
+          type: integer
+          example: 1
         username:
           type: string
           example: "username"
@@ -277,7 +274,7 @@ components:
       properties:
         username:
           type: string
-          example: "новый_пользователь"
+          example: "username"
         role:
           type: string
           enum: [ admin, editor, viewer ]

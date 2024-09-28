@@ -1,22 +1,25 @@
--- Создание типа 'UserType'
+-- Create enumerable types
 CREATE TYPE UserType AS ENUM ('Admin', 'User');
+CREATE TYPE TaskStatus AS ENUM ('Pending', 'Active', 'Resolved', 'Closed');
+CREATE TYPE TaskPriority AS ENUM ('Low', 'Medium', 'High', 'Critical');
 
--- Создание таблицы 'users'
-CREATE TABLE users (
-    id SERIAL PRIMARY KEY,
-    username VARCHAR(50) NOT NULL,
-    role VARCHAR(20) CHECK (role IN ('admin', 'editor', 'viewer')),
-    email VARCHAR(100) NOT NULL UNIQUE
+-- Create table 'users'
+CREATE TABLE Users (
+    id          BIGSERIAL       PRIMARY KEY,
+    userName    TEXT            NOT NULL UNIQUE,
+    email       TEXT            NOT NULL UNIQUE,
+    password    TEXT            NOT NULL,
+    userType    UserType        NOT NULL DEFAULT 'User'
 );
 
--- Создание таблицы 'tasks'
-CREATE TABLE tasks (
-    id SERIAL PRIMARY KEY,
-    title VARCHAR(100) NOT NULL,
+-- Create table 'Tasks'
+CREATE TABLE Tasks (
+    id          BIGSERIAL       PRIMARY KEY,
+    title       TEXT            NOT NULL,
     description TEXT,
-    status VARCHAR(20) CHECK (status IN ('pending', 'in_progress', 'completed')),
-    priority VARCHAR(20) CHECK (priority IN ('high', 'medium', 'low')),
-    author VARCHAR(50),
-    assignee VARCHAR(50)
+    status      TaskStatus      NOT NULL DEFAULT 'Pending',
+    priority    TaskPriority    NOT NULL,
+    author      BIGINT          NOT NULL REFERENCES Users(id),
+    assignee    BIGINT          REFERENCES Users(id)
 );
 

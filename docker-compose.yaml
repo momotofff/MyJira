@@ -44,10 +44,8 @@ services:
 
   pgadmin:
     container_name: pgadmin
-    image: dpage/pgadmin4:7.2
+    image: dpage/pgadmin4:latest
     environment:
-      PGADMIN_DEFAULT_EMAIL: "habrpguser@habr.com"
-      PGADMIN_DEFAULT_PASSWORD: "pgadminpwd4habr"
       PGADMIN_CONFIG_SERVER_MODE: "False"
     volumes:
       - pgadmin-data:/var/lib/pgadmin
@@ -58,10 +56,4 @@ services:
       - postgres
 
 volumes:
-  myjira-data:
   pgadmin-data:
-
-networks:
-  postgres:
-    driver: bridge
-

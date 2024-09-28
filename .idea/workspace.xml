@@ -5,13 +5,13 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b8ad1e3a-20cb-4aa1-b915-71e92b45545e" name="Changes" comment="first commit">
-      <change beforePath="$PROJECT_DIR$/.idea/dbnavigator.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/dbnavigator.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.gitignore" beforeDir="false" afterPath="$PROJECT_DIR$/.gitignore" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/misc.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/misc.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/db/init/init.sql" beforeDir="false" afterPath="$PROJECT_DIR$/db/init/init.sql" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/docker-compose.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/docker-compose.yaml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/groovy/org/example/DatabaseManager.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/groovy/org/example/DatabaseManager.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/groovy/org/example/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/groovy/org/example/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/Application.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/example/demo/Application.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/swagger/openapi.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/swagger/openapi.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
