@@ -47,6 +47,8 @@ services:
     image: dpage/pgadmin4:latest
     environment:
       PGADMIN_CONFIG_SERVER_MODE: "False"
+      PGADMIN_DEFAULT_EMAIL: "admin@mail.ru"    # без этих строк
+      PGADMIN_DEFAULT_PASSWORD: "admin"         # контейнер не запускается
     volumes:
       - pgadmin-data:/var/lib/pgadmin
     ports:

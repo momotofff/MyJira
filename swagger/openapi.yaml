@@ -1,9 +1,10 @@
 openapi: 3.0.0
 info:
-  title: Система управления задачами
+  title: Task management system
+  description: This is a sample Task management system based on the OpenAPI 3.0 specification.
   license:
     name: Apache 2.0
-    url: httpc://www.apache.org/licenses/LICENSE-2.0.html
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
   version: 0.0.1
 
 servers:
@@ -13,32 +14,31 @@ servers:
 paths:
   /tasks:
     get:
-      summary: Метод получения списка задач
-      description: Метод предназначен для получения списка всех задач, сохраненныйх в БД.
+      summary: Method for getting a list of tasks
+      description: The method is intended to obtain a list of all tasks saved in the database.
       tags:
         - Task
       operationId: getAllTasks
       responses:
         '200':
-          description: Список задач
+          description: List of tasks
           content:
             application/json:
               schema:
                 type: array
                 items:
-                  $ref: '/components/schemas/Task'
+                  $ref: '#/components/schemas/Task'
         default:
-          description: дефолтный ответ
-
+          description: Дефолтный ответ
         '501':
-          description: Метод не реализован в коде
+          description: Method not implemented in code
           content:
             application/json:
               schema:
-                $ref: "/components/schemas/Error"
+                $ref: '#/components/schemas/Error'
 
     post:
-      summary: Метод создания задачи
+      summary: Task creation method
       tags:
         - Task
       operationId: createTask
@@ -47,20 +47,20 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '/components/schemas/CreateTaskRequest'
+              $ref: '#/components/schemas/CreateTaskRequest'
       responses:
         '201':
-          description: Задача создана
+          description: Successful task creation
           content:
             application/json:
               schema:
-                $ref: '/components/schemas/Task'
+                $ref: '#/components/schemas/Task'
         default:
-          description: дефолтный ответ
+          description: Дефолтный ответ
 
   /tasks/{taskId}:
     get:
-      summary: Получить задачу по ID
+      summary: Get task by ID
       tags:
         - Task
       parameters:
@@ -75,11 +75,11 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '/components/schemas/Task'
+                $ref: '#/components/schemas/Task'
         '404':
           description: Задача не найдена
         default:
-          description: дефолтный ответ
+          description: Дефолтный ответ
 
     put:
       summary: Обновить задачу
@@ -96,16 +96,16 @@ paths:
         content:
           application/json:
             schema:
-              $ref: '/components/schemas/UpdateTaskRequest'
+              $ref: '#/components/schemas/UpdateTaskRequest'
       responses:
         '200':
           description: Задача обновлена
           content:
             application/json:
               schema:
-                $ref: '/components/schemas/Task'
+                $ref: '#/components/schemas/Task'
         default:
-          description: дефолтный ответ
+          description: Дефолтный ответ
         '404':
           description: Задача не найдена
 
@@ -123,13 +123,13 @@ paths:
         '204':
           description: "Задача удалена"
         default:
-          description: дефолтный ответ
+          description: Дефолтный ответ
         '404':
           description: "Задача не найдена"
 
   /users:
     get:
-      summary: Получить список пользователей
+      summary: Get list of users
       tags:
         - User
       responses:
@@ -142,7 +142,7 @@ paths:
                 items:
                   $ref: '#/components/schemas/User'
         default:
-          description: дефолтный ответ
+          description: Дефолтный ответ
 
     post:
       summary: Создать нового пользователя
@@ -162,7 +162,7 @@ paths:
               schema:
                 $ref: '#/components/schemas/User'
         default:
-          description: дефолтный ответ
+          description: Дефолтный ответ
 
 components:
   schemas:
@@ -259,11 +259,18 @@ components:
           example: "username"
         role:
           type: string
-          enum: [ admin, editor, viewer ]
+          enum: [admin, editor, viewer]
           example: "editor"
         email:
           type: string
           example: "user@example.com"
+
+    Error:
+      type: object
+      properties:
+        message:
+          type: string
+
 
     CreateUserRequest:
       type: object
@@ -277,11 +284,8 @@ components:
           example: "username"
         role:
           type: string
-          enum: [ admin, editor, viewer ]
+          enum: [admin, editor, viewer]
           example: "editor"
         email:
           type: string
           example: "user@example.com"
-
-security:
-  - bearerAuth: [ ]
