@@ -8,7 +8,7 @@ CREATE TABLE Users (
     id          BIGSERIAL       PRIMARY KEY,
     userName    TEXT            NOT NULL UNIQUE,
     email       TEXT            NOT NULL UNIQUE,
-    password    TEXT            NOT NULL,
+    role        TEXT            NOT NULL,
     userType    UserType        NOT NULL DEFAULT 'User'
 );
 
