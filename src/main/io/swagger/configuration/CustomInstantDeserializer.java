@@ -34,19 +34,24 @@ public class CustomInstantDeserializer<T extends Temporal>
 
   public static final CustomInstantDeserializer<Instant> INSTANT = new CustomInstantDeserializer<Instant>(
       Instant.class, DateTimeFormatter.ISO_INSTANT,
-      new Function<TemporalAccessor, Instant>() {
+      new Function<TemporalAccessor, Instant>()
+      {
         @Override
-        public Instant apply(TemporalAccessor temporalAccessor) {
+        public Instant apply(TemporalAccessor temporalAccessor)
+        {
           return Instant.from(temporalAccessor);
         }
       },
-      new Function<FromIntegerArguments, Instant>() {
+      new Function<FromIntegerArguments, Instant>()
+      {
         @Override
-        public Instant apply(FromIntegerArguments a) {
+        public Instant apply(FromIntegerArguments a)
+        {
           return Instant.ofEpochMilli(a.value);
         }
       },
-      new Function<FromDecimalArguments, Instant>() {
+      new Function<FromDecimalArguments, Instant>()
+      {
         @Override
         public Instant apply(FromDecimalArguments a) {
           return Instant.ofEpochSecond(a.integer, a.fraction);

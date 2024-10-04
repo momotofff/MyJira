@@ -35,30 +35,39 @@ import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
 @Validated
-public interface UsersApi {
-
+public interface UsersApi
+{
     @Operation(summary = "Get list of users", description = "", tags={ "User" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "200", description = "Список пользователей", content = @Content(mediaType = "application/json", array = @ArraySchema(schema = @Schema(implementation = User.class)))),
-        
-        @ApiResponse(responseCode = "200", description = "Дефолтный ответ") })
+    @ApiResponses(value = { @ApiResponse(responseCode = "200",
+                                        description = "Список пользователей",
+                                        content = @Content(mediaType = "application/json",
+                                                           array = @ArraySchema(schema = @Schema(implementation = User.class)))),
+                            @ApiResponse(responseCode = "200",
+                                         description = "Дефолтный ответ") })
+
     @RequestMapping(value = "/users",
-        produces = { "application/json" }, 
-        method = RequestMethod.GET)
+                    produces = { "application/json" },
+                    method = RequestMethod.GET)
+
     ResponseEntity<List<User>> usersGet();
 
+    @Operation(summary = "Создать нового пользователя",
+               description = "", tags={ "User" })
 
-    @Operation(summary = "Создать нового пользователя", description = "", tags={ "User" })
-    @ApiResponses(value = { 
-        @ApiResponse(responseCode = "201", description = "Пользователь создан", content = @Content(mediaType = "application/json", schema = @Schema(implementation = User.class))),
-        
-        @ApiResponse(responseCode = "200", description = "Дефолтный ответ") })
+    @ApiResponses(value = { @ApiResponse(responseCode = "201",
+                                         description = "Пользователь создан",
+                                         content = @Content(mediaType = "application/json",
+                                                            schema = @Schema(implementation = User.class))),
+                            @ApiResponse(responseCode = "200", description = "Дефолтный ответ") })
+
     @RequestMapping(value = "/users",
-        produces = { "application/json" }, 
-        consumes = { "application/json" }, 
-        method = RequestMethod.POST)
-    ResponseEntity<User> usersPost(@Parameter(in = ParameterIn.DEFAULT, description = "", required=true, schema=@Schema()) @Valid @RequestBody CreateUserRequest body
-);
+                    produces = { "application/json" },
+                    consumes = { "application/json" },
+                    method = RequestMethod.POST)
 
+    ResponseEntity<User> usersPost(@Parameter(in = ParameterIn.DEFAULT,
+                                              description = "",
+                                              required=true,
+                                              schema=@Schema())
+                                   @Valid @RequestBody CreateUserRequest body);
 }
-

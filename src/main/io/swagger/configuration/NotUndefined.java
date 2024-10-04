@@ -8,7 +8,8 @@ import java.lang.annotation.*;
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
 @Constraint(validatedBy = NotUndefinedValidator.class)
-public @interface NotUndefined {
+public @interface NotUndefined
+{
     String message() default "field cannot be undefined";
     Class<?>[] groups() default {};
     Class<? extends Payload>[] payload() default {};
