@@ -5,25 +5,26 @@
   </component>
   <component name="ChangeListManager">
     <list default="true" id="b8ad1e3a-20cb-4aa1-b915-71e92b45545e" name="Changes" comment="new commit">
+      <change afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/ApiController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/encodings.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/encodings.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/RFC3339DateFormat.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/RFC3339DateFormat.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/pom.xml" beforeDir="false" afterPath="$PROJECT_DIR$/pom.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/RFC3339DateFormat.java" beforeDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/io/swagger/Swagger2SpringBoot.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/Swagger2SpringBoot.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/api/ApiOriginFilter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/api/ApiOriginFilter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/api/ApiResponseMessage.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/api/ApiResponseMessage.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/api/NotFoundException.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/api/NotFoundException.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/io/swagger/api/TasksApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/api/TasksApi.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/io/swagger/api/TasksApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/api/TasksApiController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/api/UsersApi.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/api/UsersApi.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/api/UsersApiController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/api/UsersApiController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/configuration/CustomInstantDeserializer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/CustomInstantDeserializer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/io/swagger/configuration/HomeController.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/HomeController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/configuration/JacksonConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/JacksonConfiguration.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/configuration/LocalDateConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/LocalDateConverter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/configuration/LocalDateTimeConverter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/LocalDateTimeConverter.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/configuration/NotUndefined.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/NotUndefined.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/configuration/NotUndefinedValidator.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/NotUndefinedValidator.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/configuration/SwaggerDocumentationConfig.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/SwaggerDocumentationConfig.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/io/swagger/configuration/SwaggerUiConfiguration.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/configuration/SwaggerUiConfiguration.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/model/CreateTaskRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/model/CreateTaskRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/model/CreateUserRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/model/CreateUserRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/model/Error.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/model/Error.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/model/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/model/Task.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/model/UpdateTaskRequest.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/model/UpdateTaskRequest.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/io/swagger/model/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/io/swagger/model/User.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/Application.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/example/demo/GreetingController.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/resources/application.properties" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/resources/application.properties" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/test/java/com/example/demo/DemoApplicationTests.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/test/java/com/example/demo/DemoApplicationTests.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -79,7 +80,7 @@
       <recent name="G:\MyJira" />
     </key>
   </component>
-  <component name="RunManager" selected="Docker.docker-compose.yaml.swagger-editor: Compose Deployment">
+  <component name="RunManager" selected="Application.Swagger2SpringBoot">
     <configuration name="Application" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
       <option name="MAIN_CLASS_NAME" value="com.example.demo.Application" />
       <module name="MyJira" />
@@ -93,17 +94,23 @@
         <option name="Make" enabled="true" />
       </method>
     </configuration>
-    <configuration name="DemoApplicationTests" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+    <configuration name="Swagger2SpringBoot" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="swagger.Swagger2SpringBoot" />
       <module name="MyJira" />
       <extension name="coverage">
         <pattern>
-          <option name="PATTERN" value="com.example.demo.*" />
+          <option name="PATTERN" value="swagger.*" />
           <option name="ENABLED" value="true" />
         </pattern>
       </extension>
-      <option name="PACKAGE_NAME" value="com.example.demo" />
-      <option name="MAIN_CLASS_NAME" value="com.example.demo.DemoApplicationTests" />
-      <option name="TEST_OBJECT" value="class" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration name="All in MyJira" type="JUnit" factoryName="JUnit" temporary="true" nameIsGenerated="true">
+      <module name="MyJira" />
+      <option name="PACKAGE_NAME" value="" />
+      <option name="TEST_OBJECT" value="package" />
       <method v="2">
         <option name="Make" enabled="true" />
       </method>
@@ -114,47 +121,11 @@
       </deployment>
       <method v="2" />
     </configuration>
-    <configuration name="docker-compose.yaml: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="sourceFilePath" value="docker-compose.yaml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
-    <configuration name="docker-compose.yaml.pgadmin: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="pgadmin" />
-            </list>
-          </option>
-          <option name="sourceFilePath" value="docker-compose.yaml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
-    <configuration name="docker-compose.yaml.swagger-editor: Compose Deployment" type="docker-deploy" factoryName="docker-compose.yml" temporary="true" server-name="Docker">
-      <deployment type="docker-compose.yml">
-        <settings>
-          <option name="services">
-            <list>
-              <option value="swagger-editor" />
-            </list>
-          </option>
-          <option name="sourceFilePath" value="docker-compose.yaml" />
-        </settings>
-      </deployment>
-      <method v="2" />
-    </configuration>
     <recent_temporary>
       <list>
-        <item itemvalue="Docker.docker-compose.yaml.swagger-editor: Compose Deployment" />
+        <item itemvalue="Application.Swagger2SpringBoot" />
         <item itemvalue="Application.Application" />
-        <item itemvalue="JUnit.DemoApplicationTests" />
-        <item itemvalue="Docker.docker-compose.yaml.pgadmin: Compose Deployment" />
-        <item itemvalue="Docker.docker-compose.yaml: Compose Deployment" />
+        <item itemvalue="JUnit.All in MyJira" />
       </list>
     </recent_temporary>
   </component>

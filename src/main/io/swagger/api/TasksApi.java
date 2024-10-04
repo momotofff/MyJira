@@ -5,7 +5,7 @@
  */
 package swagger.api;
 
-import io.swagger.model.CreateTaskRequest;
+import swagger.model.CreateTaskRequest;
 import io.swagger.model.Error;
 import io.swagger.model.Task;
 import io.swagger.model.UpdateTaskRequest;
