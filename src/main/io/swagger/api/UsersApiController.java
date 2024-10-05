@@ -53,6 +53,7 @@ public class UsersApiController implements UsersApi
         catch (SQLException e)
         {
             System.err.println("Error getting users list: " + e.getMessage());
+            // TODO: Return verbose error info instead of simple 500
             return new ResponseEntity<List<User>>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
@@ -64,6 +65,7 @@ public class UsersApiController implements UsersApi
                                                      schema=@Schema())
                                           @Valid @RequestBody CreateUserRequest body)
     {
+        // TODO: Implement
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json"))

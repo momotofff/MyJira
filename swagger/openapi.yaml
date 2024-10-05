@@ -1,3 +1,6 @@
+# TODO: Get all that useful from swagger.yaml and delete it
+# TODO: No cyrillic allowed here!
+
 openapi: 3.0.0
 info:
   title: Task management system
@@ -141,6 +144,15 @@ paths:
                 type: array
                 items:
                   $ref: '#/components/schemas/User'
+        '400':
+          description: Bad request
+        '500':
+          description: Internal server error
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Error'
+
         default:
           description: Дефолтный ответ
 
@@ -268,9 +280,10 @@ components:
     Error:
       type: object
       properties:
+        code:
+          type: integer
         message:
           type: string
-
 
     CreateUserRequest:
       type: object
