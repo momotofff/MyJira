@@ -5,8 +5,8 @@
  */
 package swagger.api;
 
-import io.swagger.model.CreateUserRequest;
-import io.swagger.model.User;
+import swagger.model.CreateUserRequest;
+import swagger.model.User;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

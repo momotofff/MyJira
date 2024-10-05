@@ -1,7 +1,8 @@
 package swagger.api;
 
-import io.swagger.model.CreateUserRequest;
-import io.swagger.model.User;
+import org.springframework.web.bind.annotation.*;
+import swagger.model.CreateUserRequest;
+import swagger.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -17,13 +18,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -34,7 +28,9 @@ import java.util.List;
 import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
+
 @RestController
+@RequestMapping("/api/v1/users")
 public class UsersApiController implements UsersApi
 {
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
@@ -48,9 +44,12 @@ public class UsersApiController implements UsersApi
         this.request = request;
     }
 
+    @GetMapping("/users")
     public ResponseEntity<List<User>> usersGet()
     {
+
         String accept = request.getHeader("Accept");
+
 
         if (accept != null && accept.contains("application/json"))
         {
@@ -68,6 +67,7 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<List<User>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @PostMapping
     public ResponseEntity<User> usersPost(@Parameter(in = ParameterIn.DEFAULT,
                                                      description = "",
                                                      required=true,

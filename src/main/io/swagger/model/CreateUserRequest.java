@@ -1,4 +1,4 @@
-package io.swagger.model;
+package swagger.model;
 
 import java.util.Objects;
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -22,7 +22,8 @@ import javax.validation.constraints.*;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
 
 
-public class CreateUserRequest   {
+public class CreateUserRequest
+{
   @JsonProperty("username")
 
   private String username = null;
