@@ -1,9 +1,10 @@
 package swagger.api;
 
+import org.springframework.web.bind.annotation.*;
 import swagger.model.CreateTaskRequest;
-import io.swagger.model.Error;
-import io.swagger.model.Task;
-import io.swagger.model.UpdateTaskRequest;
+import swagger.model.Error;
+import swagger.model.Task;
+import swagger.model.UpdateTaskRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
@@ -19,13 +20,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
-import org.springframework.web.bind.annotation.CookieValue;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestHeader;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RequestPart;
-import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.multipart.MultipartFile;
 
 import javax.validation.Valid;
@@ -36,13 +30,14 @@ import java.util.List;
 import java.util.Map;
 
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
+
 @RestController
-public class TasksApiController implements TasksApi {
+@RequestMapping("/api/v1/tasks")
+public class TasksApiController implements TasksApi
+{
 
     private static final Logger log = LoggerFactory.getLogger(TasksApiController.class);
-
     private final ObjectMapper objectMapper;
-
     private final HttpServletRequest request;
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -74,6 +69,7 @@ public class TasksApiController implements TasksApi {
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @GetMapping
     public ResponseEntity<List<Task>> getAllTasks()
     {
         String accept = request.getHeader("Accept");

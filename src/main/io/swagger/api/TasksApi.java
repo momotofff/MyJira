@@ -6,9 +6,9 @@
 package swagger.api;
 
 import swagger.model.CreateTaskRequest;
-import io.swagger.model.Error;
-import io.swagger.model.Task;
-import io.swagger.model.UpdateTaskRequest;
+import swagger.model.Error;
+import swagger.model.Task;
+import swagger.model.UpdateTaskRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
