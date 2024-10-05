@@ -1,5 +1,5 @@
 -- Create enumerable types
-CREATE TYPE UserType AS ENUM ('Admin', 'User');
+CREATE TYPE UserRole AS ENUM ('Admin', 'User');
 CREATE TYPE TaskStatus AS ENUM ('Pending', 'Active', 'Resolved', 'Closed');
 CREATE TYPE TaskPriority AS ENUM ('Low', 'Medium', 'High', 'Critical');
 
@@ -8,8 +8,7 @@ CREATE TABLE Users (
     id          BIGSERIAL       PRIMARY KEY,
     userName    TEXT            NOT NULL UNIQUE,
     email       TEXT            NOT NULL UNIQUE,
-    role        TEXT            NOT NULL,
-    userType    UserType        NOT NULL DEFAULT 'User'
+    role        UserRole        NOT NULL DEFAULT 'User'
 );
 
 -- Create table 'Tasks'

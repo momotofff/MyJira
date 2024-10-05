@@ -41,9 +41,8 @@ public class User
    */
   public enum RoleEnum
   {
-    ADMIN("admin"),
-    EDITOR("editor"),
-    VIEWER("viewer");
+    ADMIN("Admin"),
+    USER("User");
 
     private String value;
 

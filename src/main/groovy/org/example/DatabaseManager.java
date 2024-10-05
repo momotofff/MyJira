@@ -1,9 +1,10 @@
 package org.example;
 
-import java.sql.Connection;
-import java.sql.DriverManager;
-import java.sql.PreparedStatement;
-import java.sql.SQLException;
+import swagger.model.User;
+
+import java.sql.*;
+import java.util.ArrayList;
+import java.util.List;
 
 public class DatabaseManager
 {
@@ -33,6 +34,27 @@ public class DatabaseManager
         {
             System.err.println("Error creating user: " + e.getMessage());
         }
+    }
+
+    public List<User> getUsers() throws SQLException
+    {
+        List<User> list = new ArrayList<>();
+        String sql = "SELECT * FROM users";
+
+        Connection conn = getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next())
+        {
+            User user = new User();
+            user.setId(rs.getInt("id"));
+            user.setUsername(rs.getString("username"));
+            user.setEmail(rs.getString("email"));
+            user.setRole(User.RoleEnum.fromValue(rs.getString("role")));
+            list.add(user);
+        }
+
+        return list;
     }
 
     public void createTask(String title, String description, String status, String priority, String author, String assignee)

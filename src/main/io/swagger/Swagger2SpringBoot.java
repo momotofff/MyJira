@@ -1,5 +1,6 @@
 package swagger;
 
+import org.example.DatabaseManager;
 import swagger.configuration.LocalDateConverter;
 import swagger.configuration.LocalDateTimeConverter;
 import org.springframework.boot.CommandLineRunner;
@@ -15,7 +16,7 @@ import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
 @SpringBootApplication
-@ComponentScan(basePackages = { "io.swagger", "io.swagger.api" , "io.swagger.configuration", "io.swagger.model"})
+@ComponentScan(basePackages = { "swagger", "swagger.api" , "swagger.configuration", "swagger.model"})
 
 public class Swagger2SpringBoot implements CommandLineRunner
 {
@@ -25,11 +26,12 @@ public class Swagger2SpringBoot implements CommandLineRunner
     }
 
     @Override
-public void run(String... arg0) throws Exception
-{
-    if (arg0.length > 0 && arg0[0].equals("exitcode"))
-        throw new ExitException();
-}
+    public void run(String... arg0) throws Exception
+    {
+        if (arg0.length > 0 && arg0[0].equals("exitcode"))
+            throw new ExitException();
+    }
+
     @Bean
     public Module jsonNullableModule() { return new JsonNullableModule();}
 
