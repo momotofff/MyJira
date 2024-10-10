@@ -1,17 +1,12 @@
 package swagger;
 
-import org.example.DatabaseManager;
 import swagger.configuration.LocalDateConverter;
 import swagger.configuration.LocalDateTimeConverter;
-import org.springframework.boot.CommandLineRunner;
-import org.springframework.boot.ExitCodeGenerator;
-import org.springframework.boot.SpringApplication;
+import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
-import org.springframework.context.annotation.ComponentScan;
 import org.openapitools.jackson.nullable.JsonNullableModule;
-import org.springframework.context.annotation.Bean;
+import org.springframework.context.annotation.*;
 import com.fasterxml.jackson.databind.Module;
-import org.springframework.context.annotation.Configuration;
 import org.springframework.format.FormatterRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurerAdapter;
 
