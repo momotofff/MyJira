@@ -11,6 +11,7 @@ tags:
 schemes:
 - "https"
 - "http"
+
 paths:
   /user:
     post:
@@ -154,6 +155,7 @@ paths:
           description: "Invalid username supplied"
         404:
           description: "User not found"
+
 securityDefinitions:
   petstore_auth:
     type: "oauth2"

@@ -53,7 +53,7 @@
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>./api-contract/petstore.yml</inputSpec>
+                            <inputSpec>./swagger/openapi.yaml:/openapi.yaml</inputSpec>
                             <language>spring</language>
                             <configOptions>
                                 <sourceFolder>swagger</sourceFolder>
