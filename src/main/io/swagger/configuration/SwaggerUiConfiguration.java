@@ -1,4 +1,4 @@
-package swagger.configuration;
+package io.swagger.configuration;
 
 import org.springframework.context.annotation.Configuration;
 import org.springframework.web.servlet.config.annotation.*;
@@ -7,7 +7,6 @@ import org.springframework.web.servlet.config.annotation.*;
 @Configuration
 public class SwaggerUiConfiguration implements WebMvcConfigurer
 {
-
     @Override
     public void addViewControllers(ViewControllerRegistry registry)
     {

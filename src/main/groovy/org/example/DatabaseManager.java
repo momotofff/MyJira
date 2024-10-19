@@ -1,7 +1,7 @@
-package org.example;
+package groovy.org.example;
 
-import swagger.model.User;
-
+import io.swagger.model.User;
+import io.swagger.model.Task;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -73,5 +73,29 @@ public class DatabaseManager
         } catch (SQLException e) {
             System.err.println("Error creating task: " + e.getMessage());
         }
+    }
+
+    public List<Task> getTasks() throws SQLException
+    {
+        List<Task> list = new ArrayList<>();
+        String sql = "SELECT * FROM tasks";
+
+        Connection conn = getConnection();
+        Statement stmt = conn.createStatement();
+        ResultSet rs = stmt.executeQuery(sql);
+        while (rs.next())
+        {
+            Task task = new Task();
+            task.setId(rs.getInt("id"));
+            task.setTitle(rs.getString("title"));
+            task.setAssignee(rs.getString("assignee"));
+            task.setStatus(Task.StatusEnum.fromValue(rs.getString("status")));
+            task.setPriority(Task.PriorityEnum.fromValue(rs.getString("priority")));
+            task.setAuthor(rs.getString("autor"));
+            task.setDescription(rs.getString("description"));
+            list.add(task);
+        }
+
+        return list;
     }
 }

@@ -1,4 +1,4 @@
-package swagger.configuration;
+package io.swagger.configuration;
 
 import javax.validation.Constraint;
 import javax.validation.Payload;

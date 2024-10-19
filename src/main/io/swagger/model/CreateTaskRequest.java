@@ -1,23 +1,12 @@
-package swagger.model;
+package io.swagger.model;
 
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import org.openapitools.jackson.nullable.JsonNullable;
-import swagger.configuration.NotUndefined;
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonSetter;
-import com.fasterxml.jackson.annotation.Nulls;
-
-import javax.validation.Valid;
+import io.swagger.configuration.NotUndefined;
 import javax.validation.constraints.*;
 
-/**
- * CreateTaskRequest
- */
 @Validated
 @NotUndefined
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")

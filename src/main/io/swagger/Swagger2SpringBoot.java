@@ -1,7 +1,7 @@
-package swagger;
+package io.swagger;
 
-import swagger.configuration.LocalDateConverter;
-import swagger.configuration.LocalDateTimeConverter;
+import io.swagger.configuration.LocalDateConverter;
+import io.swagger.configuration.LocalDateTimeConverter;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
 import org.openapitools.jackson.nullable.JsonNullableModule;

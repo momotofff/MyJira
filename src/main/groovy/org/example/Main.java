@@ -1,4 +1,4 @@
-package org.example;
+package groovy.org.example;
 
 public class Main
 {

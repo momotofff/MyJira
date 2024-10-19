@@ -1,9 +1,10 @@
-package swagger.api;
+package io.swagger.api;
 
+import groovy.org.example.DatabaseManager;
 import org.springframework.web.bind.annotation.*;
-import swagger.model.CreateTaskRequest;
-import swagger.model.Task;
-import swagger.model.UpdateTaskRequest;
+import io.swagger.model.CreateTaskRequest;
+import io.swagger.model.Task;
+import io.swagger.model.UpdateTaskRequest;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -28,6 +29,7 @@ public class TasksApiController implements TasksApi
     private static final Logger log = LoggerFactory.getLogger(TasksApiController.class);
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
+    DatabaseManager databaseManager = new DatabaseManager();
 
     @org.springframework.beans.factory.annotation.Autowired
     public TasksApiController(ObjectMapper objectMapper, HttpServletRequest request) {
@@ -38,8 +40,8 @@ public class TasksApiController implements TasksApi
     public ResponseEntity<Task> createTask(@Parameter(in = ParameterIn.DEFAULT,
                                                       description = "",
                                                       required=true,
-                                                      schema=@Schema()) @Valid @RequestBody CreateTaskRequest body
-)   {
+                                                      schema=@Schema()) @Valid @RequestBody CreateTaskRequest body)
+    {
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json"))

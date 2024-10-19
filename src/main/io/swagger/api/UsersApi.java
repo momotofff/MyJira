@@ -3,10 +3,10 @@
  * https://github.com/swagger-api/swagger-codegen
  * Do not edit the class manually.
  */
-package swagger.api;
+package io.swagger.api;
 
-import swagger.model.CreateUserRequest;
-import swagger.model.User;
+import io.swagger.model.CreateUserRequest;
+import io.swagger.model.User;
 import io.swagger.v3.oas.annotations.*;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
 import io.swagger.v3.oas.annotations.responses.*;
