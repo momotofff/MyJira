@@ -47,7 +47,7 @@ public class DatabaseManager
         while (rs.next())
         {
             User user = new User();
-            user.setId(rs.getInt("id"));
+            user.setId(rs.getLong("id"));
             user.setUsername(rs.getString("username"));
             user.setEmail(rs.getString("email"));
             user.setRole(User.RoleEnum.fromValue(rs.getString("role")));
@@ -86,7 +86,7 @@ public class DatabaseManager
         while (rs.next())
         {
             Task task = new Task();
-            task.setId(rs.getInt("id"));
+            task.setId(rs.getLong("id"));
             task.setTitle(rs.getString("title"));
             task.setAssignee(rs.getString("assignee"));
             task.setStatus(Task.StatusEnum.fromValue(rs.getString("status")));

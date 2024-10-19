@@ -25,6 +25,7 @@
             <plugin>
                 <groupId>org.springframework.boot</groupId>
                 <artifactId>spring-boot-maven-plugin</artifactId>
+                <version>3.3.4</version>
                 <executions>
                     <execution>
                         <goals>
@@ -36,7 +37,14 @@
 
             <plugin>
                 <groupId>org.apache.maven.plugins</groupId>
+                <artifactId>maven-resources-plugin</artifactId>
+                <version>3.3.1</version>
+            </plugin>
+
+            <plugin>
+                <groupId>org.apache.maven.plugins</groupId>
                 <artifactId>maven-compiler-plugin</artifactId>
+                <version>3.13.0</version>
                 <configuration>
                     <source>8</source>
                     <target>8</target>
@@ -44,17 +52,19 @@
             </plugin>
 
             <plugin>
-                <groupId>io.swagger</groupId>
-                <artifactId>swagger-codegen-maven-plugin</artifactId>
-                <version>2.2.3</version>
+                <groupId>org.openapitools</groupId>
+                <artifactId>openapi-generator-maven-plugin</artifactId>
+                <version>7.9.0</version>
                 <executions>
                     <execution>
                         <goals>
                             <goal>generate</goal>
                         </goals>
                         <configuration>
-                            <inputSpec>./swagger/openapi.yaml:/openapi.yaml</inputSpec>
-                            <language>spring</language>
+                            <inputSpec>./swagger/openapi.yaml</inputSpec>
+                            <generatorName>spring</generatorName>
+                            <apiPackage>io.swagger.api</apiPackage>
+                            <modelPackage>io.swagger.model</modelPackage>
                             <configOptions>
                                 <sourceFolder>swagger</sourceFolder>
                                 <java8>true</java8>
