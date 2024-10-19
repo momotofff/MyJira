@@ -1,4 +1,4 @@
-package swagger.configuration;
+package io.swagger.configuration;
 
 import org.openapitools.jackson.nullable.JsonNullable;
 import javax.validation.ConstraintValidator;

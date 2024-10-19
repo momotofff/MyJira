@@ -1,9 +1,9 @@
-package swagger.api;
+package io.swagger.api;
 
-import org.example.DatabaseManager;
+import groovy.org.example.DatabaseManager;
 import org.springframework.web.bind.annotation.*;
-import swagger.model.CreateUserRequest;
-import swagger.model.User;
+import io.swagger.model.CreateUserRequest;
+import io.swagger.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;

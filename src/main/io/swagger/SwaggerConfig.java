@@ -1,4 +1,4 @@
-package swagger;
+package io.swagger;
 
 import org.springframework.context.annotation.*;
 import springfox.documentation.builders.*;

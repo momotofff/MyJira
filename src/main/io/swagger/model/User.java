@@ -1,22 +1,14 @@
-package swagger.model;
+package io.swagger.model;
 
 import java.util.Objects;
-import com.fasterxml.jackson.annotation.JsonProperty;
-import com.fasterxml.jackson.annotation.JsonCreator;
-import com.fasterxml.jackson.annotation.JsonValue;
+import com.fasterxml.jackson.annotation.*;
 import io.swagger.v3.oas.annotations.media.Schema;
 import org.springframework.validation.annotation.Validated;
-import org.openapitools.jackson.nullable.JsonNullable;
-import swagger.configuration.NotUndefined;
+import io.swagger.configuration.NotUndefined;
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonSetter;
 import com.fasterxml.jackson.annotation.Nulls;
-import javax.validation.Valid;
-import javax.validation.constraints.*;
 
-/**
- * User
- */
 @Validated
 @NotUndefined
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
@@ -36,9 +28,8 @@ public class User
   @JsonSetter(nulls = Nulls.FAIL)    // FAIL setting if the value is null
   private String username = null;
 
-  /**
-   * Gets or Sets role
-   */
+   //Gets or Sets role
+
   public enum RoleEnum
   {
     ADMIN("Admin"),
@@ -90,10 +81,7 @@ public class User
     return this;
   }
 
-  /**
-   * Get id
-   * @return id
-   **/
+  //* Get id @return id
 
   @Schema(example = "1", description = "")
 
@@ -113,10 +101,7 @@ public class User
     return this;
   }
 
-  /**
-   * Get username
-   * @return username
-   **/
+   //Get username @return username
 
   @Schema(example = "username", description = "")
 
@@ -136,10 +121,9 @@ public class User
     return this;
   }
 
-  /**
-   * Get role
-   * @return role
-   **/
+
+   //Get role @return role
+
 
   @Schema(example = "editor", description = "")
 
@@ -159,10 +143,8 @@ public class User
     return this;
   }
 
-  /**
-   * Get email
-   * @return email
-   **/
+  //Get email @return email
+
 
   @Schema(example = "user@example.com", description = "")
 
@@ -212,10 +194,9 @@ public class User
     return sb.toString();
   }
 
-  /**
-   * Convert the given object to string with each line indented by 4 spaces
-   * (except the first line).
-   */
+   //Convert the given object to string with each line indented by 4 spaces
+   //(except the first line).
+
   private String toIndentedString(java.lang.Object o)
   {
     if (o == null)
