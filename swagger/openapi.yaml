@@ -60,6 +60,7 @@ paths:
 
   /tasks/{taskId}:
     get:
+      operationId: getTaskById
       summary: "Get task by ID"
       tags:
         - Task
@@ -82,6 +83,7 @@ paths:
           description: 'Successful operation'
 
     put:
+      operationId: updateTaskById
       summary: "Update task"
       tags:
         - Task
@@ -110,6 +112,7 @@ paths:
           description: 'Task not found'
 
     delete:
+      operationId: deleteTaskById
       summary: "Task deleted"
       tags:
         - Task
@@ -129,6 +132,7 @@ paths:
 
   /users:
     get:
+      operationId: getAllUsers
       summary: "Get list of users"
       tags:
         - User
@@ -154,6 +158,7 @@ paths:
           description: "successful operation"
 
     post:
+      operationId: postUser
       summary: "Create user"
       tags:
         - User
@@ -175,6 +180,7 @@ paths:
 
   /users/{username}:
     get:
+      operationId: getUserById
       summary: "Get user by name"
       tags:
         - User
@@ -197,6 +203,7 @@ paths:
           description: "successful operation"
 
     put:
+      operationId: updateUserById
       summary: "Update user"
       tags:
         - User
@@ -225,6 +232,7 @@ paths:
           description: "User not found"
 
     delete:
+      operationId: deleteUserById
       summary: "Deleted User"
       tags:
         - User

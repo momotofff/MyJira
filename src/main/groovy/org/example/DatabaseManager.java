@@ -1,7 +1,6 @@
 package groovy.org.example;
-
-import io.swagger.model.User;
 import io.swagger.model.Task;
+import io.swagger.model.User;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
