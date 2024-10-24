@@ -1,6 +1,8 @@
 package io.swagger.api;
 
 import groovy.org.example.DatabaseManager;
+import io.swagger.model.UpdateUserRequest;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.model.CreateUserRequest;
 import io.swagger.model.User;
@@ -31,7 +33,7 @@ public class UsersApiController implements UsersApi
     private final HttpServletRequest request;
     DatabaseManager databaseManager = new DatabaseManager();
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
     public UsersApiController(ObjectMapper objectMapper, HttpServletRequest request)
     {
         this.objectMapper = objectMapper;
@@ -39,7 +41,7 @@ public class UsersApiController implements UsersApi
     }
 
     @GetMapping
-    public ResponseEntity<List<User>> usersGet()
+    public ResponseEntity<List<User>> getAllUsers()
     {
         String accept = request.getHeader("Accept");
 
@@ -59,7 +61,7 @@ public class UsersApiController implements UsersApi
     }
 
     @PostMapping
-    public ResponseEntity<User> usersPost(@Parameter(in = ParameterIn.DEFAULT,
+    public ResponseEntity<User> postUser(@Parameter(in = ParameterIn.DEFAULT,
                                                      description = "",
                                                      required=true,
                                                      schema=@Schema())
@@ -82,5 +84,68 @@ public class UsersApiController implements UsersApi
         }
 
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public ResponseEntity<User> updateUserById(@Parameter(in = ParameterIn.PATH,
+                                                          description = "",
+                                                          required=true,
+                                                          schema=@Schema())
+                                               @PathVariable("username") String username,
+                                               @Parameter(in = ParameterIn.DEFAULT,
+                                                          description = "",
+                                                          required=true,
+                                                          schema=@Schema())
+                                               @Valid @RequestBody UpdateUserRequest body)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"role\" : \"User\",\n  \"id\" : 1,\n  \"email\" : \"user@example.com\",\n  \"username\" : \"username\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
+            }
+            catch (IOException e)
+            {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public ResponseEntity<User> getUserById(@Parameter(in = ParameterIn.PATH,
+                                                       description = "",
+                                                       required=true,
+                                                       schema=@Schema())
+                                            @PathVariable("username") String username)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"role\" : \"User\",\n  \"id\" : 1,\n  \"email\" : \"user@example.com\",\n  \"username\" : \"username\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
+            }
+            catch (IOException e)
+            {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public ResponseEntity<Void> deleteUserById(@Parameter(in = ParameterIn.PATH,
+                                                          description = "",
+                                                          required=true,
+                                                          schema=@Schema())
+                                               @PathVariable("username") String username)
+    {
+        String accept = request.getHeader("Accept");
+        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 }
