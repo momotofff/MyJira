@@ -1,5 +1,5 @@
 -- Create enumerable types
-CREATE TYPE UserRole AS ENUM ('Admin', 'User');
+CREATE TYPE UserRole AS ENUM ('Admin', 'User', 'Viewer');
 CREATE TYPE TaskStatus AS ENUM ('Pending', 'Active', 'Resolved', 'Closed');
 CREATE TYPE TaskPriority AS ENUM ('Low', 'Medium', 'High', 'Critical');
 

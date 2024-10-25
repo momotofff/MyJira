@@ -32,7 +32,7 @@ public class TasksApiController implements TasksApi
     private final HttpServletRequest request;
     DatabaseManager databaseManager = new DatabaseManager();
 
-    @Autowired
+    @org.springframework.beans.factory.annotation.Autowired
     public TasksApiController(ObjectMapper objectMapper, HttpServletRequest request)
     {
         this.objectMapper = objectMapper;
