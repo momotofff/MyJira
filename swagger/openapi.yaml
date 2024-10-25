@@ -180,7 +180,7 @@ paths:
 
   /users/{username}:
     get:
-      operationId: getUserById
+      operationId: getUserByName
       summary: "Get user by name"
       tags:
         - User
@@ -203,7 +203,7 @@ paths:
           description: "successful operation"
 
     put:
-      operationId: updateUserById
+      operationId: updateUserByName
       summary: "Update user"
       tags:
         - User
@@ -232,7 +232,7 @@ paths:
           description: "User not found"
 
     delete:
-      operationId: deleteUserById
+      operationId: deleteUserByName
       summary: "Deleted User"
       tags:
         - User
@@ -347,7 +347,7 @@ components:
           example: "username"
         role:
           type: string
-          enum: [Admin, User]
+          enum: [Admin, User, Viewer]
           example: "User"
         email:
           type: string

@@ -33,7 +33,7 @@ public class UsersApiController implements UsersApi
     private final HttpServletRequest request;
     DatabaseManager databaseManager = new DatabaseManager();
 
-    @Autowired
+    @org.springframework.beans.factory.annotation.Autowired
     public UsersApiController(ObjectMapper objectMapper, HttpServletRequest request)
     {
         this.objectMapper = objectMapper;
@@ -130,7 +130,7 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Void> deleteUserById(@Parameter(in = ParameterIn.PATH,
+    public ResponseEntity<Void> deleteUserByName(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required=true,
                                                           schema=@Schema())
