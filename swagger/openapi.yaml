@@ -267,12 +267,12 @@ components:
           example: "Описание задачи 1"
         status:
           type: string
-          enum: [pending, in_progress, completed]
-          example: "pending"
+          enum: [Pending, Active, Resolved, Closed]
+          example: "Pending"
         priority:
           type: string
-          enum: [high, medium, low]
-          example: "high"
+          enum: [Low, Medium, High, Critical]
+          example: "High"
         author:
           type: string
           example: "Автор Задачи"
@@ -298,12 +298,12 @@ components:
           example: "Описание новой задачи"
         status:
           type: string
-          enum: [pending, in_progress, completed]
-          example: "pending"
+          enum: [Pending, Active, Resolved, Closed]
+          example: "Pending"
         priority:
           type: string
-          enum: [high, medium, low]
-          example: "medium"
+          enum: [Low, Medium, High, Critical]
+          example: "Medium"
         author:
           type: string
           example: "Автор"
@@ -322,12 +322,12 @@ components:
           example: "Обновленное описание задачи"
         status:
           type: string
-          enum: [pending, in_progress, completed]
-          example: "in_progress"
+          enum: [Pending, Active, Resolved, Closed]
+          example: "Pending"
         priority:
           type: string
-          enum: [high, medium, low]
-          example: "low"
+          enum: [Low, Medium, High, Critical]
+          example: "Low"
         author:
           type: string
           example: "Обновленный автор"
@@ -365,8 +365,8 @@ components:
           example: "username"
         role:
           type: string
-          enum: [admin, editor, viewer]
-          example: "editor"
+          enum: [Admin, User, Viewer]
+          example: "Viewer"
         email:
           type: string
           example: "user@example.com"

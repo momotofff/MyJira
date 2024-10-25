@@ -19,14 +19,14 @@ public class DatabaseManager
 
     public User createUser(String username, String role, String email)
     {
-        String sql = "INSERT INTO users (username, role, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (username, role, email) VALUES (?,  CAST(? AS userrole), ?)";
         User user = null;
 
         try (Connection conn = getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
         {
             preparedStatement.setString(1, username);
-            preparedStatement.setObject(2, User.RoleEnum.fromValue(role));
+            preparedStatement.setString(2, role);
             preparedStatement.setString(3, email);
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -39,7 +39,7 @@ public class DatabaseManager
                         user = new User();
                         user.setId(id);
                         user.setUsername(username);
-                        user.setRole(User.RoleEnum.valueOf(role));
+                        user.setRole(User.RoleEnum.fromValue(role));
                         user.setEmail(email);
                         System.out.println("User created successfully!");
                     }
@@ -49,6 +49,9 @@ public class DatabaseManager
         catch (SQLException e)
         {
             System.err.println("Error creating user: " + e.getMessage());
+
+            if (e.getMessage().contains("duplicate key value violates unique constraint"))
+                System.err.println("Username already exists: " + username);
         }
         catch (IllegalArgumentException e)
         {
@@ -113,8 +116,21 @@ public class DatabaseManager
 
     public Task createTask(String title, String description, String status, String priority, String author, String assignee)
     {
-        String sql = "INSERT INTO tasks (title, description, status, priority, author, assignee) VALUES (?, ?, ?, ?, ?, ?)";
+        String sql = "INSERT INTO tasks (title, description, status, priority, author, assignee) VALUES (?, ?, CAST(? AS taskstatus), CAST(? AS taskpriority), ?, ?)";
         Task task = null;
+        long authorId;
+        long assigneeId;
+
+        try
+        {
+            authorId = getUserIdByUsername(author);
+            assigneeId = getUserIdByUsername(assignee);
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
         try (Connection conn = getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
         {
@@ -122,11 +138,11 @@ public class DatabaseManager
             preparedStatement.setString(2, description);
             preparedStatement.setString(3, status);
             preparedStatement.setString(4, priority);
-            preparedStatement.setString(5, author);
-            preparedStatement.setString(6, assignee);
+            preparedStatement.setLong(5, authorId);
+            preparedStatement.setLong(6, assigneeId);
 
             int affectedRows = preparedStatement.executeUpdate();
-            System.out.println("Task created successfully!");
+
 
             if (affectedRows > 0)
             {
@@ -135,9 +151,10 @@ public class DatabaseManager
                         long id = generatedKeys.getLong(1);
                         task = new Task();
                         task.setId(id);
+                        task.setTitle(title);
                         task.setDescription(description);
-                        task.setStatus(Task.StatusEnum.valueOf(status));
-                        task.setPriority(Task.PriorityEnum.valueOf(priority));
+                        task.setStatus(Task.StatusEnum.fromValue(status));
+                        task.setPriority(Task.PriorityEnum.fromValue(priority));
                         task.setAuthor(author);
                         task.setAssignee(assignee);
                         System.out.println("Task created successfully!");
@@ -221,5 +238,22 @@ public class DatabaseManager
         }
 
         return updatedUser;
+    }
+
+    private long getUserIdByUsername(String username) throws SQLException
+    {
+        String sql = "SELECT id FROM users WHERE username = ?";
+
+        try (Connection conn = getConnection();
+                PreparedStatement preparedStatement = conn.prepareStatement(sql))
+        {
+            preparedStatement.setString(1, username);
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next())
+                return rs.getLong("id");
+            else
+                throw new SQLException("User not found: " + username);
+        }
     }
 }

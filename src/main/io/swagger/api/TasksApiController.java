@@ -51,7 +51,7 @@ public class TasksApiController implements TasksApi
         {
             try
             {
-                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : \"1\",\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"high\",\n  \"status\" : \"pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : \"1\",\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"High\",\n  \"status\" : \"Pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
             }
             catch (IOException e)
             {
@@ -104,7 +104,7 @@ public class TasksApiController implements TasksApi
         {
             try
             {
-                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : \"1\",\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"high\",\n  \"status\" : \"pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : \"1\",\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"High\",\n  \"status\" : \"Pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
             }
             catch (IOException e)
             {
