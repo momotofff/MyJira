@@ -19,14 +19,14 @@ public class DatabaseManager
 
     public User createUser(String username, String role, String email)
     {
-        String sql = "INSERT INTO users (username, role, email) VALUES (?, ?, ?)";
+        String sql = "INSERT INTO users (username, role, email) VALUES (?,  CAST(? AS userrole), ?)";
         User user = null;
 
         try (Connection conn = getConnection();
              PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
         {
             preparedStatement.setString(1, username);
-            preparedStatement.setObject(2, User.RoleEnum.fromValue(role));
+            preparedStatement.setString(2, role);
             preparedStatement.setString(3, email);
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -39,7 +39,7 @@ public class DatabaseManager
                         user = new User();
                         user.setId(id);
                         user.setUsername(username);
-                        user.setRole(User.RoleEnum.valueOf(role));
+                        user.setRole(User.RoleEnum.fromValue(role));
                         user.setEmail(email);
                         System.out.println("User created successfully!");
                     }
@@ -49,6 +49,9 @@ public class DatabaseManager
         catch (SQLException e)
         {
             System.err.println("Error creating user: " + e.getMessage());
+
+            if (e.getMessage().contains("duplicate key value violates unique constraint"))
+                System.err.println("Username already exists: " + username);
         }
         catch (IllegalArgumentException e)
         {
