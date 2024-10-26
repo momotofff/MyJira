@@ -1,7 +1,6 @@
 package groovy.org.example;
-import io.swagger.model.Task;
-import io.swagger.model.UpdateUserRequest;
-import io.swagger.model.User;
+import io.swagger.model.*;
+
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,7 +18,7 @@ public class DatabaseManager
 
     public User createUser(String username, String role, String email)
     {
-        String sql = "INSERT INTO users (username, role, email) VALUES (?,  CAST(? AS userrole), ?)";
+        String sql = "INSERT INTO users (username, role, email) VALUES (?, ?::userrole, ?)";
         User user = null;
 
         try (Connection conn = getConnection();
@@ -39,9 +38,9 @@ public class DatabaseManager
                         user = new User();
                         user.setId(id);
                         user.setUsername(username);
-                        user.setRole(User.RoleEnum.fromValue(role));
+                        user.setRole(UserRole.fromValue(role));
                         user.setEmail(email);
-                        System.out.println("User created successfully!");
+                        System.out.printf("User with ID = %d created successfully!%n", id);
                     }
                 }
             }
@@ -76,7 +75,7 @@ public class DatabaseManager
                 user.setId(resultSet.getLong("id"));
                 user.setUsername(resultSet.getString("username"));
                 user.setEmail(resultSet.getString("email"));
-                user.setRole(User.RoleEnum.fromValue(resultSet.getString("role")));
+                user.setRole(UserRole.fromValue(resultSet.getString("role")));
                 list.add(user);
             }
         } catch (SQLException e) {
@@ -102,7 +101,7 @@ public class DatabaseManager
                     user = new User();
                     user.setUsername(rs.getString("username"));
                     user.setEmail(rs.getString("email"));
-                    user.setRole(User.RoleEnum.fromValue(rs.getString("role")));
+                    user.setRole(UserRole.fromValue(rs.getString("role")));
                 }
             }
         }
@@ -116,7 +115,11 @@ public class DatabaseManager
 
     public Task createTask(String title, String description, String status, String priority, String author, String assignee)
     {
-        String sql = "INSERT INTO tasks (title, description, status, priority, author, assignee) VALUES (?, ?, CAST(? AS taskstatus), CAST(? AS taskpriority), ?, ?)";
+        String sql =
+            "INSERT INTO tasks " +
+            "(title, description, status,        priority,        author, assignee) VALUES " +
+            "(?,     ?,           ?::taskstatus, ?::taskpriority, ?,      ?)";
+
         Task task = null;
         long authorId;
         long assigneeId;
@@ -143,7 +146,6 @@ public class DatabaseManager
 
             int affectedRows = preparedStatement.executeUpdate();
 
-
             if (affectedRows > 0)
             {
                 try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
@@ -153,11 +155,11 @@ public class DatabaseManager
                         task.setId(id);
                         task.setTitle(title);
                         task.setDescription(description);
-                        task.setStatus(Task.StatusEnum.fromValue(status));
-                        task.setPriority(Task.PriorityEnum.fromValue(priority));
+                        task.setStatus(TaskStatus.fromValue(status));
+                        task.setPriority(TaskPriority.fromValue(priority));
                         task.setAuthor(author);
                         task.setAssignee(assignee);
-                        System.out.println("Task created successfully!");
+                        System.out.printf("Task with ID = %d created successfully!%n", id);
                     }
                 }
             }
@@ -193,8 +195,8 @@ public class DatabaseManager
                 task.setId(resultSet.getLong("id"));
                 task.setTitle(resultSet.getString("title"));
                 task.setAssignee(resultSet.getString("assignee"));
-                task.setStatus(Task.StatusEnum.fromValue(resultSet.getString("status")));
-                task.setPriority(Task.PriorityEnum.fromValue(resultSet.getString("priority")));
+                task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
+                task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
                 task.setAuthor(resultSet.getString("author")); // Исправил опечатку: "autor" на "author"
                 task.setDescription(resultSet.getString("description"));
                 list.add(task);
@@ -218,7 +220,7 @@ public class DatabaseManager
              PreparedStatement preparedStatement = conn.prepareStatement(sql))
         {
 
-            preparedStatement.setString(1, body.getRole());
+            preparedStatement.setString(1, body.getRole().getValue());
             preparedStatement.setString(2, body.getEmail());
             preparedStatement.setString(3, username);
 
@@ -228,7 +230,7 @@ public class DatabaseManager
             {
                 updatedUser = new User();
                 updatedUser.setUsername(username);
-                updatedUser.setRole(User.RoleEnum.valueOf(body.getRole()));
+                updatedUser.setRole(body.getRole());
                 updatedUser.setEmail(body.getEmail());
             }
         }

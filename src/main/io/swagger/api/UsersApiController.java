@@ -2,6 +2,7 @@ package io.swagger.api;
 
 import groovy.org.example.DatabaseManager;
 import io.swagger.model.UpdateUserRequest;
+import io.swagger.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.model.CreateUserRequest;
@@ -57,7 +58,6 @@ public class UsersApiController implements UsersApi
 
             return new ResponseEntity<List<User>>(users, HttpStatus.OK);
         }
-
         catch (SQLException e)
         {
             log.error("Error getting users list: {}", e.getMessage(), e);
@@ -76,7 +76,7 @@ public class UsersApiController implements UsersApi
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json"))
-            return new ResponseEntity<User>(databaseManager.createUser(body.getUsername(), User.RoleEnum.USER.getValue(), body.getEmail()), HttpStatus.CREATED);
+            return new ResponseEntity<User>(databaseManager.createUser(body.getUsername(), UserRole.USER.getValue(), body.getEmail()), HttpStatus.CREATED);
 
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
