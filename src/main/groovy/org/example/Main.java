@@ -13,6 +13,7 @@ public class Main
         //startApplication.run();
 
         DatabaseManager dbManager = new DatabaseManager();
+
         dbManager.createUser("john_doe", "User", "john_doe@example.com");
         dbManager.createUser("jane_smith", "User", "jane_smith@example.com");
         dbManager.createUser("dick_smith", "User", "dick_smith@example.com");

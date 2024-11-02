@@ -13,7 +13,7 @@ public class DatabaseManager
 
     public Connection getConnection() throws SQLException
     {
-        return DriverManager.getConnection(URL, USER, PASSWORD);
+        return DriverManager.getConnection(URL, USER, PASSWORD);                                                        // Создание соединения с базой данных
     }
 
     public User createUser(String username, String role, String email)
@@ -21,8 +21,8 @@ public class DatabaseManager
         String sql = "INSERT INTO users (username, role, email) VALUES (?, ?::userrole, ?)";
         User user = null;
 
-        try (Connection conn = getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
         {
             preparedStatement.setString(1, username);
             preparedStatement.setString(2, role);
@@ -89,8 +89,8 @@ public class DatabaseManager
         String sql = "SELECT * FROM users WHERE name = ?";
         User user = null;
 
-        try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(sql))
+        try (Connection connection = getConnection();
+             PreparedStatement pstmt = connection.prepareStatement(sql))
         {
             pstmt.setString(1, name);
 
@@ -134,8 +134,8 @@ public class DatabaseManager
             throw new RuntimeException(e);
         }
 
-        try (Connection conn = getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
         {
             preparedStatement.setString(1, title);
             preparedStatement.setString(2, description);
@@ -211,15 +211,13 @@ public class DatabaseManager
         return list;
     }
 
-
-
     public User updateUser(String username, UpdateUserRequest body)
     {
         String sql = "UPDATE users SET role = ?, email = ? WHERE username = ?";
         User updatedUser = null;
 
-        try (Connection conn = getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql))
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
 
             preparedStatement.setString(1, body.getRole().getValue());
@@ -248,8 +246,8 @@ public class DatabaseManager
     {
         String sql = "SELECT * FROM users WHERE userName = ?";
 
-        try (Connection conn = getConnection();
-                PreparedStatement preparedStatement = conn.prepareStatement(sql))
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
             preparedStatement.setString(1, userName);
             ResultSet rs = preparedStatement.executeQuery();
@@ -265,8 +263,8 @@ public class DatabaseManager
     {
         String sql = "SELECT * FROM users WHERE id = ?";
 
-        try (Connection conn = getConnection();
-             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
 
             long id = Long.parseLong(userId);
             preparedStatement.setLong(1, id);
@@ -332,5 +330,48 @@ public class DatabaseManager
         }
 
         return list;
+    }
+
+    public boolean userExists(String userName)
+    {
+        String sql = "SELECT COUNT(*) FROM users WHERE userName = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+
+            preparedStatement.setString(1, userName);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                if (resultSet.next())
+                    return resultSet.getInt(1) > 0;
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
+
+    public void deleteUserByUserName(String userName)
+    {
+        if (!userExists(userName))
+            return;
+
+        String sql = "DELETE FROM users WHERE userName = ?";
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setString(1, userName);
+            preparedStatement.executeUpdate(); // Выполнение запроса на удаление
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 }

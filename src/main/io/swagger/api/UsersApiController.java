@@ -130,13 +130,22 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @DeleteMapping
     public ResponseEntity<Void> deleteUserByName(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required=true,
                                                           schema=@Schema())
-                                               @PathVariable("username") String username)
+                                                 @PathVariable("username") String username,
+                                                 @RequestHeader(required = false) String accept)
     {
-        String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+        if (databaseManager.userExists(username))
+        {
+            databaseManager.deleteUserByUserName(username);
+            return ResponseEntity.noContent().build();
+        }
+        else
+        {
+            return ResponseEntity.notFound().build();
+        }
     }
 }
