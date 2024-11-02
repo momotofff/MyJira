@@ -197,7 +197,7 @@ public class DatabaseManager
                 task.setAssignee(resultSet.getString("assignee"));
                 task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
                 task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
-                task.setAuthor(resultSet.getString("author")); // Исправил опечатку: "autor" на "author"
+                task.setAuthor(resultSet.getString("author"));
                 task.setDescription(resultSet.getString("description"));
                 list.add(task);
             }
@@ -210,6 +210,8 @@ public class DatabaseManager
 
         return list;
     }
+
+
 
     public User updateUser(String username, UpdateUserRequest body)
     {
@@ -242,20 +244,93 @@ public class DatabaseManager
         return updatedUser;
     }
 
-    private long getUserIdByUsername(String username) throws SQLException
+    private long getUserIdByUsername(String userName) throws SQLException
     {
-        String sql = "SELECT id FROM users WHERE username = ?";
+        String sql = "SELECT * FROM users WHERE userName = ?";
 
         try (Connection conn = getConnection();
                 PreparedStatement preparedStatement = conn.prepareStatement(sql))
         {
-            preparedStatement.setString(1, username);
+            preparedStatement.setString(1, userName);
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next())
                 return rs.getLong("id");
             else
-                throw new SQLException("User not found: " + username);
+                throw new SQLException("User not found: " + userName);
         }
+    }
+
+    public String getUserNameByUserId(String userId)
+    {
+        String sql = "SELECT * FROM users WHERE id = ?";
+
+        try (Connection conn = getConnection();
+             PreparedStatement preparedStatement = conn.prepareStatement(sql)) {
+
+            long id = Long.parseLong(userId);
+            preparedStatement.setLong(1, id);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next())
+                return rs.getString("userName");
+            else
+                throw new SQLException("User not found: " + userId);
+
+        }
+
+        catch (NumberFormatException e)
+        {
+            throw new IllegalArgumentException("Invalid user ID: " + userId, e);
+        }
+
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public List<Task> getTasksByUserName(String userName)
+    {
+        String sql = "SELECT * FROM tasks WHERE assignee = ?";
+        List<Task> list = new ArrayList<>();
+
+        long assigneeId;
+
+        try
+        {
+            assigneeId = getUserIdByUsername(userName);
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+
+        try (Connection connection = getConnection();
+             PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setLong(1, assigneeId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next())
+            {
+                Task task = new Task();
+                task.setId(resultSet.getLong("id"));
+                task.setTitle(resultSet.getString("title"));
+                task.setAssignee(resultSet.getString("assignee"));
+                task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
+                task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
+                task.setAuthor(resultSet.getString("author"));
+                task.setDescription(resultSet.getString("description"));
+                list.add(task);
+            }
+
+        } catch (SQLException e) {
+            e.printStackTrace();
+        }
+
+        return list;
     }
 }
