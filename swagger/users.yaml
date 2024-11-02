@@ -20,6 +20,10 @@ components:
         email:
           type: string
           example: "user@example.com"
+        tasks:
+          type: array
+          items:
+           $ref: ./tasks.yaml#/components/schemas/Task
 
     CreateUserRequest:
       type: object

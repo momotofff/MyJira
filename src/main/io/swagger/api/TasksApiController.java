@@ -1,7 +1,6 @@
 package io.swagger.api;
 
 import groovy.org.example.DatabaseManager;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.model.CreateTaskRequest;
 import io.swagger.model.Task;
@@ -172,5 +171,21 @@ public class TasksApiController implements TasksApi
         }
 
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public ResponseEntity<List<Task>> getTasksByUserName(@Parameter(in = ParameterIn.PATH,
+                                                             description = "",
+                                                             required=true,
+                                                             schema=@Schema())
+                                                  @PathVariable("userName") String userName)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            return new ResponseEntity<List<Task>>(databaseManager.getTasksByUserName(userName), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 }
