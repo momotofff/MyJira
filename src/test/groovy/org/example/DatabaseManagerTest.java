@@ -14,12 +14,14 @@ public class DatabaseManagerTest
 {
     private static final String USER = "postgres";
     private static final String PASS = "postgres";
+    private static final int PORT = 5432;
 
     @Container
     private final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
             .withDatabaseName("test-db")
             .withUsername(USER)
             .withPassword(PASS)
+            .withExposedPorts(PORT)
             .withInitScript("init.sql");
 
     private DatabaseManager databaseManager;
@@ -33,6 +35,7 @@ public class DatabaseManagerTest
     public void setUp() throws SQLException
     {
         postgres.start();
+        // postgres.getMappedPort(PORT) instead of postgres.getExposedPorts().get(0)
         String url = String.format("jdbc:postgresql://%s:%d/postgres", postgres.getHost(), postgres.getExposedPorts().get(0));
         databaseManager = new DatabaseManager(url, "postgres", "postgres");
         countUsers = databaseManager.getUsers().size();
