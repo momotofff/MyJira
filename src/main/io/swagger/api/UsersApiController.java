@@ -3,7 +3,6 @@ package io.swagger.api;
 import groovy.org.example.DatabaseManager;
 import io.swagger.model.UpdateUserRequest;
 import io.swagger.model.UserRole;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.model.CreateUserRequest;
 import io.swagger.model.User;
@@ -32,7 +31,7 @@ public class UsersApiController implements UsersApi
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
-    DatabaseManager databaseManager = new DatabaseManager();
+    DatabaseManager databaseManager = new DatabaseManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
 
     @org.springframework.beans.factory.annotation.Autowired
     public UsersApiController(ObjectMapper objectMapper, HttpServletRequest request)

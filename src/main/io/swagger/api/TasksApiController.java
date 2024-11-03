@@ -29,7 +29,7 @@ public class TasksApiController implements TasksApi
     private static final Logger log = LoggerFactory.getLogger(TasksApiController.class);
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
-    DatabaseManager databaseManager = new DatabaseManager();
+    DatabaseManager databaseManager = new DatabaseManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
 
     @org.springframework.beans.factory.annotation.Autowired
     public TasksApiController(ObjectMapper objectMapper, HttpServletRequest request)

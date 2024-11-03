@@ -2,6 +2,9 @@ package groovy.org.example;
 
 import io.swagger.model.User;
 import org.junit.jupiter.api.*;
+import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.junit.jupiter.Container;
+
 import java.sql.*;
 import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
@@ -9,6 +12,16 @@ import static org.junit.jupiter.api.Assertions.*;
 @TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DatabaseManagerTest
 {
+    private static final String USER = "postgres";
+    private static final String PASS = "postgres";
+
+    @Container
+    private final PostgreSQLContainer<?> postgres = new PostgreSQLContainer<>("postgres:16-alpine")
+            .withDatabaseName("test-db")
+            .withUsername(USER)
+            .withPassword(PASS)
+            .withInitScript("init.sql");
+
     private DatabaseManager databaseManager;
 
     private final String username = "testUser";
@@ -19,7 +32,9 @@ public class DatabaseManagerTest
     @BeforeEach
     public void setUp() throws SQLException
     {
-        databaseManager = new DatabaseManager();
+        postgres.start();
+        String url = String.format("jdbc:postgresql://%s:%d/postgres", postgres.getHost(), postgres.getExposedPorts().get(0));
+        databaseManager = new DatabaseManager(url, "postgres", "postgres");
         countUsers = databaseManager.getUsers().size();
     }
 
@@ -62,7 +77,6 @@ public class DatabaseManagerTest
         assertEquals(countUsers, users.size());
         assertEquals(username, users.get(countUsers - 1).getUsername());
     }
-
 
     @Test
     @Order(5)

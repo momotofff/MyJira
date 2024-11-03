@@ -7,13 +7,20 @@ import java.util.List;
 
 public class DatabaseManager
 {
-    private static final String URL = "jdbc:postgresql://localhost:5432/postgres";
-    private static final String USER = "postgres";
-    private static final String PASSWORD = "postgres";
+    private final String url;
+    private final String user;
+    private final String password;
 
     public Connection getConnection() throws SQLException
     {
-        return DriverManager.getConnection(URL, USER, PASSWORD);                                                        // Создание соединения с базой данных
+        return DriverManager.getConnection(url, user, password);                                                        // Создание соединения с базой данных
+    }
+
+    public DatabaseManager(String url, String user, String password)
+    {
+        this.url = url;
+        this.user = user;
+        this.password = password;
     }
 
     public User createUser(String username, String role, String email)
