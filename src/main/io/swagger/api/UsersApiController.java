@@ -79,7 +79,7 @@ public class UsersApiController implements UsersApi
 
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
-/*
+
     @PostMapping
     public ResponseEntity<User> updateUserByName(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
@@ -104,7 +104,7 @@ public class UsersApiController implements UsersApi
 
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
-*/
+
     public ResponseEntity<User> getUserByName(@Parameter(in = ParameterIn.PATH,
                                                        description = "",
                                                        required=true,
