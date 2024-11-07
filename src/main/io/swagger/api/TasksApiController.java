@@ -23,7 +23,7 @@ import java.util.List;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
 
 @RestController
-@RequestMapping("/api/v1/tasks")
+@RequestMapping("/tasks")
 public class TasksApiController implements TasksApi
 {
     private static final Logger log = LoggerFactory.getLogger(TasksApiController.class);
