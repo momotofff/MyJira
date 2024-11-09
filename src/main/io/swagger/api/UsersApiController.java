@@ -74,10 +74,18 @@ public class UsersApiController implements UsersApi
     {
         String accept = request.getHeader("Accept");
 
-        if (accept != null && accept.contains("application/json"))
-            return new ResponseEntity<User>(databaseManager.createUser(body.getUsername(), UserRole.USER.getValue(), body.getEmail()), HttpStatus.CREATED);
+        try
+        {
+            if (accept == null || !accept.contains("application/json"))
+                return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
 
-        return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
+            return new ResponseEntity<User>(databaseManager.createUser(body.getUsername(), UserRole.USER.getValue(), body.getEmail()), HttpStatus.CREATED);
+        }
+        catch (SQLException e)
+        {
+            log.error("Error getting users list: {}", e.getMessage(), e);
+            return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
     @PostMapping
@@ -137,7 +145,7 @@ public class UsersApiController implements UsersApi
                                                  @PathVariable("username") String username,
                                                  @RequestHeader(required = false) String accept)
     {
-        if (databaseManager.userExists(username))
+        if (databaseManager.isUserExists(username))
         {
             databaseManager.deleteUserByUserName(username);
             return ResponseEntity.noContent().build();

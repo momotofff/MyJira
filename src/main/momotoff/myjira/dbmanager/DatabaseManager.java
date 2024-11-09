@@ -23,101 +23,22 @@ public class DatabaseManager
         this.password = password;
     }
 
-    public User createUser(String username, String role, String email)
+    public User createUser(String username, String role, String email) throws SQLException
     {
-        String sql = "INSERT INTO users (username, role, email) VALUES (?, ?::userrole, ?)";
-        User user = null;
-
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
-        {
-            preparedStatement.setString(1, username);
-            preparedStatement.setString(2, role);
-            preparedStatement.setString(3, email);
-
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows > 0)
-            {
-                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
-                    if (generatedKeys.next()) {
-                        long id = generatedKeys.getLong(1);
-                        user = new User();
-                        user.setId(id);
-                        user.setUsername(username);
-                        user.setRole(UserRole.fromValue(role));
-                        user.setEmail(email);
-                        System.out.printf("User with ID = %d created successfully!%n", id);
-                    }
-                }
-            }
-        }
-        catch (SQLException e)
-        {
-            System.err.println("Error creating user: " + e.getMessage());
-
-            if (e.getMessage().contains("duplicate key value violates unique constraint"))
-                System.err.println("Username already exists: " + username);
-        }
-        catch (IllegalArgumentException e)
-        {
-            System.err.println("Invalid role: " + role);
-        }
-
-        return user;
+        Connection connection = getConnection();
+        return UsersDbManager.createUser(connection, username, role, email);
     }
 
     public List<User> getUsers() throws SQLException
     {
-        List<User> list = new ArrayList<>();
-        String sql = "SELECT * FROM users";
-
-        try (Connection connection = getConnection();
-             Statement statement = connection.createStatement();
-             ResultSet resultSet = statement.executeQuery(sql))
-        {
-            while (resultSet.next())
-            {
-                User user = new User();
-                user.setId(resultSet.getLong("id"));
-                user.setUsername(resultSet.getString("username"));
-                user.setEmail(resultSet.getString("email"));
-                user.setRole(UserRole.fromValue(resultSet.getString("role")));
-                list.add(user);
-            }
-        } catch (SQLException e) {
-            System.err.println("Error retrieving users: " + e.getMessage());
-        }
-
-        return list;
+        Connection connection = getConnection();
+        return UsersDbManager.getUsers(connection);
     }
 
-    public User getUserByName(String name) throws SQLException {
-        String sql = "SELECT * FROM users WHERE name = ?";
-        User user = null;
-
-        try (Connection connection = getConnection();
-             PreparedStatement pstmt = connection.prepareStatement(sql))
-        {
-            pstmt.setString(1, name);
-
-            try (ResultSet rs = pstmt.executeQuery())
-            {
-                if (rs.next())
-                {
-                    user = new User();
-                    user.setUsername(rs.getString("username"));
-                    user.setEmail(rs.getString("email"));
-                    user.setRole(UserRole.fromValue(rs.getString("role")));
-                }
-            }
-        }
-        catch (SQLException e)
-        {
-            throw new SQLException("Error while trying to get user by name", e);
-        }
-
-        return user;
+    public User getUserByName(String name) throws SQLException
+    {
+        Connection connection = getConnection();
+        return UsersDbManager.getUserByName(connection, name);
     }
 
     public Task createTask(String title, String description, String status, String priority, String author, String assignee)
@@ -339,7 +260,7 @@ public class DatabaseManager
         return list;
     }
 
-    public boolean userExists(String userName)
+    public boolean isUserExists(String userName)
     {
         String sql = "SELECT COUNT(*) FROM users WHERE userName = ?";
 
@@ -365,7 +286,7 @@ public class DatabaseManager
 
     public void deleteUserByUserName(String userName)
     {
-        if (!userExists(userName))
+        if (!isUserExists(userName))
             return;
 
         String sql = "DELETE FROM users WHERE userName = ?";

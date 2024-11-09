@@ -52,17 +52,18 @@ public class DatabaseManagerTest
     }
 
     @Test
+    void getConnection_ExpectFailed()
+    {
+        DatabaseManager failedDb = new DatabaseManager("For the Emperor!", USER, PASS);
+        assertThrows(SQLException.class, failedDb::getConnection);
+    }
+
+    @Test
     void getConnection_ExpectSuccess()
     {
-        try (Connection connection = databaseManager.getConnection())
-        {
-            assertNotNull(connection);
-            assertFalse(connection.isClosed(), "Connection should be open");
-        }
-        catch (SQLException e)
-        {
-            fail("Exception during DB connect: " + e.getMessage());
-        }
+        Connection connection = assertDoesNotThrow(() -> databaseManager.getConnection());
+        assertNotNull(connection);
+        assertFalse(assertDoesNotThrow(connection::isClosed, "Connection should be open"));
     }
 
     @Test
@@ -84,11 +85,10 @@ public class DatabaseManagerTest
     @Test
     public void createUserWithDuplicateUsername_ExpectFailed() throws SQLException
     {
-        User user1 = databaseManager.createUser(username, role, email);
-        assertNotNull(user1);
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
 
-        User user2 = databaseManager.createUser(username, role, email);
-        assertNull(user2);
+        assertThrows(SQLException.class, () -> databaseManager.createUser(username, role, email));
 
         List<User> users = databaseManager.getUsers();
         assertEquals(1, users.size());
@@ -98,9 +98,27 @@ public class DatabaseManagerTest
     void deleteUserByUserName_ExpectSuccess()
     {
         assertDoesNotThrow(() -> databaseManager.createUser(username, role, email));
-        assertTrue(databaseManager.userExists(username), "User should exist after creation");
+        assertTrue(databaseManager.isUserExists(username), "User should exist after creation");
 
         assertDoesNotThrow(() -> databaseManager.deleteUserByUserName(username));
-        assertFalse(databaseManager.userExists(username), "User should be deleted");
+        assertFalse(databaseManager.isUserExists(username), "User should be deleted");
+    }
+
+    @Test
+    void getUserByName_ExpectSuccess()
+    {
+        assertDoesNotThrow(() -> databaseManager.createUser(username, role, email));
+        assertTrue(databaseManager.isUserExists(username), "User should exist after creation");
+
+        assertNotNull(assertDoesNotThrow(() -> databaseManager.getUserByName(username)));
+    }
+
+    @Test
+    void getUserByName_ExpectFailed()
+    {
+        assertDoesNotThrow(() -> databaseManager.createUser(username, role, email));
+        assertTrue(databaseManager.isUserExists(username), "User should exist after creation");
+
+        assertNull(assertDoesNotThrow(() -> databaseManager.getUserByName("Emperor")));
     }
 }
