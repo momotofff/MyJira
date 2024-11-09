@@ -31,6 +31,8 @@ public class UsersApiController implements UsersApi
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
+    // TODO: Move to bean to make it singleton
+    // TODO: Get DB address, username and pass from environment variables
     DatabaseManager databaseManager = new DatabaseManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
 
     @org.springframework.beans.factory.annotation.Autowired
@@ -87,7 +89,7 @@ public class UsersApiController implements UsersApi
             return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
+/*
     @PostMapping
     public ResponseEntity<User> updateUserByName(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
@@ -112,7 +114,7 @@ public class UsersApiController implements UsersApi
 
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
-
+*/
     public ResponseEntity<User> getUserByName(@Parameter(in = ParameterIn.PATH,
                                                        description = "",
                                                        required=true,
