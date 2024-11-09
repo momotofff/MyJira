@@ -13,7 +13,7 @@ public class DatabaseManager
 
     public Connection getConnection() throws SQLException
     {
-        return DriverManager.getConnection(url, user, password);                                                        // Создание соединения с базой данных
+        return DriverManager.getConnection(url, user, password);
     }
 
     public DatabaseManager(String url, String user, String password)

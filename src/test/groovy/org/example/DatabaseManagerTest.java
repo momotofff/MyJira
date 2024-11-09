@@ -2,6 +2,7 @@ package groovy.org.example;
 import io.swagger.model.User;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
+import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 import org.testcontainers.junit.jupiter.Container;
 import org.testcontainers.junit.jupiter.Testcontainers;
 
@@ -11,51 +12,60 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-@TestMethodOrder(MethodOrderer.OrderAnnotation.class)
 public class DatabaseManagerTest
 {
     private final String username = "testUser";
     private final String role = "User";
     private final String email = "testUser@example.com";
 
-    private static final String USER = "postgresTest";
-    private static final String PASS = "postgresTest";
+    private static final String USER = "postgres";
+    private static final String PASS = "postgres";
+    private static final String DBNAME = "test-db";
 
     @Container
     private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16-alpine")
-            .withDatabaseName("test-db")
+            .withDatabaseName(DBNAME)
             .withUsername(USER)
             .withPassword(PASS)
-            .withInitScript("init/init.sql");
+            .withInitScript("init.sql");
 
     private static DatabaseManager databaseManager;
 
-    @BeforeEach
-    public void setUp()
+    @BeforeAll
+    public static void beforeAll()
     {
-        String url = String.format("jdbc:postgresql://%s:%d/test-db", postgreSQLContainer.getHost(), postgreSQLContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT));
+        String url = String.format("jdbc:postgresql://%s:%d/%s",
+                postgreSQLContainer.getHost(),
+                postgreSQLContainer.getMappedPort(PostgreSQLContainer.POSTGRESQL_PORT),
+                DBNAME
+        );
+
         databaseManager = new DatabaseManager(url, USER, PASS);
     }
 
+    @BeforeEach
+    public void beforeEach()
+    {
+        JdbcDatabaseDelegate containerDelegate = new JdbcDatabaseDelegate(postgreSQLContainer, "");
+        containerDelegate.execute("DELETE FROM users", "", 0, true, true);
+    }
+
     @Test
-    @Order(1)
-    void getConnectionTest()
+    void getConnection_ExpectSuccess()
     {
         try (Connection connection = databaseManager.getConnection())
         {
-            assertNotNull(connection, "Соединение с базой данных не должно быть null");
-            assertFalse(connection.isClosed(), "Соединение должно быть открыто");
+            assertNotNull(connection);
+            assertFalse(connection.isClosed(), "Connection should be open");
         }
         catch (SQLException e)
         {
-            fail("Не удалось получить соединение: " + e.getMessage());
+            fail("Exception during DB connect: " + e.getMessage());
         }
     }
 
-
     @Test
-    @Order(2)
-    public void CreateUserSuccessTest() throws SQLException
+    public void createAndGetUser_ExpectSuccess() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
@@ -65,39 +75,31 @@ public class DatabaseManagerTest
 
         List<User> users = databaseManager.getUsers();
         assertEquals(1, users.size());
+        assertEquals(users.get(0).getUsername(), user.getUsername());
+        assertEquals(users.get(0).getRole(), user.getRole());
+        assertEquals(users.get(0).getEmail(), user.getEmail());
     }
 
     @Test
-    @Order(3)
-    public void CreateUserDuplicateUsernameTest() throws SQLException
+    public void createUserWithDuplicateUsername_ExpectFailed() throws SQLException
     {
-        User user = databaseManager.createUser(username, role, email);
-        assertNull(user);
+        User user1 = databaseManager.createUser(username, role, email);
+        assertNotNull(user1);
+
+        User user2 = databaseManager.createUser(username, role, email);
+        assertNull(user2);
 
         List<User> users = databaseManager.getUsers();
         assertEquals(1, users.size());
-        assertEquals(username, users.get(0).getUsername());
     }
 
     @Test
-    @Order(4)
-    public void GetUsersTest() throws SQLException
+    void deleteUserByUserName_ExpectSuccess()
     {
-        List<User> users = databaseManager.getUsers();
-        assertEquals(1, users.size());
-        assertEquals(username, users.get(0).getUsername());
-    }
+        assertDoesNotThrow(() -> databaseManager.createUser(username, role, email));
+        assertTrue(databaseManager.userExists(username), "User should exist after creation");
 
-    @Test
-    @Order(5)
-    void deleteUserByUserName() throws SQLException
-    {
-
-        List<User> users = databaseManager.getUsers();
-        assertEquals(1, users.size());
-        assertEquals(username, users.get(0).getUsername());
-        assertTrue(databaseManager.userExists(username), "Пользователь должен существовать перед удалением");
-        databaseManager.deleteUserByUserName(username);
-        assertFalse(databaseManager.userExists(username), "Пользователь должен быть удален");
+        assertDoesNotThrow(() -> databaseManager.deleteUserByUserName(username));
+        assertFalse(databaseManager.userExists(username), "User should be deleted");
     }
 }
