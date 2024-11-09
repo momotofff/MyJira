@@ -1,6 +1,6 @@
 package io.swagger.api;
 
-import groovy.org.example.DatabaseManager;
+import momotoff.myjira.dbmanager.DatabaseManager;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.model.CreateTaskRequest;
 import io.swagger.model.Task;

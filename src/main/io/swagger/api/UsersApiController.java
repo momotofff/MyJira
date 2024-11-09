@@ -1,6 +1,6 @@
 package io.swagger.api;
 
-import groovy.org.example.DatabaseManager;
+import momotoff.myjira.dbmanager.DatabaseManager;
 import io.swagger.model.UpdateUserRequest;
 import io.swagger.model.UserRole;
 import org.springframework.web.bind.annotation.*;

@@ -1,9 +1,6 @@
 package groovy.org.example;
 
-import io.swagger.model.Task;
-import io.swagger.model.User;
-
-import java.util.List;
+import momotoff.myjira.dbmanager.DatabaseManager;
 
 public class Main
 {

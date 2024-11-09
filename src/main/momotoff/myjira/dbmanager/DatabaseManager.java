@@ -1,4 +1,4 @@
-package groovy.org.example;
+package momotoff.myjira.dbmanager;
 import io.swagger.model.*;
 
 import java.sql.*;

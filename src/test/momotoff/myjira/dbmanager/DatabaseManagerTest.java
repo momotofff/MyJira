@@ -1,4 +1,5 @@
-package groovy.org.example;
+package momotoff.myjira.dbmanager;
+
 import io.swagger.model.User;
 import org.junit.jupiter.api.*;
 import org.testcontainers.containers.PostgreSQLContainer;
