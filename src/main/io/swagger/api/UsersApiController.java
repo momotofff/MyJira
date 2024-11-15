@@ -145,7 +145,7 @@ public class UsersApiController implements UsersApi
                                                           required=true,
                                                           schema=@Schema())
                                                  @PathVariable("username") String username,
-                                                 @RequestHeader(required = false) String accept)
+                                                 @RequestHeader(required = false) String accept) throws SQLException
     {
         if (databaseManager.isUserExists(username))
         {

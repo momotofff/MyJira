@@ -33,6 +33,7 @@ components:
         assignee:
           type: string
           example: "Исполнитель Задачи"
+          nullable: true
 
     CreateTaskRequest:
       type: object
@@ -60,6 +61,7 @@ components:
         assignee:
           type: string
           example: "Исполнитель"
+          nullable: true
 
     UpdateTaskRequest:
       type: object
@@ -81,3 +83,4 @@ components:
         assignee:
           type: string
           example: "Обновленный исполнитель"
+          nullable: true
