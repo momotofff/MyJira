@@ -63,34 +63,10 @@ public class DatabaseManager
         return UsersDbManager.updateUser(connection, username, body);
     }
 
-    public String getUserNameByUserId(String userId)
+    public String getUserNameByUserId(String userId) throws SQLException
     {
-        String sql = "SELECT * FROM users WHERE id = ?";
-
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            long id = Long.parseLong(userId);
-            preparedStatement.setLong(1, id);
-
-            ResultSet rs = preparedStatement.executeQuery();
-
-            if (rs.next())
-                return rs.getString("userName");
-            else
-                throw new SQLException("User not found: " + userId);
-
-        }
-
-        catch (NumberFormatException e)
-        {
-            throw new IllegalArgumentException("Invalid user ID: " + userId, e);
-        }
-
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
+        Connection connection = getConnection();
+        return UsersDbManager.getUserNameByUserId(connection, userId);
     }
 
     public List<Task> getTasksByUserName(String userName) throws SQLException

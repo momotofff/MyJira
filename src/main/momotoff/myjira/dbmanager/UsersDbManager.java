@@ -10,7 +10,6 @@ import java.util.List;
 
 class UsersDbManager
 {
-    // TODO: Relocate all user-related methods here
     public static User createUser(Connection connection, String username, String role, String email) throws SQLException
     {
         String sql = "INSERT INTO users (username, role, email) VALUES (?, ?::userrole, ?)";
@@ -137,6 +136,35 @@ class UsersDbManager
         }
 
         return updatedUser;
+    }
+
+    public static String getUserNameByUserId(Connection connection, String userId)
+    {
+        String sql = "SELECT * FROM users WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            long id = Long.parseLong(userId);
+            preparedStatement.setLong(1, id);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next())
+                return rs.getString("userName");
+            else
+                throw new SQLException("User not found: " + userId);
+
+        }
+
+        catch (NumberFormatException e)
+        {
+            throw new IllegalArgumentException("Invalid user ID: " + userId, e);
+        }
+
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
     }
 
     public static void deleteUserByUserName(Connection connection, String userName)
