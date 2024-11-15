@@ -177,7 +177,7 @@ public class TasksApiController implements TasksApi
                                                              description = "",
                                                              required=true,
                                                              schema=@Schema())
-                                                  @PathVariable("userName") String userName)
+                                                  @PathVariable("userName") String userName) throws SQLException
     {
         String accept = request.getHeader("Accept");
 

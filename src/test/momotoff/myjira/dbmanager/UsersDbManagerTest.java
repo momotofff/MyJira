@@ -13,7 +13,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Testcontainers
-public class DatabaseManagerTest
+public class UsersDbManagerTest
 {
     private final String username = "testUser";
     private final String role = "User";
@@ -21,7 +21,7 @@ public class DatabaseManagerTest
 
     private static final String USER = "postgres";
     private static final String PASS = "postgres";
-    private static final String DBNAME = "test-db";
+    private static final String DBNAME = "test-dbUsers";
 
     @Container
     private static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16-alpine")

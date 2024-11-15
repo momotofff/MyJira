@@ -1,5 +1,6 @@
 package momotoff.myjira.dbmanager;
 
+import io.swagger.model.UpdateUserRequest;
 import io.swagger.model.User;
 import io.swagger.model.UserRole;
 
@@ -9,7 +10,6 @@ import java.util.List;
 
 class UsersDbManager
 {
-    // TODO: Relocate all user-related methods here
     public static User createUser(Connection connection, String username, String role, String email) throws SQLException
     {
         String sql = "INSERT INTO users (username, role, email) VALUES (?, ?::userrole, ?)";
@@ -106,5 +106,105 @@ class UsersDbManager
         }
 
         return user;
+    }
+
+    public static User updateUser(Connection connection, String username, UpdateUserRequest body)
+    {
+        String sql = "UPDATE users SET role = ?, email = ? WHERE username = ?";
+        User updatedUser = null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+
+            preparedStatement.setString(1, body.getRole().getValue());
+            preparedStatement.setString(2, body.getEmail());
+            preparedStatement.setString(3, username);
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows > 0)
+            {
+                updatedUser = new User();
+                updatedUser.setUsername(username);
+                updatedUser.setRole(body.getRole());
+                updatedUser.setEmail(body.getEmail());
+            }
+        }
+        catch (SQLException e)
+        {
+            System.err.println("Error updating user: " + e.getMessage());
+        }
+
+        return updatedUser;
+    }
+
+    public static String getUserNameByUserId(Connection connection, String userId)
+    {
+        String sql = "SELECT * FROM users WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+
+            long id = Long.parseLong(userId);
+            preparedStatement.setLong(1, id);
+
+            ResultSet rs = preparedStatement.executeQuery();
+
+            if (rs.next())
+                return rs.getString("userName");
+            else
+                throw new SQLException("User not found: " + userId);
+
+        }
+
+        catch (NumberFormatException e)
+        {
+            throw new IllegalArgumentException("Invalid user ID: " + userId, e);
+        }
+
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    public static void deleteUserByUserName(Connection connection, String userName)
+    {
+        if (!isUserExists(connection, userName))
+            return;
+
+        String sql = "DELETE FROM users WHERE userName = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setString(1, userName);
+            preparedStatement.executeUpdate(); // Выполнение запроса на удаление
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
+
+    private static boolean isUserExists(Connection connection, String userName)
+    {
+        String sql = "SELECT COUNT(*) FROM users WHERE userName = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+
+            preparedStatement.setString(1, userName);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                if (resultSet.next())
+                    return resultSet.getInt(1) > 0;
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return false;
     }
 }
