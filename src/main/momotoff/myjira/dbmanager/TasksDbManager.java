@@ -216,4 +216,9 @@ class TasksDbManager
                 throw new SQLException("User not found: " + userName);
         }
     }
+
+    public static void deleteTaskById(Connection connection, long id)
+    {
+
+    }
 }

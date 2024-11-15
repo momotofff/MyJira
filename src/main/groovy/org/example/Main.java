@@ -14,10 +14,12 @@ public class Main
         //startApplication.run();
 
         UsernamePasswordAuthenticationToken auth =
-                new UsernamePasswordAuthenticationToken("john_doe", "password"); // Назначьте имя пользователя
+                new UsernamePasswordAuthenticationToken("john_doe", "password");
 
         SecurityContextHolder.getContext().setAuthentication(auth);
+
         DatabaseManager dbManager = new DatabaseManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+
         //dbManager.createUser("john_doe", "User", "john_doe@example.com");
         //dbManager.createUser("jane_smith", "User", "jane_smith@example.com");
         //dbManager.createUser("dick_smith", "User", "dick_smith@example.com");

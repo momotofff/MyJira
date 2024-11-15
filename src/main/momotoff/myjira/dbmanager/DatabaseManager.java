@@ -39,6 +39,24 @@ public class DatabaseManager
         return UsersDbManager.getUserByName(connection, name);
     }
 
+    public void deleteUserByUserName(String userName) throws SQLException
+    {
+        Connection connection = getConnection();
+        UsersDbManager.deleteUserByUserName(connection, userName);
+    }
+
+    public User updateUser(String username, UpdateUserRequest body) throws SQLException
+    {
+        Connection connection = getConnection();
+        return UsersDbManager.updateUser(connection, username, body);
+    }
+
+    public String getUserNameByUserId(String userId) throws SQLException
+    {
+        Connection connection = getConnection();
+        return UsersDbManager.getUserNameByUserId(connection, userId);
+    }
+
     public Task createTask(String title, String description, String status, String priority) throws SQLException
     {
         Connection connection = getConnection();
@@ -57,28 +75,16 @@ public class DatabaseManager
         return TasksDbManager.getTasks(connection);
     }
 
-    public User updateUser(String username, UpdateUserRequest body) throws SQLException
-    {
-        Connection connection = getConnection();
-        return UsersDbManager.updateUser(connection, username, body);
-    }
-
-    public String getUserNameByUserId(String userId) throws SQLException
-    {
-        Connection connection = getConnection();
-        return UsersDbManager.getUserNameByUserId(connection, userId);
-    }
-
     public List<Task> getTasksByUserName(String userName) throws SQLException
     {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByUserName(connection, userName);
     }
 
-    public void deleteUserByUserName(String userName) throws SQLException
+    public void deleteTaskById(long id) throws SQLException
     {
         Connection connection = getConnection();
-        UsersDbManager.deleteUserByUserName(connection, userName);
+        TasksDbManager.deleteTaskById(connection, id);
     }
 
     public boolean isUserExists(String userName)
