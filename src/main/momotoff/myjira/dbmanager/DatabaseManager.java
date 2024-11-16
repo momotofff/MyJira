@@ -9,7 +9,7 @@ public class DatabaseManager
     private final String user;
     private final String password;
 
-    public Connection getConnection() throws SQLException
+    Connection getConnection() throws SQLException
     {
         return DriverManager.getConnection(url, user, password);
     }
@@ -57,16 +57,22 @@ public class DatabaseManager
         return UsersDbManager.getUserNameByUserId(connection, userId);
     }
 
-    public Task createTask(String title, String description, String status, String priority) throws SQLException
+    public boolean isUserExists(String userName) throws SQLException
     {
         Connection connection = getConnection();
-        return TasksDbManager.createTask(connection, title, description, status, priority);
+        return UsersDbManager.isUserExists(connection, userName);
     }
 
-    public Task updateTask(long taskId, String title, String description, String status, String priority) throws SQLException
+    public Task createTask(String title, String description, String status, String priority, Long authorId) throws SQLException
     {
         Connection connection = getConnection();
-        return TasksDbManager.updateTask(connection, taskId, title, description, status, priority);
+        return TasksDbManager.createTask(connection, title, description, status, priority, authorId);
+    }
+
+    public Task updateTask(long taskId, String title, String description, String status, String priority, Long assigneeId) throws SQLException
+    {
+        Connection connection = getConnection();
+        return TasksDbManager.updateTask(connection, taskId, title, description, status, priority, assigneeId);
     }
 
     public List<Task> getTasks() throws SQLException
@@ -85,29 +91,5 @@ public class DatabaseManager
     {
         Connection connection = getConnection();
         TasksDbManager.deleteTaskById(connection, id);
-    }
-
-    public boolean isUserExists(String userName)
-    {
-        String sql = "SELECT COUNT(*) FROM users WHERE userName = ?";
-
-        try (Connection connection = getConnection();
-             PreparedStatement preparedStatement = connection.prepareStatement(sql))
-        {
-
-            preparedStatement.setString(1, userName);
-
-            try (ResultSet resultSet = preparedStatement.executeQuery())
-            {
-                if (resultSet.next())
-                    return resultSet.getInt(1) > 0;
-            }
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-
-        return false;
     }
 }

@@ -185,7 +185,7 @@ class UsersDbManager
         }
     }
 
-    private static boolean isUserExists(Connection connection, String userName)
+    public static boolean isUserExists(Connection connection, String userName)
     {
         String sql = "SELECT COUNT(*) FROM users WHERE userName = ?";
 

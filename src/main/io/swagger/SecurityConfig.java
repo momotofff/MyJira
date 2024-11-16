@@ -1,4 +1,4 @@
-package momotoff.myjira.dbmanager;
+package io.swagger;
 
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;

@@ -44,10 +44,10 @@ class TasksDbManager
                 Task task = new Task();
                 task.setId(resultSet.getLong("id"));
                 task.setTitle(resultSet.getString("title"));
-                task.setAssignee(JsonNullable.of(resultSet.getString("assignee")));
+                task.setAssignee(JsonNullable.of(resultSet.getLong("assignee")));
                 task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
                 task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
-                task.setAuthor(resultSet.getString("author"));
+                task.setAuthor(resultSet.getLong("author"));
                 task.setDescription(resultSet.getString("description"));
                 list.add(task);
             }
@@ -59,28 +59,14 @@ class TasksDbManager
         return list;
     }
 
-    public static Task createTask(Connection connection, String title, String description, String status, String priority)
+    public static Task createTask(Connection connection, String title, String description, String status, String priority, Long authorId)
     {
         String sql =
                 "INSERT INTO tasks " +
-                        "(title, description, status,        priority,        author, assignee) VALUES " +
-                        "(?,     ?,           ?::taskstatus, ?::taskpriority, ?,      DEFAULT)";
+                        "(title, description, status,        priority,        author) VALUES " +
+                        "(?,     ?,           ?::taskstatus, ?::taskpriority, ?)";
 
         Task task = null;
-        long authorId;
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String author = authentication.getName();
-
-        try
-        {
-            authorId = getUserIdByUsername(connection, author);
-        }
-
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
         {
@@ -103,7 +89,7 @@ class TasksDbManager
                         task.setDescription(description);
                         task.setStatus(TaskStatus.fromValue(status));
                         task.setPriority(TaskPriority.fromValue(priority));
-                        task.setAuthor(author);
+                        task.setAuthor(authorId);
                         System.out.printf("Task with ID = %d created successfully!%n", id);
                     }
                 }
@@ -134,10 +120,10 @@ class TasksDbManager
                 Task task = new Task();
                 task.setId(resultSet.getLong("id"));
                 task.setTitle(resultSet.getString("title"));
-                task.setAssignee(JsonNullable.of(resultSet.getString("assignee")));
+                task.setAssignee(JsonNullable.of(resultSet.getLong("assignee")));
                 task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
                 task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
-                task.setAuthor(resultSet.getString("author"));
+                task.setAuthor(resultSet.getLong("author"));
                 task.setDescription(resultSet.getString("description"));
                 list.add(task);
             }
@@ -151,31 +137,20 @@ class TasksDbManager
         return list;
     }
 
-    public static Task updateTask(Connection connection, long taskId, String title, String description, String status, String priority) {
+    public static Task updateTask(Connection connection, long taskId, String title, String description, String status, String priority, Long assigneeId) {
         String sql =
-                "UPDATE tasks SET title = ?, description = ?, status = ?::taskstatus, " +
-                        "priority = ?::taskpriority, author = ? WHERE id = ?";
+            "UPDATE tasks" +
+            "SET title = ?, description = ?, status = ?::taskstatus, assignee = ?, priority = ?::taskpriority" +
+            "WHERE id = ?";
 
         Task task = null;
-        long authorId;
-
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String author = authentication.getName();
-        try
-        {
-            authorId = getUserIdByUsername(connection, author);
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
             preparedStatement.setString(1, title);
             preparedStatement.setString(2, description);
             preparedStatement.setString(3, status);
-            preparedStatement.setString(4, priority);
-            preparedStatement.setLong(5, authorId); // Установка id автора
+            preparedStatement.setLong(4, assigneeId);
+            preparedStatement.setString(5, priority);
             preparedStatement.setLong(6, taskId);
 
             int affectedRows = preparedStatement.executeUpdate();
@@ -187,8 +162,8 @@ class TasksDbManager
                 task.setDescription(description);
                 task.setStatus(TaskStatus.fromValue(status));
                 task.setPriority(TaskPriority.fromValue(priority));
-                task.setAuthor(author);
-                // assignee остается без изменений, если не нужно его обновлять
+                task.setAssignee(JsonNullable.of(assigneeId));
+
                 System.out.printf("Task with ID = %d updated successfully!%n", taskId);
             }
         } catch (SQLException e) {
@@ -199,7 +174,6 @@ class TasksDbManager
 
         return task;
     }
-
 
     private static long getUserIdByUsername(Connection connection, String userName) throws SQLException
     {

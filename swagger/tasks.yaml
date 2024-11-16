@@ -28,11 +28,13 @@ components:
         priority:
           $ref: "#/components/schemas/TaskPriority"
         author:
-          type: string
-          example: "Автор Задачи"
+          type: integer
+          format: int64
+          example: 1
         assignee:
-          type: string
-          example: "Исполнитель Задачи"
+          type: integer
+          format: int64
+          example: 1
           nullable: true
 
     CreateTaskRequest:
@@ -56,12 +58,9 @@ components:
         priority:
           $ref: "#/components/schemas/TaskPriority"
         author:
-          type: string
-          example: "Автор"
-        assignee:
-          type: string
-          example: "Исполнитель"
-          nullable: true
+          type: integer
+          format: int64
+          example: 1
 
     UpdateTaskRequest:
       type: object
@@ -77,10 +76,8 @@ components:
         priority:
           $ref: "#/components/schemas/TaskPriority"
           example: "Low"
-        author:
-          type: string
-          example: "Обновленный автор"
         assignee:
-          type: string
-          example: "Обновленный исполнитель"
+          type: integer
+          format: int64
+          example: 1
           nullable: true

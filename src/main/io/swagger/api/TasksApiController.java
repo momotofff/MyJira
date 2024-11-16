@@ -1,6 +1,8 @@
 package io.swagger.api;
 
 import momotoff.myjira.dbmanager.DatabaseManager;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.model.CreateTaskRequest;
 import io.swagger.model.Task;
@@ -45,6 +47,18 @@ public class TasksApiController implements TasksApi
                                            @Valid @RequestBody CreateTaskRequest body)
     {
         String accept = request.getHeader("Accept");
+
+        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+        String author = authentication.getName();
+
+        try
+        {
+            long authorId = databaseManager.getUserByName(author).getId();
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
 
         if (accept != null && accept.contains("application/json"))
         {
