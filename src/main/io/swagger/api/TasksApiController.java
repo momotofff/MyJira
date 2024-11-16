@@ -1,6 +1,8 @@
 package io.swagger.api;
 
 import momotoff.myjira.dbmanager.DatabaseManager;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
@@ -25,15 +27,18 @@ import java.util.List;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
 
 @RestController
+@DependsOn("dbManager")
 @RequestMapping("/tasks")
 public class TasksApiController implements TasksApi
 {
     private static final Logger log = LoggerFactory.getLogger(TasksApiController.class);
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
-    DatabaseManager databaseManager = new DatabaseManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
+    private DatabaseManager databaseManager;
+
+    @Autowired
     public TasksApiController(ObjectMapper objectMapper, HttpServletRequest request)
     {
         this.objectMapper = objectMapper;

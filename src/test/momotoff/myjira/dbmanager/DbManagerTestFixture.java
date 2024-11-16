@@ -17,7 +17,7 @@ public abstract class DbManagerTestFixture
 {
     private static final String USER = "postgres";
     private static final String PASS = "postgres";
-    private static final String DBNAME = "test-dbUsers";
+    private static final String DBNAME = "test-db";
 
     @Container
     protected static final PostgreSQLContainer<?> postgreSQLContainer = new PostgreSQLContainer<>("postgres:16-alpine")

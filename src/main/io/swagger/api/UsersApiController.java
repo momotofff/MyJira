@@ -3,6 +3,9 @@ package io.swagger.api;
 import momotoff.myjira.dbmanager.DatabaseManager;
 import io.swagger.model.UpdateUserRequest;
 import io.swagger.model.UserRole;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
+import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.model.CreateUserRequest;
 import io.swagger.model.User;
@@ -25,17 +28,18 @@ import java.util.List;
 @javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
 
 @RestController
+@DependsOn("dbManager")
 @RequestMapping("/users")
 public class UsersApiController implements UsersApi
 {
     private static final Logger log = LoggerFactory.getLogger(UsersApiController.class);
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
-    // TODO: Move to bean to make it singleton
-    // TODO: Get DB address, username and pass from environment variables
-    DatabaseManager databaseManager = new DatabaseManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
 
-    @org.springframework.beans.factory.annotation.Autowired
+    @Autowired
+    private DatabaseManager databaseManager;
+
+    @Autowired
     public UsersApiController(ObjectMapper objectMapper, HttpServletRequest request)
     {
         this.objectMapper = objectMapper;
