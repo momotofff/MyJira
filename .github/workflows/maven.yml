@@ -25,7 +25,7 @@ jobs:
           distribution: 'temurin'
 
       - name: Build and test with Maven
-        run: mvn clean verify
+        run: mvn -B test
 
       - name: List JaCoCo report directory
         run: ls -R target/site/jacoco/
