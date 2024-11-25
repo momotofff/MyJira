@@ -2,10 +2,7 @@ package momotoff.myjira.dbmanager;
 
 import io.swagger.model.User;
 import org.junit.jupiter.api.*;
-import org.testcontainers.containers.PostgreSQLContainer;
 import org.testcontainers.jdbc.JdbcDatabaseDelegate;
-import org.testcontainers.junit.jupiter.Container;
-import org.testcontainers.junit.jupiter.Testcontainers;
 
 import java.sql.*;
 import java.util.List;
@@ -14,10 +11,6 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class UsersDbManagerTest extends DbManagerTestFixture
 {
-    private final String username = "testUser";
-    private final String role = "User";
-    private final String email = "testUser@example.com";
-
     @BeforeEach
     public void beforeEach()
     {

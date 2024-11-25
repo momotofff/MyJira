@@ -51,7 +51,7 @@ public class DatabaseManager
         return UsersDbManager.updateUser(connection, username, body);
     }
 
-    public String getUserNameByUserId(String userId) throws SQLException
+    public long getUserByUserId(long userId) throws SQLException
     {
         Connection connection = getConnection();
         return UsersDbManager.getUserNameByUserId(connection, userId);
