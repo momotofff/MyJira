@@ -15,6 +15,10 @@ import static org.junit.jupiter.api.Assertions.*;
 @Testcontainers
 public abstract class DbManagerTestFixture
 {
+    final static String username = "testUser";
+    final static String role = "User";
+    final static String email = "testUser@example.com";
+
     private static final String USER = "postgres";
     private static final String PASS = "postgres";
     private static final String DBNAME = "test-db";

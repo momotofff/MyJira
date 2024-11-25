@@ -25,7 +25,8 @@ class UsersDbManager
 
             if (affectedRows > 0)
             {
-                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys()) {
+                try (ResultSet generatedKeys = preparedStatement.getGeneratedKeys())
+                {
                     if (generatedKeys.next()) {
                         long id = generatedKeys.getLong(1);
                         user = new User();
@@ -138,19 +139,17 @@ class UsersDbManager
         return updatedUser;
     }
 
-    public static String getUserNameByUserId(Connection connection, String userId)
+    public static long getUserNameByUserId(Connection connection, long userId)
     {
         String sql = "SELECT * FROM users WHERE id = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
-
-            long id = Long.parseLong(userId);
-            preparedStatement.setLong(1, id);
-
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setLong(1, userId);
             ResultSet rs = preparedStatement.executeQuery();
 
             if (rs.next())
-                return rs.getString("userName");
+                return rs.getLong("userName");
             else
                 throw new SQLException("User not found: " + userId);
 
