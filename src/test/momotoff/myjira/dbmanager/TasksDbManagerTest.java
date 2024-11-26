@@ -2,17 +2,30 @@ package momotoff.myjira.dbmanager;
 
 import io.swagger.model.Task;
 import io.swagger.model.User;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.testcontainers.jdbc.JdbcDatabaseDelegate;
+
 import java.sql.SQLException;
 import java.util.List;
+
 import static org.junit.jupiter.api.Assertions.*;
 
 public class TasksDbManagerTest extends DbManagerTestFixture
 {
-    String title = "Tas2324";
-    String description = "Description for Task 1";
-    String status = "Pending";
-    String priority = "High";
+    private final String title = "Tas2324";
+    private final String description = "Description for Task 1";
+    private final String status = "Pending";
+    private final String priority = "High";
+    private final Long unauthorizedUserId = 5L;
+
+    @BeforeEach
+    public void beforeEach()
+    {
+        JdbcDatabaseDelegate containerDelegate = new JdbcDatabaseDelegate(postgreSQLContainer, "");
+        containerDelegate.execute("DELETE FROM tasks", "", 0, true, true);
+    }
+
     @Test
     public void createAndGetTask_ExpectSuccess() throws SQLException
     {
@@ -30,12 +43,14 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void createAndGetTask_ExpectFailed()
+    public void createTaskByAnUnauthorizedUser_ExpectFailed()
     {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            databaseManager.createTask(title, description, status, priority, unauthorizedUserId);
+        });
 
+        assertEquals("User with ID " + unauthorizedUserId + " does not exist.", thrown.getMessage());
     }
-
-
 
     @Test
     public void getTasksByUserName()

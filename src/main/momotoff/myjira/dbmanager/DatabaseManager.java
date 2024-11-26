@@ -27,6 +27,12 @@ public class DatabaseManager
         return UsersDbManager.createUser(connection, username, role, email);
     }
 
+    public User updateUser(String username, UpdateUserRequest body) throws SQLException
+    {
+        Connection connection = getConnection();
+        return UsersDbManager.updateUser(connection, username, body);
+    }
+
     public List<User> getUsers() throws SQLException
     {
         Connection connection = getConnection();
@@ -44,11 +50,10 @@ public class DatabaseManager
         Connection connection = getConnection();
         UsersDbManager.deleteUserByUserName(connection, userName);
     }
-
-    public User updateUser(String username, UpdateUserRequest body) throws SQLException
+    public void deleteUserByUserId(Long userId) throws SQLException
     {
         Connection connection = getConnection();
-        return UsersDbManager.updateUser(connection, username, body);
+        UsersDbManager.deleteUserByUserId(connection, userId);
     }
 
     public long getUserByUserId(long userId) throws SQLException
@@ -61,6 +66,11 @@ public class DatabaseManager
     {
         Connection connection = getConnection();
         return UsersDbManager.isUserExists(connection, userName);
+    }
+    public boolean isUserExists(Long userId) throws SQLException
+    {
+        Connection connection = getConnection();
+        return UsersDbManager.isUserExists(connection, userId);
     }
 
     public Task createTask(String title, String description, String status, String priority, Long authorId) throws SQLException
@@ -92,4 +102,6 @@ public class DatabaseManager
         Connection connection = getConnection();
         TasksDbManager.deleteTaskById(connection, id);
     }
+
+
 }

@@ -7,6 +7,7 @@ import io.swagger.model.UserRole;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.NoSuchElementException;
 
 class UsersDbManager
 {
@@ -53,6 +54,44 @@ class UsersDbManager
         }
 
         return user;
+    }
+
+    public static User updateUser(Connection connection, String username, UpdateUserRequest body)
+    {
+        String sql = "UPDATE users SET role = ?, email = ? WHERE username = ?";
+        User updatedUser = null;
+
+        if (body == null || body.getRole() == null || body.getEmail() == null) {
+            throw new IllegalArgumentException("Request body or its properties cannot be null");
+        }
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+
+            preparedStatement.setString(1, body.getRole().getValue());
+            preparedStatement.setString(2, body.getEmail());
+            preparedStatement.setString(3, username);
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows > 0)
+            {
+                updatedUser = new User();
+                updatedUser.setUsername(username);
+                updatedUser.setRole(body.getRole());
+                updatedUser.setEmail(body.getEmail());
+            }
+            else
+            {
+                throw new NoSuchElementException("User with username " + username + " does not exist.");
+            }
+        }
+        catch (SQLException e)
+        {
+            System.err.println("Error updating user: " + e.getMessage());
+        }
+
+        return updatedUser;
     }
 
     public static List<User> getUsers(Connection connection) throws SQLException
@@ -109,36 +148,6 @@ class UsersDbManager
         return user;
     }
 
-    public static User updateUser(Connection connection, String username, UpdateUserRequest body)
-    {
-        String sql = "UPDATE users SET role = ?, email = ? WHERE username = ?";
-        User updatedUser = null;
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
-        {
-
-            preparedStatement.setString(1, body.getRole().getValue());
-            preparedStatement.setString(2, body.getEmail());
-            preparedStatement.setString(3, username);
-
-            int affectedRows = preparedStatement.executeUpdate();
-
-            if (affectedRows > 0)
-            {
-                updatedUser = new User();
-                updatedUser.setUsername(username);
-                updatedUser.setRole(body.getRole());
-                updatedUser.setEmail(body.getEmail());
-            }
-        }
-        catch (SQLException e)
-        {
-            System.err.println("Error updating user: " + e.getMessage());
-        }
-
-        return updatedUser;
-    }
-
     public static long getUserNameByUserId(Connection connection, long userId)
     {
         String sql = "SELECT * FROM users WHERE id = ?";
@@ -183,6 +192,23 @@ class UsersDbManager
             throw new RuntimeException(e);
         }
     }
+    public static void deleteUserByUserId(Connection connection, Long userId)
+    {
+        if (!isUserExists(connection, userId))
+            return;
+
+        String sql = "DELETE FROM users WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setLong(1, userId);
+            preparedStatement.executeUpdate(); // Выполнение запроса на удаление
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static boolean isUserExists(Connection connection, String userName)
     {
@@ -206,4 +232,28 @@ class UsersDbManager
 
         return false;
     }
+
+    public static boolean isUserExists(Connection connection, Long userId)
+    {
+        String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setLong(1, userId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                if (resultSet.next())
+                    return resultSet.getInt(1) > 0;
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
+
+
 }
