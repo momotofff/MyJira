@@ -1,5 +1,6 @@
 package io.swagger.api;
 
+import io.swagger.model.UpdateUserRequest;
 import momotoff.myjira.dbmanager.DatabaseManager;
 import io.swagger.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -69,7 +70,7 @@ public class UsersApiController implements UsersApi
         }
     }
 
-    @PostMapping
+    @PostMapping("/users")
     public ResponseEntity<User> postUser(@Parameter(in = ParameterIn.DEFAULT,
                                                      description = "",
                                                      required=true,
@@ -91,8 +92,8 @@ public class UsersApiController implements UsersApi
             return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-/*
-    @PostMapping
+
+    @PostMapping("/users/{username}")
     public ResponseEntity<User> updateUserByName(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required=true,
@@ -109,14 +110,22 @@ public class UsersApiController implements UsersApi
         if (accept == null || !accept.contains("application/json"))
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
-        User updatedUser = databaseManager.updateUser(username, body);
+        User updatedUser = null;
+        try
+        {
+            updatedUser = databaseManager.updateUser(username, body);
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
 
         if (updatedUser == null)
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
 
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
-*/
+
     public ResponseEntity<User> getUserByName(@Parameter(in = ParameterIn.PATH,
                                                        description = "",
                                                        required=true,

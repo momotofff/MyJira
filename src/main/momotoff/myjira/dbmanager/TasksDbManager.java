@@ -57,12 +57,17 @@ class TasksDbManager
 
     public static Task createTask(Connection connection, String title, String description, String status, String priority, Long authorId)
     {
+        if (!isUserExists(connection, authorId))
+            throw new IllegalArgumentException("User with ID " + authorId + " does not exist.");
+
         String sql =
                 "INSERT INTO tasks " +
                         "(title, description, status,        priority,        author) VALUES " +
                         "(?,     ?,           ?::taskstatus, ?::taskpriority, ?)";
 
         Task task = null;
+
+
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
         {
@@ -190,5 +195,19 @@ class TasksDbManager
     public static void deleteTaskById(Connection connection, long id)
     {
 
+    }
+
+    private static boolean isUserExists(Connection connection, Long userId) {
+        String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, userId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+            if (resultSet.next()) {
+                return resultSet.getInt(1) > 0;
+            }
+        } catch (SQLException e) {
+            System.err.println("Error checking if user exists: " + e.getMessage());
+        }
+        return false;
     }
 }

@@ -4,12 +4,10 @@ import io.swagger.model.Task;
 import io.swagger.model.User;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.postgresql.util.PSQLException;
 import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 
 import java.sql.SQLException;
 import java.util.List;
-import java.util.function.BooleanSupplier;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -45,11 +43,13 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void createTaskByAnUnauthorizedUser_ExpectFailed() throws SQLException
+    public void createTaskByAnUnauthorizedUser_ExpectFailed()
     {
-        //databaseManager.createTask(title, description, status, priority, unauthorizedUserId);
-        //assertThrows(SQLException.class, () -> databaseManager.createTask(title, description, status, priority, unauthorizedUserId), "To create a task, the user must be authorized in the database");
-        //assertThrows(SQLException.class, () -> databaseManager.createTask(title, description, status, priority, 5L), "To create a task, the user must be authorized in the database");
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            databaseManager.createTask(title, description, status, priority, unauthorizedUserId);
+        });
+
+        assertEquals("User with ID " + unauthorizedUserId + " does not exist.", thrown.getMessage());
     }
 
     @Test
