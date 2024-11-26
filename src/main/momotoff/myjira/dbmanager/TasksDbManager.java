@@ -4,9 +4,6 @@ import io.swagger.model.Task;
 import io.swagger.model.TaskPriority;
 import io.swagger.model.TaskStatus;
 import org.openapitools.jackson.nullable.JsonNullable;
-import org.springframework.security.core.Authentication;
-import org.springframework.security.core.context.SecurityContextHolder;
-
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -32,7 +29,6 @@ class TasksDbManager
         {
             throw new RuntimeException(e);
         }
-
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {

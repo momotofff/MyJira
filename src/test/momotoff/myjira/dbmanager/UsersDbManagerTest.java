@@ -57,6 +57,16 @@ public class UsersDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
+    void deleteUserByUserId_ExpectSuccess()
+    {
+        Long userId = assertDoesNotThrow(() -> databaseManager.createUser(username, role, email).getId());
+        assertTrue(assertDoesNotThrow(() -> databaseManager.isUserExists(userId), "User should exist after creation"));
+
+        assertDoesNotThrow(() -> databaseManager.deleteUserByUserId(userId));
+        assertFalse(assertDoesNotThrow(() -> databaseManager.isUserExists(userId)), "User should be deleted");
+    }
+
+    @Test
     void getUserByName_ExpectSuccess()
     {
         assertDoesNotThrow(() -> databaseManager.createUser(username, role, email));

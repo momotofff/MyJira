@@ -183,6 +183,23 @@ class UsersDbManager
             throw new RuntimeException(e);
         }
     }
+    public static void deleteUserByUserId(Connection connection, Long userId)
+    {
+        if (!isUserExists(connection, userId))
+            return;
+
+        String sql = "DELETE FROM users WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setLong(1, userId);
+            preparedStatement.executeUpdate(); // Выполнение запроса на удаление
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+    }
 
     public static boolean isUserExists(Connection connection, String userName)
     {
@@ -206,4 +223,28 @@ class UsersDbManager
 
         return false;
     }
+
+    public static boolean isUserExists(Connection connection, Long userId)
+    {
+        String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setLong(1, userId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                if (resultSet.next())
+                    return resultSet.getInt(1) > 0;
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        return false;
+    }
+
+
 }

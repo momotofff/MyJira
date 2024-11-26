@@ -1,10 +1,8 @@
 package io.swagger.api;
 
 import momotoff.myjira.dbmanager.DatabaseManager;
-import io.swagger.model.UpdateUserRequest;
 import io.swagger.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.ApplicationContext;
 import org.springframework.context.annotation.DependsOn;
 import org.springframework.web.bind.annotation.*;
 import io.swagger.model.CreateUserRequest;
@@ -143,7 +141,7 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @DeleteMapping
+    @DeleteMapping("/users/name/{username}")
     public ResponseEntity<Void> deleteUserByName(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required=true,
@@ -154,6 +152,25 @@ public class UsersApiController implements UsersApi
         if (databaseManager.isUserExists(username))
         {
             databaseManager.deleteUserByUserName(username);
+            return ResponseEntity.noContent().build();
+        }
+        else
+        {
+            return ResponseEntity.notFound().build();
+        }
+    }
+
+    @DeleteMapping("/users/id/{userId}")
+    public ResponseEntity<Void> deleteUserById(@Parameter(in = ParameterIn.PATH,
+                                                          description = "",
+                                                          required=true,
+                                                          schema=@Schema())
+                                                 @PathVariable("userId") Long userId,
+                                                 @RequestHeader(required = false) String accept) throws SQLException
+    {
+        if (databaseManager.isUserExists(userId))
+        {
+            databaseManager.deleteUserByUserId(userId);
             return ResponseEntity.noContent().build();
         }
         else
