@@ -73,8 +73,8 @@ public class UsersApiController implements UsersApi
     @PostMapping("/users")
     public ResponseEntity<User> postUser(@Parameter(in = ParameterIn.DEFAULT,
                                                      description = "",
-                                                     required=true,
-                                                     schema=@Schema())
+                                                     required = true,
+                                                     schema = @Schema())
                                           @Valid @RequestBody CreateUserRequest body)
     {
         String accept = request.getHeader("Accept");
@@ -96,13 +96,13 @@ public class UsersApiController implements UsersApi
     @PostMapping("/users/{username}")
     public ResponseEntity<User> updateUserByName(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
-                                                          required=true,
-                                                          schema=@Schema())
+                                                          required = true,
+                                                          schema = @Schema())
                                                @PathVariable("username") String username,
                                                @Parameter(in = ParameterIn.DEFAULT,
                                                           description = "",
-                                                          required=true,
-                                                          schema=@Schema())
+                                                          required = true,
+                                                          schema = @Schema())
                                                @Valid @RequestBody UpdateUserRequest body)
     {
         String accept = request.getHeader("Accept");
@@ -113,7 +113,40 @@ public class UsersApiController implements UsersApi
         User updatedUser = null;
         try
         {
-            updatedUser = databaseManager.updateUser(username, body);
+            updatedUser = databaseManager.updateUserByName(username, body);
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
+
+        if (updatedUser == null)
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @PostMapping("/users/{id}")
+    public ResponseEntity<User> updateUserById(@Parameter(in = ParameterIn.PATH,
+                                                          description = "",
+                                                          required = true,
+                                                          schema = @Schema())
+                                                 @PathVariable("id") long userId,
+                                                 @Parameter(in = ParameterIn.DEFAULT,
+                                                         description = "",
+                                                         required = true,
+                                                         schema = @Schema())
+                                                 @Valid @RequestBody UpdateUserRequest body)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept == null || !accept.contains("application/json"))
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+
+        User updatedUser = null;
+        try
+        {
+            updatedUser = databaseManager.updateUserById(userId, body);
         }
         catch (SQLException e)
         {
@@ -128,8 +161,8 @@ public class UsersApiController implements UsersApi
 
     public ResponseEntity<User> getUserByName(@Parameter(in = ParameterIn.PATH,
                                                        description = "",
-                                                       required=true,
-                                                       schema=@Schema())
+                                                       required = true,
+                                                       schema = @Schema())
                                             @PathVariable("username") String username)
     {
         String accept = request.getHeader("Accept");

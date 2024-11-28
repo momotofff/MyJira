@@ -27,11 +27,19 @@ public class DatabaseManager
         return UsersDbManager.createUser(connection, username, role, email);
     }
 
-    public User updateUser(String username, UpdateUserRequest body) throws SQLException
+    public User updateUserByName(String username, UpdateUserRequest body) throws SQLException
     {
         Connection connection = getConnection();
-        return UsersDbManager.updateUser(connection, username, body);
+        return UsersDbManager.updatingUserByName(connection, username, body);
     }
+
+    public User updateUserById(long userd, UpdateUserRequest body) throws SQLException
+    {
+        Connection connection = getConnection();
+        return UsersDbManager.updatingUserById(connection, userd, body);
+    }
+
+
 
     public List<User> getUsers() throws SQLException
     {
@@ -43,6 +51,12 @@ public class DatabaseManager
     {
         Connection connection = getConnection();
         return UsersDbManager.getUserByName(connection, name);
+    }
+
+    public User getUserById(long id) throws SQLException
+    {
+        Connection connection = getConnection();
+        return UsersDbManager.getUserById(connection, id);
     }
 
     public void deleteUserByUserName(String userName) throws SQLException
