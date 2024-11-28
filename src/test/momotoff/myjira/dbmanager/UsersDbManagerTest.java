@@ -1,6 +1,8 @@
 package momotoff.myjira.dbmanager;
 
+import io.swagger.model.UpdateUserRequest;
 import io.swagger.model.User;
+import io.swagger.model.UserRole;
 import org.junit.jupiter.api.*;
 import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 
@@ -44,6 +46,57 @@ public class UsersDbManagerTest extends DbManagerTestFixture
 
         List<User> users = databaseManager.getUsers();
         assertEquals(1, users.size());
+    }
+
+    @Test
+    public void updateUserByName_ExpectSuccess() throws SQLException
+    {
+        // Создадим пользователя
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        // Подготовим запрос на обновление
+        UpdateUserRequest updateRequest = new UpdateUserRequest();
+        updateRequest.setRole(UserRole.VIEWER);
+        updateRequest.setEmail("new_email@example.com");
+
+        // Обновляем пользователя и проверяем успешность операции
+        User updatedUser = databaseManager.updateUserByName(username, updateRequest);
+        assertNotNull(updatedUser);
+        assertEquals("new_email@example.com", updatedUser.getEmail());
+        assertEquals("Viewer", updatedUser.getRole().toString());
+
+        // Проверяем, что данные обновлены в базе данных
+        User fetchedUser = databaseManager.getUserByName(username);
+        assertNotNull(fetchedUser);
+        assertEquals("new_email@example.com", fetchedUser.getEmail());
+        assertEquals("Viewer", fetchedUser.getRole().toString());
+    }
+
+    @Test
+    public void updateUserById_ExpectSuccess() throws SQLException
+    {
+        // Создадим пользователя
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+        long userId = user.getId();
+
+        // Подготовим запрос на обновление
+        UpdateUserRequest updateRequest = new UpdateUserRequest();
+        updateRequest.setRole(UserRole.VIEWER);
+        updateRequest.setEmail("new_email@example.com");
+
+        // Обновляем пользователя и проверяем успешность операции
+        User updatedUser = databaseManager.updateUserById(userId, updateRequest);
+        assertNotNull(updatedUser);
+        assertEquals("new_email@example.com", updatedUser.getEmail());
+        assertEquals("Viewer", updatedUser.getRole().toString());
+
+        // Проверяем, что данные обновлены в базе данных по ID
+        User fetchedUser = databaseManager.getUserById(userId);
+        assertNotNull(fetchedUser);
+        assertEquals("new_email@example.com", fetchedUser.getEmail());
+        assertEquals("Viewer", fetchedUser.getRole().toString());
     }
 
     @Test

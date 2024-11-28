@@ -53,7 +53,25 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void getTasksByUserName()
+    public void getTasksByAuthorName()
+    {
+
+    }
+
+    @Test
+    public void getTasksByAuthorId()
+    {
+
+    }
+
+    @Test
+    public void getTasksByAssigneeName()
+    {
+
+    }
+
+    @Test
+    public void getTasksByAssigneeId()
     {
 
     }

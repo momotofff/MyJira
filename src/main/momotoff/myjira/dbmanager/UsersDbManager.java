@@ -56,9 +56,9 @@ class UsersDbManager
         return user;
     }
 
-    public static User updateUser(Connection connection, String username, UpdateUserRequest body)
+    public static User updatingUserByName(Connection connection, String username, UpdateUserRequest body)
     {
-        String sql = "UPDATE users SET role = ?, email = ? WHERE username = ?";
+        String sql = "UPDATE users SET role = ?::userrole, email = ? WHERE username = ?";
         User updatedUser = null;
 
         if (body == null || body.getRole() == null || body.getEmail() == null) {
@@ -84,6 +84,44 @@ class UsersDbManager
             else
             {
                 throw new NoSuchElementException("User with username " + username + " does not exist.");
+            }
+        }
+        catch (SQLException e)
+        {
+            System.err.println("Error updating user: " + e.getMessage());
+        }
+
+        return updatedUser;
+    }
+
+    public static User updatingUserById(Connection connection, long userId, UpdateUserRequest body)
+    {
+        String sql = "UPDATE users SET role = ?::userrole, email = ? WHERE id = ?";
+        User updatedUser = null;
+
+        if (body == null || body.getRole() == null || body.getEmail() == null) {
+            throw new IllegalArgumentException("Request body or its properties cannot be null");
+        }
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+
+            preparedStatement.setString(1, body.getRole().getValue());
+            preparedStatement.setString(2, body.getEmail());
+            preparedStatement.setLong(3, userId);
+
+            int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows > 0)
+            {
+                updatedUser = new User();
+                updatedUser.setId(userId);
+                updatedUser.setRole(body.getRole());
+                updatedUser.setEmail(body.getEmail());
+            }
+            else
+            {
+                throw new NoSuchElementException("User with ID " + userId + " does not exist.");
             }
         }
         catch (SQLException e)
@@ -143,6 +181,30 @@ class UsersDbManager
         catch (SQLException e)
         {
             throw new SQLException("Error while trying to get user by name", e);
+        }
+
+        return user;
+    }
+
+    public static User getUserById(Connection connection, long id) throws SQLException {
+        String sql = "SELECT * FROM users WHERE id = ?";
+
+        User user = null;
+
+        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+            pstmt.setLong(1, id);
+
+            try (ResultSet rs = pstmt.executeQuery()) {
+                if (rs.next()) {
+                    user = new User();
+                    user.setUsername(rs.getString("username"));
+                    user.setEmail(rs.getString("email"));
+                    user.setRole(UserRole.fromValue(rs.getString("role")));
+                }
+            }
+        }
+        catch (SQLException e) {
+            throw new SQLException("Error while trying to get user by id", e);
         }
 
         return user;
