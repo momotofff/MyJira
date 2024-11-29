@@ -39,8 +39,6 @@ public class DatabaseManager
         return UsersDbManager.updatingUserById(connection, userd, body);
     }
 
-
-
     public List<User> getUsers() throws SQLException
     {
         Connection connection = getConnection();
@@ -109,6 +107,24 @@ public class DatabaseManager
     {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByUserName(connection, userName);
+    }
+
+    public List<Task> getTasksByUserId(long userId) throws SQLException
+    {
+        Connection connection = getConnection();
+        return TasksDbManager.getTasksByUserId(connection, userId);
+    }
+
+    public List<Task> getTasksByAuthorId(long userid) throws SQLException
+    {
+        Connection connection = getConnection();
+        return TasksDbManager.getTasksByAuthorId(connection, userid);
+    }
+
+    public List<Task> getTasksByAuthorName(String userName) throws SQLException
+    {
+        Connection connection = getConnection();
+        return TasksDbManager.getTasksByAuthorName(connection, userName);
     }
 
     public void deleteTaskById(long id) throws SQLException
