@@ -93,7 +93,7 @@ public class UsersApiController implements UsersApi
         }
     }
 
-    @PostMapping("/users/{username}")
+    @PutMapping("/users/{username}")
     public ResponseEntity<User> updateUserByName(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required = true,
@@ -111,6 +111,7 @@ public class UsersApiController implements UsersApi
             return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
 
         User updatedUser = null;
+
         try
         {
             updatedUser = databaseManager.updateUserByName(username, body);
@@ -126,7 +127,7 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @PostMapping("/users/{id}")
+    @PutMapping("/users/{id}")
     public ResponseEntity<User> updateUserById(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required = true,
@@ -159,11 +160,12 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
+    @GetMapping("/users/name/{username}")
     public ResponseEntity<User> getUserByName(@Parameter(in = ParameterIn.PATH,
                                                        description = "",
                                                        required = true,
                                                        schema = @Schema())
-                                            @PathVariable("username") String username)
+                                              @PathVariable("username") String username)
     {
         String accept = request.getHeader("Accept");
 
@@ -179,6 +181,21 @@ public class UsersApiController implements UsersApi
                 return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
+
+        User user = null;
+
+        try
+        {
+            user = databaseManager.getUserByName(username);
+        }
+        catch (SQLException e)
+
+        {
+            throw new RuntimeException(e);
+        }
+
+        if (user != null)
+            return new ResponseEntity<>(user, HttpStatus.OK);
 
         return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }

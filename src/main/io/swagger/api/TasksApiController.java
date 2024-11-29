@@ -45,11 +45,12 @@ public class TasksApiController implements TasksApi
         this.request = request;
     }
 
-    public ResponseEntity<Task> createTask(@Parameter(in = ParameterIn.DEFAULT,
+    @PostMapping("/tasks")
+    public ResponseEntity<Task> postTask(@Parameter(in = ParameterIn.DEFAULT,
                                                       description = "",
-                                                      required=true,
-                                                      schema=@Schema())
-                                           @Valid @RequestBody CreateTaskRequest body)
+                                                      required = true,
+                                                      schema = @Schema())
+                                         @Valid @RequestBody CreateTaskRequest body)
     {
         String accept = request.getHeader("Accept");
 
@@ -70,6 +71,36 @@ public class TasksApiController implements TasksApi
             try
             {
                 return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : \"1\",\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"High\",\n  \"status\" : \"Pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
+            }
+            catch (IOException e)
+            {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @PostMapping("/tasks/{id}")
+    public ResponseEntity<Task> updateTaskById(@Parameter(in = ParameterIn.PATH,
+                                                          description = "",
+                                                          required = true,
+                                                          schema = @Schema())
+                                               @PathVariable("taskId") String taskId,
+                                               @Parameter(in = ParameterIn.DEFAULT,
+                                                          description = "",
+                                                          required = true,
+                                                          schema = @Schema())
+                                               @Valid @RequestBody UpdateTaskRequest body)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"high\",\n  \"status\" : \"pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
             }
             catch (IOException e)
             {
@@ -102,6 +133,7 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @GetMapping
     public ResponseEntity<Void> deleteTaskById(@Parameter(in = ParameterIn.PATH,
                                                              description = "",
                                                              required=true,
@@ -111,6 +143,7 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @GetMapping
     public ResponseEntity<Task> getTaskById(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required=true,
@@ -163,35 +196,6 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    public ResponseEntity<Task> updateTaskById(@Parameter(in = ParameterIn.PATH,
-                                                          description = "",
-                                                          required=true,
-                                                          schema=@Schema())
-                                               @PathVariable("taskId") String taskId,
-                                               @Parameter(in = ParameterIn.DEFAULT,
-                                                          description = "",
-                                                          required=true,
-                                                          schema=@Schema())
-                                               @Valid @RequestBody UpdateTaskRequest body)
-    {
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json"))
-        {
-            try
-            {
-                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"high\",\n  \"status\" : \"pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
-            }
-            catch (IOException e)
-            {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
     public ResponseEntity<List<Task>> getTasksByUserName(@Parameter(in = ParameterIn.PATH,
                                                              description = "",
                                                              required=true,
@@ -206,5 +210,33 @@ public class TasksApiController implements TasksApi
         }
 
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public ResponseEntity<List<Task>> getTasksByUserId(@Parameter(in = ParameterIn.PATH,
+            description = "",
+            required=true,
+            schema=@Schema())
+                                                         @PathVariable("userName") long userId) throws SQLException
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            return new ResponseEntity<List<Task>>(databaseManager.getTasksByUserId(userId), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    public void deleteTasksById(@Parameter(in = ParameterIn.PATH,
+                                                                 description = "",
+                                                                 required = true,
+                                                                 schema = @Schema())
+                                                       @PathVariable("userName") long userId) throws SQLException
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+            databaseManager.deleteTaskById(userId);
     }
 }
