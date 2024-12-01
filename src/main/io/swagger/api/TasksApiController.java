@@ -82,12 +82,12 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @PostMapping("/tasks/{id}")
+    @PostMapping("/tasks/{taskId}")
     public ResponseEntity<Task> updateTaskById(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required = true,
                                                           schema = @Schema())
-                                               @PathVariable("taskId") String taskId,
+                                               @PathVariable("taskId") long taskId,
                                                @Parameter(in = ParameterIn.DEFAULT,
                                                           description = "",
                                                           required = true,
@@ -112,7 +112,7 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping
+    @GetMapping("/tasks")
     public ResponseEntity<List<Task>> getAllTasks()
     {
         String accept = request.getHeader("Accept");
@@ -133,14 +133,30 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping
-    public ResponseEntity<Void> deleteTaskById(@Parameter(in = ParameterIn.PATH,
-                                                             description = "",
-                                                             required=true,
-                                                             schema=@Schema()) @PathVariable("taskId") String taskId)
+    @DeleteMapping("/tasks/{taskId}")
+    public ResponseEntity<Void> deleteTasksById(@Parameter(in = ParameterIn.PATH,
+                                           description = "",
+                                           required = true,
+                                           schema = @Schema())
+                                @PathVariable("taskId") long taskId) throws SQLException
     {
         String accept = request.getHeader("Accept");
-        return new ResponseEntity<Void>(HttpStatus.NOT_IMPLEMENTED);
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                databaseManager.deleteTaskById(taskId);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
+            }
+            catch (SQLException e)
+            {
+                log.error("Error deleting task with ID: " + taskId, e);
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
     @GetMapping
@@ -196,27 +212,34 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @GetMapping("/tasks/by-username/{userName}")
     public ResponseEntity<List<Task>> getTasksByUserName(@Parameter(in = ParameterIn.PATH,
-                                                             description = "",
-                                                             required=true,
-                                                             schema=@Schema())
-                                                  @PathVariable("userName") String userName) throws SQLException
+                                                                    description = "The username of the user whose tasks are to be retrieved.",
+                                                                    required = true,
+                                                                    schema = @Schema())
+                                                         @PathVariable("userName") String userName)
     {
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json"))
         {
-            return new ResponseEntity<List<Task>>(databaseManager.getTasksByUserName(userName), HttpStatus.OK);
+            try {
+                return new ResponseEntity<List<Task>>(databaseManager.getTasksByUserName(userName), HttpStatus.OK);
+            }
+            catch (SQLException e) {
+                throw new RuntimeException(e);
+            }
         }
 
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @GetMapping("/tasks/by-id/{userId}")
     public ResponseEntity<List<Task>> getTasksByUserId(@Parameter(in = ParameterIn.PATH,
-            description = "",
-            required=true,
-            schema=@Schema())
-                                                         @PathVariable("userName") long userId) throws SQLException
+                                                                  description = "The ID of the user whose tasks are to be retrieved.",
+                                                                  required = true,
+                                                                  schema = @Schema())
+                                                       @PathVariable("userId") long userId) throws SQLException
     {
         String accept = request.getHeader("Accept");
 
@@ -226,17 +249,5 @@ public class TasksApiController implements TasksApi
         }
 
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public void deleteTasksById(@Parameter(in = ParameterIn.PATH,
-                                                                 description = "",
-                                                                 required = true,
-                                                                 schema = @Schema())
-                                                       @PathVariable("userName") long userId) throws SQLException
-    {
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json"))
-            databaseManager.deleteTaskById(userId);
     }
 }
