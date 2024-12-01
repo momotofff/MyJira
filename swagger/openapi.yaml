@@ -130,10 +130,10 @@ paths:
         '404':
           description: "Task not found"
 
-  /tasks/{userName}:
+  /tasks/by-username/{userName}:
     get:
-      operationId: getTaskByUserName
-      summary: "Get task by ID"
+      operationId: getTasksByUserName
+      summary: "Get tasks by username"
       tags:
         - Task
       parameters:
@@ -148,7 +148,39 @@ paths:
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/Task'
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          description: 'Bad request, invalid userName'
+        '404':
+          description: 'Task not found'
+        '500':
+          description: 'Internal server error'
+        default:
+          description: 'Successful operation'
+
+  /tasks/by-id/{userId}:
+    get:
+      operationId: getTasksByUserId
+      summary: "Get tasks by ID"
+      tags:
+        - Task
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Task found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
         '404':
           description: 'Task not found'
         default:
