@@ -20,6 +20,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.RestController;
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
@@ -82,6 +83,51 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
+    @GetMapping("/tasks")
+    public ResponseEntity<List<Task>> getAllTasks()
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                return new ResponseEntity(databaseManager.getTasks(), HttpStatus.OK);
+            }
+            catch (SQLException e)
+            {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<List<Task>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @GetMapping("/tasks/{taskId}")
+    public ResponseEntity<Task> getTaskById(@Parameter(in = ParameterIn.PATH,
+            description = "",
+            required=true,
+            schema=@Schema()) @PathVariable("taskId") String taskId
+    )   {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : \"1\",\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"High\",\n  \"status\" : \"Pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
+            }
+            catch (IOException e)
+            {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
     @PostMapping("/tasks/{taskId}")
     public ResponseEntity<Task> updateTaskById(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
@@ -112,27 +158,6 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping("/tasks")
-    public ResponseEntity<List<Task>> getAllTasks()
-    {
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json"))
-        {
-            try
-            {
-                return new ResponseEntity(databaseManager.getTasks(), HttpStatus.OK);
-            }
-            catch (SQLException e)
-            {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Task>>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<Void> deleteTasksById(@Parameter(in = ParameterIn.PATH,
                                            description = "",
@@ -159,58 +184,6 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @GetMapping
-    public ResponseEntity<Task> getTaskById(@Parameter(in = ParameterIn.PATH,
-                                                          description = "",
-                                                          required=true,
-                                                          schema=@Schema()) @PathVariable("taskId") String taskId
-)   {
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json"))
-        {
-            try
-            {
-                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : \"1\",\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"High\",\n  \"status\" : \"Pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
-            }
-            catch (IOException e)
-            {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    public ResponseEntity<Task> putTaskById(@Parameter(in = ParameterIn.PATH,
-                                                          description = "",
-                                                          required=true,
-                                                          schema=@Schema())
-                                               @PathVariable("taskId") String taskId,
-                                               @Parameter(in = ParameterIn.DEFAULT,
-                                                          description = "",
-                                                          required=true,
-                                                          schema=@Schema())
-                                               @Valid @RequestBody UpdateTaskRequest body)
-    {
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json"))
-        {
-            try
-            {
-                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : \"1\",\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"high\",\n  \"status\" : \"pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
-            }
-            catch (IOException e)
-            {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
-    }
 
     @GetMapping("/tasks/by-username/{userName}")
     public ResponseEntity<List<Task>> getTasksByUserName(@Parameter(in = ParameterIn.PATH,
@@ -246,6 +219,57 @@ public class TasksApiController implements TasksApi
         if (accept != null && accept.contains("application/json"))
         {
             return new ResponseEntity<List<Task>>(databaseManager.getTasksByUserId(userId), HttpStatus.OK);
+        }
+
+        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @GetMapping("/tasks/search/{keyword}")
+    public ResponseEntity<List<Task>> searchTasks(@NotNull @Parameter(in = ParameterIn.QUERY,
+                                                                      description = "" ,
+                                                                      required = true,
+                                                                      schema = @Schema())
+                                                  @Valid @RequestParam(value = "keyword",
+                                                                       required = true) String keyword)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                return new ResponseEntity<List<Task>>(objectMapper.readValue("[ {\n  \"author\" : 1,\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : 1,\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"Medium\",\n  \"status\" : \"Pending\"\n}, {\n  \"author\" : 1,\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : 1,\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"Medium\",\n  \"status\" : \"Pending\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
+            }
+            catch (IOException e)
+            {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<List<Task>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @GetMapping("/tasks/by-status/{status}")
+    public ResponseEntity<List<Task>> getTasksByStatus(@Parameter(in = ParameterIn.PATH,
+                                                                  description = "",
+                                                                  required = true,
+                                                                  schema = @Schema())
+                                                       @PathVariable("status") String status)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                return new ResponseEntity<List<Task>>(objectMapper.readValue("[ {\n  \"author\" : 1,\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : 1,\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"Medium\",\n  \"status\" : \"Pending\"\n}, {\n  \"author\" : 1,\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : 1,\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"Medium\",\n  \"status\" : \"Pending\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
+            }
+            catch (IOException e)
+            {
+                log.error("Couldn't serialize response for content type application/json", e);
+                return new ResponseEntity<List<Task>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
         }
 
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
