@@ -64,6 +64,13 @@ components:
 
     UpdateTaskRequest:
       type: object
+      required:
+        - title
+        - description
+        - status
+        - priority
+        - author
+        - assignee
       properties:
         title:
           type: string

@@ -20,7 +20,6 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
-import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -127,7 +126,7 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @PutMapping("/users/{id}")
+    @PutMapping("/{id}")
     public ResponseEntity<User> updateUserById(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required = true,
@@ -160,81 +159,105 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @GetMapping("/users/name/{username}")
+    @GetMapping("/name/{username}")
     public ResponseEntity<User> getUserByName(@Parameter(in = ParameterIn.PATH,
-                                                       description = "",
-                                                       required = true,
-                                                       schema = @Schema())
+                                                         description = "Username of the user",
+                                                         required = true,
+                                                         schema = @Schema())
                                               @PathVariable("username") String username)
     {
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json"))
-        {
-            try
-            {
-                return new ResponseEntity<User>(objectMapper.readValue("{\n  \"role\" : \"User\",\n  \"id\" : 1,\n  \"email\" : \"user@example.com\",\n  \"username\" : \"username\"\n}", User.class), HttpStatus.NOT_IMPLEMENTED);
-            }
-            catch (IOException e)
-            {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
         User user = null;
 
         try
         {
             user = databaseManager.getUserByName(username);
+
+            if (user != null)
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
         catch (SQLException e)
-
         {
-            throw new RuntimeException(e);
+            log.error("Error retrieving user by username", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
-
-        if (user != null)
-            return new ResponseEntity<>(user, HttpStatus.OK);
-
-        return new ResponseEntity<User>(HttpStatus.NOT_IMPLEMENTED);
     }
-
-    @DeleteMapping("/users/name/{username}")
-    public ResponseEntity<Void> deleteUserByName(@Parameter(in = ParameterIn.PATH,
-                                                          description = "",
-                                                          required=true,
-                                                          schema=@Schema())
-                                                 @PathVariable("username") String username,
-                                                 @RequestHeader(required = false) String accept) throws SQLException
+    @GetMapping("/id/{userId}")
+    public ResponseEntity<User> getUserById(@Parameter(in = ParameterIn.PATH,
+                                                       description = "ID of the user",
+                                                       required = true,
+                                                       schema = @Schema())
+                                            @PathVariable("userId") long userId)
     {
-        if (databaseManager.isUserExists(username))
+        User user = null;
+
+        try
         {
-            databaseManager.deleteUserByUserName(username);
-            return ResponseEntity.noContent().build();
+            user = databaseManager.getUserById(userId);
+
+            if (user != null)
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            else
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+
         }
-        else
+        catch (SQLException e)
         {
-            return ResponseEntity.notFound().build();
+            log.error("Error retrieving user by ID", e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @DeleteMapping("/users/id/{userId}")
+    @DeleteMapping("/name/{username}")
+    public ResponseEntity<Void> deleteUserByName(@Parameter(in = ParameterIn.PATH,
+                                                            description = "Username of the user to delete",
+                                                            required = true,
+                                                            schema = @Schema())
+                                                 @PathVariable("username") String username)
+    {
+        try
+        {
+            if (databaseManager.isUserExists(username))
+            {
+                databaseManager.deleteUserByUserName(username);
+                return ResponseEntity.noContent().build();
+            }
+            else
+            {
+                return ResponseEntity.notFound().build();
+            }
+        }
+        catch (SQLException e)
+        {
+            log.error("Error deleting user by username", e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @DeleteMapping("/users/{userId}")
     public ResponseEntity<Void> deleteUserById(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required=true,
                                                           schema=@Schema())
                                                  @PathVariable("userId") Long userId,
-                                                 @RequestHeader(required = false) String accept) throws SQLException
+                                                 @RequestHeader(required = false) String accept)
     {
-        if (databaseManager.isUserExists(userId))
+        try
         {
-            databaseManager.deleteUserByUserId(userId);
-            return ResponseEntity.noContent().build();
+            if (databaseManager.isUserExists(userId))
+            {
+                databaseManager.deleteUserByUserId(userId);
+                return ResponseEntity.noContent().build();
+            }
+            else
+            {
+                return ResponseEntity.notFound().build();
+            }
         }
-        else
+        catch (SQLException e)
         {
-            return ResponseEntity.notFound().build();
+            throw new RuntimeException(e);
         }
     }
 }

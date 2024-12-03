@@ -105,16 +105,16 @@ public class DatabaseManager
         return TasksDbManager.getTasks(connection);
     }
 
-    public List<Task> getTasksByUserName(String userName) throws SQLException
+    public List<Task> getTasksByAssigneeName(String userName) throws SQLException
     {
         Connection connection = getConnection();
-        return TasksDbManager.getTasksByUserName(connection, userName);
+        return TasksDbManager.getTasksByAssigneeName(connection, userName);
     }
 
-    public List<Task> getTasksByUserId(long userId) throws SQLException
+    public List<Task> getTasksByAssigneeId(long assigneeId) throws SQLException
     {
         Connection connection = getConnection();
-        return TasksDbManager.getTasksByUserId(connection, userId);
+        return TasksDbManager.getTasksByAssigneeId(connection, assigneeId);
     }
 
     public List<Task> getTasksByAuthorId(long userid) throws SQLException
