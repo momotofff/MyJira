@@ -4,6 +4,8 @@ import io.swagger.model.Task;
 import io.swagger.model.TaskPriority;
 import io.swagger.model.TaskStatus;
 import org.openapitools.jackson.nullable.JsonNullable;
+
+import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -328,5 +330,84 @@ class TasksDbManager
         }
 
         return tasks;
+    }
+
+    public static List<Task> searchTasks(Connection connection, String keyword) throws IOException
+    {
+        if (keyword == null || keyword.trim().isEmpty())
+            throw new IllegalArgumentException("Keyword cannot be null or empty");
+
+
+        List<Task> matchingTasks = new ArrayList<>();
+
+        String sql = "SELECT * FROM tasks WHERE LOWER(title) LIKE ? OR LOWER(description) LIKE ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            // Устанавливаем параметры запроса
+            String searchKeyword = "%" + keyword.toLowerCase() + "%";
+
+            preparedStatement.setString(1, searchKeyword);
+            preparedStatement.setString(2, searchKeyword);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                while (resultSet.next())
+                {
+                    Task task = new Task();
+                    task.setId(resultSet.getLong("id"));
+                    task.setTitle(resultSet.getString("title"));
+                    task.setDescription(resultSet.getString("description"));
+                    task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
+                    task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
+
+                    matchingTasks.add(task);
+                }
+            }
+        } catch (SQLException e) {
+            throw new IOException("Database error during task search", e);
+        }
+
+        if (matchingTasks.isEmpty()) {
+            throw new IOException("No tasks found matching the provided keyword");
+        }
+
+        return matchingTasks;
+    }
+
+    public static List<Task> getTasksByStatus(Connection connection, String status) throws IOException
+    {
+        List<Task> matchingTasks = new ArrayList<>();
+
+        String sql = "SELECT * FROM tasks WHERE status = ?";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setString(1, status);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                while (resultSet.next())
+                {
+                    Task task = new Task();
+                    task.setId(resultSet.getLong("id"));
+                    task.setTitle(resultSet.getString("title"));
+                    task.setDescription(resultSet.getString("description"));
+                    task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
+                    task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
+
+                    matchingTasks.add(task);
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new IOException("Database error during task search", e);
+        }
+
+        if (matchingTasks.isEmpty())
+            throw new IOException("No tasks found matching the provided status");
+
+        return matchingTasks;
     }
 }

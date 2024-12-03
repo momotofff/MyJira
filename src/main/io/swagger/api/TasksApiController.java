@@ -238,12 +238,15 @@ public class TasksApiController implements TasksApi
         {
             try
             {
-                return new ResponseEntity<List<Task>>(objectMapper.readValue("[ {\n  \"author\" : 1,\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : 1,\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"Medium\",\n  \"status\" : \"Pending\"\n}, {\n  \"author\" : 1,\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : 1,\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"Medium\",\n  \"status\" : \"Pending\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<List<Task>>(databaseManager.searchTasks(keyword), HttpStatus.OK);
+            }
+            catch (SQLException e)
+            {
+                throw new RuntimeException(e);
             }
             catch (IOException e)
             {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<List<Task>>(HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new RuntimeException(e);
             }
         }
 
@@ -263,12 +266,16 @@ public class TasksApiController implements TasksApi
         {
             try
             {
-                return new ResponseEntity<List<Task>>(objectMapper.readValue("[ {\n  \"author\" : 1,\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : 1,\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"Medium\",\n  \"status\" : \"Pending\"\n}, {\n  \"author\" : 1,\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : 1,\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"Medium\",\n  \"status\" : \"Pending\"\n} ]", List.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<List<Task>>(databaseManager.getTasksByStatus(status), HttpStatus.NOT_IMPLEMENTED);
             }
             catch (IOException e)
             {
                 log.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<List<Task>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+            catch (SQLException e)
+            {
+                throw new RuntimeException(e);
             }
         }
 

@@ -1,5 +1,7 @@
 package momotoff.myjira.dbmanager;
 import io.swagger.model.*;
+
+import java.io.IOException;
 import java.sql.*;
 import java.util.List;
 
@@ -133,5 +135,15 @@ public class DatabaseManager
         TasksDbManager.deleteTaskById(connection, id);
     }
 
+    public List<Task> searchTasks(String keyword) throws SQLException, IOException
+    {
+        Connection connection = getConnection();
+        return TasksDbManager.searchTasks(connection, keyword);
+    }
+
+    public List<Task> getTasksByStatus(String status) throws SQLException, IOException {
+        Connection connection = getConnection();
+        return TasksDbManager.getTasksByStatus(connection, status);
+    }
 
 }
