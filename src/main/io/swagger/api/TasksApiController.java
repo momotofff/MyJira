@@ -1,5 +1,7 @@
 package io.swagger.api;
 
+import io.swagger.model.TaskPriority;
+import io.swagger.model.TaskStatus;
 import momotoff.myjira.dbmanager.DatabaseManager;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
@@ -57,10 +59,11 @@ public class TasksApiController implements TasksApi
 
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String author = authentication.getName();
+        long authorId;
 
         try
         {
-            long authorId = databaseManager.getUserByName(author).getId();
+            authorId = databaseManager.getUserByName(author).getId();
         }
         catch (SQLException e)
         {
@@ -71,12 +74,11 @@ public class TasksApiController implements TasksApi
         {
             try
             {
-                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : \"1\",\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"High\",\n  \"status\" : \"Pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<Task>(databaseManager.createTask(body.getTitle(), body.getDescription(), TaskStatus.PENDING.getValue(), TaskPriority.MEDIUM.getValue(), authorId), HttpStatus.OK);
             }
-            catch (IOException e)
+            catch (SQLException e)
             {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new RuntimeException(e);
             }
         }
 
@@ -146,12 +148,11 @@ public class TasksApiController implements TasksApi
         {
             try
             {
-                return new ResponseEntity<Task>(objectMapper.readValue("{\n  \"author\" : \"Автор Задачи\",\n  \"description\" : \"Описание задачи 1\",\n  \"id\" : 1,\n  \"assignee\" : \"Исполнитель Задачи\",\n  \"title\" : \"Задача 1\",\n  \"priority\" : \"high\",\n  \"status\" : \"pending\"\n}", Task.class), HttpStatus.NOT_IMPLEMENTED);
+                return new ResponseEntity<Task>(databaseManager.updateTask(taskId, body.getTitle(), body.getDescription(), body.getStatus().toString(), body.getPriority().getValue(), taskId), HttpStatus.OK);
             }
-            catch (IOException e)
+            catch (SQLException e)
             {
-                log.error("Couldn't serialize response for content type application/json", e);
-                return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
+                throw new RuntimeException(e);
             }
         }
 
@@ -185,19 +186,19 @@ public class TasksApiController implements TasksApi
     }
 
 
-    @GetMapping("/tasks/by-username/{userName}")
-    public ResponseEntity<List<Task>> getTasksByUserName(@Parameter(in = ParameterIn.PATH,
+    @GetMapping("/tasks/by-username/{assigneeName}")
+    public ResponseEntity<List<Task>> getTasksByAssigneeName(@Parameter(in = ParameterIn.PATH,
                                                                     description = "The username of the user whose tasks are to be retrieved.",
                                                                     required = true,
                                                                     schema = @Schema())
-                                                         @PathVariable("userName") String userName)
+                                                         @PathVariable("assigneeName") String assigneeName)
     {
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json"))
         {
             try {
-                return new ResponseEntity<List<Task>>(databaseManager.getTasksByUserName(userName), HttpStatus.OK);
+                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAssigneeName(assigneeName), HttpStatus.OK);
             }
             catch (SQLException e) {
                 throw new RuntimeException(e);
@@ -207,18 +208,72 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping("/tasks/by-id/{userId}")
-    public ResponseEntity<List<Task>> getTasksByUserId(@Parameter(in = ParameterIn.PATH,
+    @GetMapping("/tasks/by-id/{assigneeId}")
+    public ResponseEntity<List<Task>> getTasksByAssigneeId(@Parameter(in = ParameterIn.PATH,
                                                                   description = "The ID of the user whose tasks are to be retrieved.",
                                                                   required = true,
                                                                   schema = @Schema())
-                                                       @PathVariable("userId") long userId) throws SQLException
+                                                       @PathVariable("userId") long userId)
     {
         String accept = request.getHeader("Accept");
 
         if (accept != null && accept.contains("application/json"))
         {
-            return new ResponseEntity<List<Task>>(databaseManager.getTasksByUserId(userId), HttpStatus.OK);
+            try
+            {
+                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAssigneeId(userId), HttpStatus.OK);
+            }
+            catch (SQLException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @GetMapping("/tasks/by-username/author/{authorName}")
+    public ResponseEntity<List<Task>> getTasksByAuthorName(@Parameter(in = ParameterIn.PATH,
+                                                                      description = "The username of the user whose tasks are to be retrieved.",
+                                                                      required = true,
+                                                                      schema = @Schema())
+                                                           @PathVariable("authorName") String authorName)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try {
+                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAuthorName(authorName), HttpStatus.OK);
+            }
+            catch (SQLException e)
+            {
+                throw new RuntimeException(e);
+            }
+        }
+
+        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @GetMapping("/tasks/by-id/author/{authorId}")
+    public ResponseEntity<List<Task>> getTasksByAuthorId(@Parameter(in = ParameterIn.PATH,
+            description = "The ID of the user whose tasks are to be retrieved.",
+            required = true,
+            schema = @Schema())
+                                                           @PathVariable("authorId") long authorId)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAuthorId(authorId), HttpStatus.OK);
+            }
+            catch (SQLException e)
+            {
+                throw new RuntimeException(e);
+            }
         }
 
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);

@@ -130,21 +130,21 @@ paths:
         '404':
           description: "Task not found"
 
-  /tasks/by-username/{userName}:
+  /tasks/by-username/{assigneeName}:
     get:
-      operationId: getTasksByUserName
-      summary: "Get tasks by username"
+      operationId: getTasksByAssigneeName
+      summary: "Get tasks by Assignee name"
       tags:
         - Task
       parameters:
-        - name: userName
+        - name: assigneeName
           in: path
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: Task found
+          description: Tasks found
           content:
             application/json:
               schema:
@@ -152,39 +152,97 @@ paths:
                 items:
                   $ref: '#/components/schemas/Task'
         '400':
-          description: 'Bad request, invalid userName'
+          description: 'Bad request, invalid assigneeName'
         '404':
-          description: 'Task not found'
+          description: 'No tasks found for the specified assigneeName'
         '500':
           description: 'Internal server error'
-        default:
-          description: 'Successful operation'
 
-  /tasks/by-id/{userId}:
+  /tasks/by-username/author/{authorName}:
     get:
-      operationId: getTasksByUserId
-      summary: "Get tasks by ID"
+      operationId: getTasksByAuthorName
+      summary: "Get tasks by Author name"
       tags:
         - Task
       parameters:
-        - name: userId
+        - name: authorName
           in: path
           required: true
           schema:
             type: string
       responses:
         '200':
-          description: Task found
+          description: Tasks found
           content:
             application/json:
               schema:
                 type: array
                 items:
                   $ref: '#/components/schemas/Task'
+        '400':
+          description: 'Bad request, invalid authorName'
         '404':
-          description: 'Task not found'
-        default:
-          description: 'Successful operation'
+          description: 'No tasks found for the specified authorName'
+        '500':
+          description: 'Internal server error'
+
+  /tasks/by-id/{assigneeId}:
+    get:
+      operationId: getTasksByAssigneeId
+      summary: "Get tasks by Assignee ID"
+      tags:
+        - Task
+      parameters:
+        - name: assigneeId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Tasks found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          description: 'Bad request, invalid assigneeId'
+        '404':
+          description: 'No tasks found for the specified assigneeId'
+        '500':
+          description: 'Internal server error'
+
+  /tasks/by-id/author/{authorId}:
+    get:
+      operationId: getTasksByAuthorId
+      summary: "Get tasks by Author ID"
+      tags:
+        - Task
+      parameters:
+        - name: authorId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: Tasks found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Task'
+        '400':
+          description: 'Bad request, invalid authorId'
+        '404':
+          description: 'No tasks found for the specified authorId'
+        '500':
+          description: 'Internal server error'
 
   /tasks/by-status/{status}:
     get:
@@ -362,6 +420,81 @@ paths:
           description: "successful operation"
         '404':
           description: "User not found"
+
+  /users/{userId}:
+    get:
+      operationId: getUserById
+      summary: "Get user by ID"
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '200':
+          description: "User found"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: "User not found"
+        default:
+          description: "successful operation"
+
+    put:
+      operationId: updateUserById
+      summary: "Update user by ID"
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: "User updated"
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/User'
+        '404':
+          description: "User not found"
+        default:
+          description: "successful operation"
+
+    delete:
+      operationId: deleteUserById
+      summary: "Delete User by ID"
+      tags:
+        - User
+      parameters:
+        - name: userId
+          in: path
+          required: true
+          schema:
+            type: integer
+            format: int64
+      responses:
+        '204':
+          description: "User deleted"
+        '404':
+          description: "User not found"
+        default:
+          description: "successful operation"
 
 components:
   schemas:

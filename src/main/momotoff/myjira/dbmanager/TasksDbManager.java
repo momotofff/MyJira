@@ -16,7 +16,7 @@ import java.util.List;
 
 class TasksDbManager
 {
-    public static List<Task> getTasksByUserName(Connection connection, String userName)
+    public static List<Task> getTasksByAssigneeName(Connection connection, String assigneeName)
     {
         String sql = "SELECT * FROM tasks WHERE assignee = ?";
         List<Task> list = new ArrayList<>();
@@ -25,7 +25,7 @@ class TasksDbManager
 
         try
         {
-            assigneeId = getUserIdByUsername(connection, userName);
+            assigneeId = getUserIdByName(connection, assigneeName);
         }
         catch (SQLException e)
         {
@@ -57,6 +57,35 @@ class TasksDbManager
         }
 
         return list;
+    }
+
+    public static List<Task> getTasksByAssigneeId(Connection connection, long assigneeId)
+    {
+        List<Task> tasks = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE assignee = ?"; // Предполагаем, что задачи присваиваются пользователям через поле assignee.
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setLong(1, assigneeId);
+            ResultSet resultSet = preparedStatement.executeQuery();
+
+            while (resultSet.next())
+            {
+                Task task = new Task();
+                task.setId(resultSet.getLong("id"));
+                task.setTitle(resultSet.getString("title"));
+                task.setDescription(resultSet.getString("description"));
+                task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
+                task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
+                tasks.add(task);
+            }
+        }
+        catch (SQLException e)
+        {
+            System.err.println("Error retrieving tasks for user ID = " + assigneeId + ": " + e.getMessage());
+        }
+
+        return tasks;
     }
 
     public static Task createTask(Connection connection, String title, String description, String status, String priority, Long authorId)
@@ -187,7 +216,7 @@ class TasksDbManager
         return task;
     }
 
-    private static long getUserIdByUsername(Connection connection, String userName) throws SQLException
+    private static long getUserIdByName(Connection connection, String userName) throws SQLException
     {
         String sql = "SELECT * FROM users WHERE userName = ?";
 
@@ -245,72 +274,53 @@ class TasksDbManager
         return false;
     }
 
-    public static List<Task> getTasksByUserId(Connection connection, long userId)
-    {
+    public static List<Task> getTasksByAuthorId(Connection connection, long authorId) {
         List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE assignee = ?"; // Предполагаем, что задачи присваиваются пользователям через поле assignee.
+        String sql = "SELECT * FROM tasks WHERE author = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
-        {
-            preparedStatement.setLong(1, userId);
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+            preparedStatement.setLong(1, authorId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
-            while (resultSet.next())
-            {
-                Task task = new Task();
-                task.setId(resultSet.getLong("id"));
-                task.setTitle(resultSet.getString("title"));
-                task.setDescription(resultSet.getString("description"));
-                task.setStatus(TaskStatus.fromValue(resultSet.getString("status"))); // Предполагаем, что у вас есть метод отрисовки статуса.
-                task.setPriority(TaskPriority.fromValue(resultSet.getString("priority"))); // Идентифицируем приоритет.
-                tasks.add(task);
-            }
-        }
-        catch (SQLException e)
-        {
-            System.err.println("Error retrieving tasks for user ID = " + userId + ": " + e.getMessage());
-        }
-
-        return tasks;
-    }
-
-    public static List<Task> getTasksByAuthorId(Connection connection, long userId)
-    {
-        List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE creator_id = ?"; // Предполагаем, что у нас есть поле creator_id для идентификации автора.
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
-        {
-            preparedStatement.setLong(1, userId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next())
-            {
+            while (resultSet.next()) {
                 Task task = new Task();
                 task.setId(resultSet.getLong("id"));
                 task.setTitle(resultSet.getString("title"));
                 task.setDescription(resultSet.getString("description"));
                 task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
                 task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
+                task.setAuthor(authorId);
                 tasks.add(task);
             }
         }
         catch (SQLException e)
         {
-            System.err.println("Error retrieving tasks for author ID = " + userId + ": " + e.getMessage());
+
+            System.err.println("Error retrieving tasks for author ID = " + authorId + ": " + e.getMessage());
         }
 
         return tasks;
     }
 
-    public static List<Task> getTasksByAuthorName(Connection connection, String userName)
+    public static List<Task> getTasksByAuthorName(Connection connection, String authorName)
     {
-        List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT t.* FROM tasks t JOIN users u ON t.creator_id = u.id WHERE u.username = ?"; // Соединяем таблицы для получения задач по имени автора.
+        List<Task> list = new ArrayList<>();
+        String sql = "SELECT * FROM tasks WHERE author = ?";
+
+        long authorId;
+
+        try
+        {
+            authorId = getUserIdByName(connection, authorName);
+        }
+        catch (SQLException e)
+        {
+            throw new RuntimeException(e);
+        }
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
-            preparedStatement.setString(1, userName);
+            preparedStatement.setLong(1, authorId);
             ResultSet resultSet = preparedStatement.executeQuery();
 
             while (resultSet.next())
@@ -318,18 +328,21 @@ class TasksDbManager
                 Task task = new Task();
                 task.setId(resultSet.getLong("id"));
                 task.setTitle(resultSet.getString("title"));
-                task.setDescription(resultSet.getString("description"));
+                task.setAssignee(JsonNullable.of(resultSet.getLong("assignee")));
                 task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
                 task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
-                tasks.add(task);
+                task.setAuthor(resultSet.getLong("author"));
+                task.setDescription(resultSet.getString("description"));
+                list.add(task);
             }
+
         }
         catch (SQLException e)
         {
-            System.err.println("Error retrieving tasks for author name = " + userName + ": " + e.getMessage());
+            System.err.println("Error retrieving tasks for author name = " + authorName + ": " + e.getMessage());
         }
 
-        return tasks;
+        return list;
     }
 
     public static List<Task> searchTasks(Connection connection, String keyword) throws IOException
