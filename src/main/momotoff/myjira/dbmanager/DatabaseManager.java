@@ -70,12 +70,6 @@ public class DatabaseManager
         UsersDbManager.deleteUserById(connection, userId);
     }
 
-    public long getUserByUserId(long userId) throws SQLException
-    {
-        Connection connection = getConnection();
-        return UsersDbManager.getUserNameByUserId(connection, userId);
-    }
-
     public boolean isUserExists(String userName) throws SQLException
     {
         Connection connection = getConnection();
