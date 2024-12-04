@@ -1,5 +1,6 @@
 package momotoff.myjira.dbmanager;
 import io.swagger.model.*;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.sql.*;
@@ -87,16 +88,28 @@ public class DatabaseManager
         return TasksDbManager.createTask(connection, title, description, status, priority, authorId);
     }
 
+    public List<Task> getTasks() throws SQLException
+    {
+        Connection connection = getConnection();
+        return TasksDbManager.getTasks(connection);
+    }
+
+    public Task getTaskById(long taskId) throws SQLException
+    {
+        Connection connection = getConnection();
+        return TasksDbManager.getTaskById(connection, taskId);
+    }
+
     public Task updateTask(long taskId, String title, String description, String status, String priority, Long assigneeId) throws SQLException
     {
         Connection connection = getConnection();
         return TasksDbManager.updateTask(connection, taskId, title, description, status, priority, assigneeId);
     }
 
-    public List<Task> getTasks() throws SQLException
+    public void deleteTaskById(long id) throws SQLException
     {
         Connection connection = getConnection();
-        return TasksDbManager.getTasks(connection);
+        TasksDbManager.deleteTaskById(connection, id);
     }
 
     public List<Task> getTasksByAssigneeName(String userName) throws SQLException
@@ -111,22 +124,16 @@ public class DatabaseManager
         return TasksDbManager.getTasksByAssigneeId(connection, assigneeId);
     }
 
-    public List<Task> getTasksByAuthorId(long userid) throws SQLException
-    {
-        Connection connection = getConnection();
-        return TasksDbManager.getTasksByAuthorId(connection, userid);
-    }
-
     public List<Task> getTasksByAuthorName(String userName) throws SQLException
     {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByAuthorName(connection, userName);
     }
 
-    public void deleteTaskById(long id) throws SQLException
+    public List<Task> getTasksByAuthorId(long userid) throws SQLException
     {
         Connection connection = getConnection();
-        TasksDbManager.deleteTaskById(connection, id);
+        return TasksDbManager.getTasksByAuthorId(connection, userid);
     }
 
     public List<Task> searchTasks(String keyword) throws SQLException, IOException
