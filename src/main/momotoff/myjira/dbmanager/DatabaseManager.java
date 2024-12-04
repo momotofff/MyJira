@@ -59,15 +59,15 @@ public class DatabaseManager
         return UsersDbManager.getUserById(connection, id);
     }
 
-    public void deleteUserByUserName(String userName) throws SQLException
+    public void deleteUserByName(String userName) throws SQLException
     {
         Connection connection = getConnection();
-        UsersDbManager.deleteUserByUserName(connection, userName);
+        UsersDbManager.deleteUserByName(connection, userName);
     }
-    public void deleteUserByUserId(Long userId) throws SQLException
+    public void deleteUserById(Long userId) throws SQLException
     {
         Connection connection = getConnection();
-        UsersDbManager.deleteUserByUserId(connection, userId);
+        UsersDbManager.deleteUserById(connection, userId);
     }
 
     public long getUserByUserId(long userId) throws SQLException

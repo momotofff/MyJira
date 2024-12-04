@@ -237,7 +237,7 @@ class UsersDbManager
         }
     }
 
-    public static void deleteUserByUserName(Connection connection, String userName)
+    public static void deleteUserByName(Connection connection, String userName)
     {
         if (!isUserExists(connection, userName))
             return;
@@ -254,7 +254,7 @@ class UsersDbManager
             throw new RuntimeException(e);
         }
     }
-    public static void deleteUserByUserId(Connection connection, Long userId)
+    public static void deleteUserById(Connection connection, Long userId)
     {
         if (!isUserExists(connection, userId))
             return;
@@ -309,6 +309,7 @@ class UsersDbManager
                     return resultSet.getInt(1) > 0;
             }
         }
+
         catch (SQLException e)
         {
             throw new RuntimeException(e);
@@ -316,6 +317,4 @@ class UsersDbManager
 
         return false;
     }
-
-
 }

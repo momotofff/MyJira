@@ -100,22 +100,22 @@ public class UsersDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    void deleteUserByUserName_ExpectSuccess()
+    void deleteUserByName_ExpectSuccess()
     {
         assertDoesNotThrow(() -> databaseManager.createUser(username, role, email));
         assertTrue(assertDoesNotThrow(() -> databaseManager.isUserExists(username)), "User should exist after creation");
 
-        assertDoesNotThrow(() -> databaseManager.deleteUserByUserName(username));
+        assertDoesNotThrow(() -> databaseManager.deleteUserByName(username));
         assertFalse(assertDoesNotThrow(() -> databaseManager.isUserExists(username)), "User should be deleted");
     }
 
     @Test
-    void deleteUserByUserId_ExpectSuccess()
+    void deleteUserById_ExpectSuccess()
     {
         Long userId = assertDoesNotThrow(() -> databaseManager.createUser(username, role, email).getId());
         assertTrue(assertDoesNotThrow(() -> databaseManager.isUserExists(userId), "User should exist after creation"));
 
-        assertDoesNotThrow(() -> databaseManager.deleteUserByUserId(userId));
+        assertDoesNotThrow(() -> databaseManager.deleteUserById(userId));
         assertFalse(assertDoesNotThrow(() -> databaseManager.isUserExists(userId)), "User should be deleted");
     }
 
@@ -135,5 +135,21 @@ public class UsersDbManagerTest extends DbManagerTestFixture
         assertTrue(assertDoesNotThrow(() -> databaseManager.isUserExists(username)), "User should exist after creation");
 
         assertNull(assertDoesNotThrow(() -> databaseManager.getUserByName("Emperor")));
+    }
+
+    @Test
+    void getUserById_ExpectSuccess()
+    {
+        User user = assertDoesNotThrow(() -> databaseManager.createUser(username, role, email));
+        assertTrue(assertDoesNotThrow(() -> databaseManager.isUserExists(user.getId())), "User should exist after creation");
+
+        assertNotNull(assertDoesNotThrow(() -> databaseManager.getUserByName(username)));
+    }
+
+    @Test
+    void getUserById_ExpectFailed()
+    {
+        assertFalse(assertDoesNotThrow(() -> databaseManager.isUserExists(0L)), "User should no exist after creation");
+        assertNull(assertDoesNotThrow(() -> databaseManager.getUserById(0L)));
     }
 }

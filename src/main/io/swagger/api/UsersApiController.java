@@ -220,7 +220,7 @@ public class UsersApiController implements UsersApi
         {
             if (databaseManager.isUserExists(username))
             {
-                databaseManager.deleteUserByUserName(username);
+                databaseManager.deleteUserByName(username);
                 return ResponseEntity.noContent().build();
             }
             else
@@ -247,7 +247,7 @@ public class UsersApiController implements UsersApi
         {
             if (databaseManager.isUserExists(userId))
             {
-                databaseManager.deleteUserByUserId(userId);
+                databaseManager.deleteUserById(userId);
                 return ResponseEntity.noContent().build();
             }
             else
