@@ -210,34 +210,7 @@ class UsersDbManager
         return user;
     }
 
-    public static long getUserNameByUserId(Connection connection, long userId)
-    {
-        String sql = "SELECT * FROM users WHERE id = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
-        {
-            preparedStatement.setLong(1, userId);
-            ResultSet rs = preparedStatement.executeQuery();
-
-            if (rs.next())
-                return rs.getLong("userName");
-            else
-                throw new SQLException("User not found: " + userId);
-
-        }
-
-        catch (NumberFormatException e)
-        {
-            throw new IllegalArgumentException("Invalid user ID: " + userId, e);
-        }
-
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-    }
-
-    public static void deleteUserByUserName(Connection connection, String userName)
+    public static void deleteUserByName(Connection connection, String userName)
     {
         if (!isUserExists(connection, userName))
             return;
@@ -254,7 +227,7 @@ class UsersDbManager
             throw new RuntimeException(e);
         }
     }
-    public static void deleteUserByUserId(Connection connection, Long userId)
+    public static void deleteUserById(Connection connection, Long userId)
     {
         if (!isUserExists(connection, userId))
             return;
@@ -309,6 +282,7 @@ class UsersDbManager
                     return resultSet.getInt(1) > 0;
             }
         }
+
         catch (SQLException e)
         {
             throw new RuntimeException(e);
@@ -316,6 +290,4 @@ class UsersDbManager
 
         return false;
     }
-
-
 }

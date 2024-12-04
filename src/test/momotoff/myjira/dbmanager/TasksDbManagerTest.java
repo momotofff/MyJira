@@ -24,6 +24,7 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     {
         JdbcDatabaseDelegate containerDelegate = new JdbcDatabaseDelegate(postgreSQLContainer, "");
         containerDelegate.execute("DELETE FROM tasks", "", 0, true, true);
+        containerDelegate.execute("DELETE FROM users", "", 0, true, true);
     }
 
     @Test
@@ -45,7 +46,8 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     @Test
     public void createTaskByAnUnauthorizedUser_ExpectFailed()
     {
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () ->
+        {
             databaseManager.createTask(title, description, status, priority, unauthorizedUserId);
         });
 
@@ -53,15 +55,41 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void getTasksByAuthorName()
+    public void getTasksByAuthorName() throws SQLException
     {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
 
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+
+        List<Task> returnedTasks = assertDoesNotThrow(() -> databaseManager.getTasksByAuthorName(username));
+
+        for (Task t : returnedTasks)
+        {
+            assertEquals(t.getTitle(), title);
+            assertEquals(t.getDescription(), description);
+            assertEquals(t.getStatus().getValue(), status);
+            assertEquals(t.getPriority().getValue(), priority);
+        }
     }
 
     @Test
-    public void getTasksByAuthorId()
+    public void getTasksByAuthorId() throws SQLException
     {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
 
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+
+        List<Task> returnedTasks = assertDoesNotThrow(() -> databaseManager.getTasksByAuthorId(user.getId()));
+
+        for (Task t : returnedTasks)
+        {
+            assertEquals(t.getTitle(), title);
+            assertEquals(t.getDescription(), description);
+            assertEquals(t.getStatus().getValue(), status);
+            assertEquals(t.getPriority().getValue(), priority);
+        }
     }
 
     @Test
@@ -72,6 +100,48 @@ public class TasksDbManagerTest extends DbManagerTestFixture
 
     @Test
     public void getTasksByAssigneeId()
+    {
+
+    }
+
+    @Test
+    public void getTasks() throws SQLException
+    {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+
+        List<Task> returnedTasks = assertDoesNotThrow(() -> databaseManager.getTasksByAuthorId(user.getId()));
+        assertEquals(returnedTasks.size(), 1);
+    }
+
+    @Test
+    public void getTaskById()
+    {
+
+    }
+
+    @Test
+    public void updateTask()
+    {
+
+    }
+
+    @Test
+    public void deleteTaskById()
+    {
+
+    }
+
+    @Test
+    public void searchTasks()
+    {
+
+    }
+
+    @Test
+    public void getTasksByStatus()
     {
 
     }

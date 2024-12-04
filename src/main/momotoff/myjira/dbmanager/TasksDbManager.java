@@ -4,6 +4,7 @@ import io.swagger.model.Task;
 import io.swagger.model.TaskPriority;
 import io.swagger.model.TaskStatus;
 import org.openapitools.jackson.nullable.JsonNullable;
+import org.springframework.http.ResponseEntity;
 
 import java.io.IOException;
 import java.sql.Connection;
@@ -171,6 +172,38 @@ class TasksDbManager
         }
 
         return list;
+    }
+
+    public static Task getTaskById(Connection connection, long taskId)
+    {
+        String sql = "SELECT * FROM tasks WHERE id = ?";
+        Task task = null;
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setLong(1, taskId);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                if (resultSet.next())
+                {
+                    task = new Task();
+                    task.setId(resultSet.getLong("id"));
+                    task.setTitle(resultSet.getString("title"));
+                    task.setAssignee(JsonNullable.of(resultSet.getLong("assignee")));
+                    task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
+                    task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
+                    task.setAuthor(resultSet.getLong("author"));
+                    task.setDescription(resultSet.getString("description"));
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            System.err.println("Error retrieving task: " + e.getMessage());
+        }
+
+        return task;
     }
 
     public static Task updateTask(Connection connection, long taskId, String title, String description, String status, String priority, Long assigneeId)
