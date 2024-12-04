@@ -162,10 +162,10 @@ public class TasksApiController implements TasksApi
 
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<Void> deleteTasksById(@Parameter(in = ParameterIn.PATH,
-                                           description = "",
-                                           required = true,
-                                           schema = @Schema())
-                                @PathVariable("taskId") long taskId) throws SQLException
+                                                                description = "",
+                                                                required = true,
+                                                                schema = @Schema())
+                                                @PathVariable("taskId") long taskId) throws SQLException
     {
         String accept = request.getHeader("Accept");
 
@@ -189,10 +189,10 @@ public class TasksApiController implements TasksApi
 
     @GetMapping("/tasks/by-username/{assigneeName}")
     public ResponseEntity<List<Task>> getTasksByAssigneeName(@Parameter(in = ParameterIn.PATH,
-                                                                    description = "The username of the user whose tasks are to be retrieved.",
-                                                                    required = true,
-                                                                    schema = @Schema())
-                                                         @PathVariable("assigneeName") String assigneeName)
+                                                                        description = "The username of the user whose tasks are to be retrieved.",
+                                                                        required = true,
+                                                                        schema = @Schema())
+                                                            @PathVariable("assigneeName") String assigneeName)
     {
         String accept = request.getHeader("Accept");
 
@@ -211,10 +211,10 @@ public class TasksApiController implements TasksApi
 
     @GetMapping("/tasks/by-id/{assigneeId}")
     public ResponseEntity<List<Task>> getTasksByAssigneeId(@Parameter(in = ParameterIn.PATH,
-                                                                  description = "The ID of the user whose tasks are to be retrieved.",
-                                                                  required = true,
-                                                                  schema = @Schema())
-                                                       @PathVariable("userId") long userId)
+                                                                      description = "The ID of the user whose tasks are to be retrieved.",
+                                                                      required = true,
+                                                                      schema = @Schema())
+                                                           @PathVariable("userId") long userId)
     {
         String accept = request.getHeader("Accept");
 
@@ -258,10 +258,10 @@ public class TasksApiController implements TasksApi
 
     @GetMapping("/tasks/by-id/author/{authorId}")
     public ResponseEntity<List<Task>> getTasksByAuthorId(@Parameter(in = ParameterIn.PATH,
-            description = "The ID of the user whose tasks are to be retrieved.",
-            required = true,
-            schema = @Schema())
-                                                           @PathVariable("authorId") long authorId)
+                                                                    description = "The ID of the user whose tasks are to be retrieved.",
+                                                                    required = true,
+                                                                    schema = @Schema())
+                                                         @PathVariable("authorId") long authorId)
     {
         String accept = request.getHeader("Accept");
 
