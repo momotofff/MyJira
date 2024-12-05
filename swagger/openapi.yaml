@@ -186,7 +186,7 @@ paths:
         '500':
           description: 'Internal server error'
 
-  /tasks/by-id/{assigneeId}:
+  /tasks/by-assignee/{assigneeId}:
     get:
       operationId: getTasksByAssigneeId
       summary: "Get tasks by Assignee ID"
@@ -212,6 +212,47 @@ paths:
           description: 'Bad request, invalid assigneeId'
         '404':
           description: 'No tasks found for the specified assigneeId'
+        '500':
+          description: 'Internal server error'
+
+  /tasks/{taskId}/assign/{userId}:
+    post:
+      summary: "Assign a user to a task"
+      tags:
+        - Task
+      operationId: assignUser
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          description: "ID of the task to be assigned"
+          schema:
+            type: integer
+            format: int64
+        - name: userId
+          in: path
+          required: true
+          description: "ID of the user to assign to the task"
+          schema:
+            type: integer
+            format: int64
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/CreateTaskRequest'
+      responses:
+        '200':
+          description: 'Successful task assignment'
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Task'
+        '400':
+          description: 'Bad request, invalid taskId or userId'
+        '404':
+          description: 'Task not found or user not found'
         '500':
           description: 'Internal server error'
 

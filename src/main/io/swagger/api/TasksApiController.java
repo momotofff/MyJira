@@ -209,7 +209,7 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping("/tasks/by-id/{assigneeId}")
+    @GetMapping("/tasks/by-assignee/{assigneeId}")
     public ResponseEntity<List<Task>> getTasksByAssigneeId(@Parameter(in = ParameterIn.PATH,
                                                                       description = "The ID of the user whose tasks are to be retrieved.",
                                                                       required = true,
@@ -336,5 +336,26 @@ public class TasksApiController implements TasksApi
         }
 
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
+    }
+
+    @PostMapping("/tasks/{taskId}/assign/{userId}")
+    public ResponseEntity<Task> assignUser(@PathVariable("taskId") long taskId,
+                                           @PathVariable("userId") long userId)
+    {
+        String accept = request.getHeader("Accept");
+
+        if (accept != null && accept.contains("application/json"))
+        {
+            try
+            {
+                return new ResponseEntity<>(databaseManager.assignUser(taskId, userId), HttpStatus.OK);
+            }
+            catch (SQLException e)
+            {
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+            }
+        }
+
+        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

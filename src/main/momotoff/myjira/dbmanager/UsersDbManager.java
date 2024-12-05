@@ -45,7 +45,6 @@ class UsersDbManager
             if (e.getMessage().contains("Duplicate key value violates unique constraint"))
                 throw new SQLException("Username already exists: " + username, e);
 
-
             throw new SQLException("Error creating user: " + username, e);
         }
         catch (IllegalArgumentException e)
@@ -61,9 +60,8 @@ class UsersDbManager
         String sql = "UPDATE users SET role = ?::userrole, email = ? WHERE username = ?";
         User updatedUser = null;
 
-        if (body == null || body.getRole() == null || body.getEmail() == null) {
+        if (body == null || body.getRole() == null || body.getEmail() == null)
             throw new IllegalArgumentException("Request body or its properties cannot be null");
-        }
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
@@ -99,9 +97,8 @@ class UsersDbManager
         String sql = "UPDATE users SET role = ?::userrole, email = ? WHERE id = ?";
         User updatedUser = null;
 
-        if (body == null || body.getRole() == null || body.getEmail() == null) {
+        if (body == null || body.getRole() == null || body.getEmail() == null)
             throw new IllegalArgumentException("Request body or its properties cannot be null");
-        }
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
@@ -186,16 +183,20 @@ class UsersDbManager
         return user;
     }
 
-    public static User getUserById(Connection connection, long id) throws SQLException {
+    public static User getUserById(Connection connection, long id) throws SQLException
+    {
         String sql = "SELECT * FROM users WHERE id = ?";
 
         User user = null;
 
-        try (PreparedStatement pstmt = connection.prepareStatement(sql)) {
+        try (PreparedStatement pstmt = connection.prepareStatement(sql))
+        {
             pstmt.setLong(1, id);
 
-            try (ResultSet rs = pstmt.executeQuery()) {
-                if (rs.next()) {
+            try (ResultSet rs = pstmt.executeQuery())
+            {
+                if (rs.next())
+                {
                     user = new User();
                     user.setUsername(rs.getString("username"));
                     user.setEmail(rs.getString("email"));
@@ -203,7 +204,8 @@ class UsersDbManager
                 }
             }
         }
-        catch (SQLException e) {
+        catch (SQLException e)
+        {
             throw new SQLException("Error while trying to get user by id", e);
         }
 
@@ -251,7 +253,6 @@ class UsersDbManager
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
-
             preparedStatement.setString(1, userName);
 
             try (ResultSet resultSet = preparedStatement.executeQuery())

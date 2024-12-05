@@ -456,4 +456,22 @@ class TasksDbManager
 
         return matchingTasks;
     }
+
+    public static Task assignUser(Connection connection, long taskId, long userId) throws SQLException
+    {
+        String sql = "UPDATE tasks SET assignee = ? WHERE id = ?";
+        try (PreparedStatement statement = connection.prepareStatement(sql))
+        {
+            statement.setLong(1, userId);
+            statement.setLong(2, taskId);
+            int affectedRows = statement.executeUpdate();
+
+            if (affectedRows == 0)
+            {
+                throw new SQLException("No task found with given ID: " + taskId);
+            }
+        }
+
+        return getTaskById(connection, taskId);
+    }
 }
