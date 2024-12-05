@@ -142,9 +142,15 @@ public class DatabaseManager
         return TasksDbManager.searchTasks(connection, keyword);
     }
 
-    public List<Task> getTasksByStatus(String status) throws SQLException, IOException {
+    public List<Task> getTasksByStatus(String status) throws SQLException, IOException
+    {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByStatus(connection, status);
     }
 
+    public Task assignUser(long taskId, long userId) throws SQLException
+    {
+        Connection connection = getConnection();
+        return TasksDbManager.assignUser(connection, taskId, userId);
+    }
 }

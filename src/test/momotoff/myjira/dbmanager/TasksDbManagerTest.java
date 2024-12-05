@@ -19,6 +19,10 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     private final String priority = "High";
     private final Long unauthorizedUserId = 5L;
 
+    private final String userNameAssign = "userNameAssign";
+    private final String roleAssign = "User";
+    private final String emailAssign = "userNameAssign@example.com";
+
     @BeforeEach
     public void beforeEach()
     {
@@ -93,15 +97,42 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void getTasksByAssigneeName()
+    public void assignUser() throws SQLException
     {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+        User assignUser = databaseManager.createUser(userNameAssign, roleAssign, emailAssign);
+        assertNotNull(assignUser);
 
+        Task task = assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        Task updatedTask = databaseManager.assignUser(task.getId(), assignUser.getId());
+
+        assertEquals(assignUser.getId(), updatedTask.getAssignee().get());
     }
 
     @Test
-    public void getTasksByAssigneeId()
-    {
+    public void getTasksByAssigneeName() throws SQLException {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+        User assignUser = databaseManager.createUser(userNameAssign, roleAssign, emailAssign);
+        assertNotNull(assignUser);
 
+        Task task = assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertDoesNotThrow(() -> databaseManager.assignUser(task.getId(), assignUser.getId()));
+
+        assertNotNull(databaseManager.getTasksByAssigneeName(assignUser.getUsername()));
+    }
+
+    @Test
+    public void getTasksByAssigneeId() throws SQLException
+    {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+        User assignUser = databaseManager.createUser(userNameAssign, roleAssign, emailAssign);
+        assertNotNull(assignUser);
+
+        Task task = assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertNotNull(databaseManager.assignUser(task.getId(), assignUser.getId()));
     }
 
     @Test
