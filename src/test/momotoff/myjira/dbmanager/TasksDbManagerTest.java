@@ -6,6 +6,7 @@ import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 
+import java.io.IOException;
 import java.sql.SQLException;
 import java.util.List;
 
@@ -148,9 +149,13 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void getTaskById()
+    public void getTaskById() throws SQLException
     {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
 
+        long taskId = (assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()))).getId();
+        assertNotNull(assertDoesNotThrow(() -> databaseManager.getTaskById(taskId)));
     }
 
     @Test
@@ -160,9 +165,15 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void deleteTaskById()
+    public void deleteTaskById() throws SQLException
     {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
 
+        long taskId = (assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()))).getId();
+
+        assertDoesNotThrow(() -> databaseManager.deleteTaskById(taskId));
+        assertNull(databaseManager.getTaskById(taskId));
     }
 
     @Test
@@ -172,8 +183,45 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void getTasksByStatus()
+    public void getTasksByStatus_ExpectSuccess() throws SQLException, IOException
     {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertEquals(databaseManager.getTasksByStatus(status).size(), 1);
+    }
+
+    @Test
+    public void getTasksByPriority_ExpectSuccess() throws SQLException, IOException
+    {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertEquals(databaseManager.getTasksByPriority(priority).size(), 1);
+
+    }
+
+    @Test
+    public void getTasksByPriority_ExpectFailed_IOException() throws SQLException
+    {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertThrows(IOException.class, () -> databaseManager.getTasksByPriority("priority"));
+
+    }
+
+    @Test
+    public void getTasksByPriority_ExpectFailed_IllegalArgumentException() throws SQLException
+    {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertThrows(IOException.class, () -> databaseManager.getTasksByPriority("priority"));
 
     }
 }

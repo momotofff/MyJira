@@ -148,6 +148,12 @@ public class DatabaseManager
         return TasksDbManager.getTasksByStatus(connection, status);
     }
 
+    public List<Task> getTasksByPriority(String priority) throws SQLException, IOException
+    {
+        Connection connection = getConnection();
+        return TasksDbManager.getTasksByPriority(connection, priority);
+    }
+
     public Task assignUser(long taskId, long userId) throws SQLException
     {
         Connection connection = getConnection();
