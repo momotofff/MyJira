@@ -425,7 +425,7 @@ class TasksDbManager
     {
         List<Task> matchingTasks = new ArrayList<>();
 
-        String sql = "SELECT * FROM tasks WHERE status = ?";
+        String sql = "SELECT * FROM tasks WHERE status = ?::taskstatus";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
@@ -457,6 +457,42 @@ class TasksDbManager
         return matchingTasks;
     }
 
+    public static List<Task> getTasksByPriority(Connection connection, String priority) throws IOException
+    {
+        List<Task> list = new ArrayList<>();
+
+        if (priority == null || priority.trim().isEmpty())
+            throw new IllegalArgumentException("Priority must not be null or empty");
+
+        String sql = "SELECT * FROM tasks WHERE priority = ?::taskpriority";
+
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
+            preparedStatement.setString(1, priority);
+
+            try (ResultSet resultSet = preparedStatement.executeQuery())
+            {
+                while (resultSet.next())
+                {
+                    Task task = new Task();
+                    task.setId(resultSet.getLong("id"));
+                    task.setTitle(resultSet.getString("title"));
+                    task.setDescription(resultSet.getString("description"));
+                    task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
+                    task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
+
+                    list.add(task);
+                }
+            }
+        }
+        catch (SQLException e)
+        {
+            throw new IOException("Database error during task search", e);
+        }
+
+        return list;
+    }
+
     public static Task assignUser(Connection connection, long taskId, long userId) throws SQLException
     {
         String sql = "UPDATE tasks SET assignee = ? WHERE id = ?";
@@ -474,4 +510,6 @@ class TasksDbManager
 
         return getTaskById(connection, taskId);
     }
+
+
 }
