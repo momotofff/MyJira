@@ -451,9 +451,6 @@ class TasksDbManager
             throw new IOException("Database error during task search", e);
         }
 
-        if (matchingTasks.isEmpty())
-            throw new IOException("No tasks found matching the provided status");
-
         return matchingTasks;
     }
 
