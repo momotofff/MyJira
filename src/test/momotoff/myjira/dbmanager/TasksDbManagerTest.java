@@ -16,12 +16,12 @@ public class TasksDbManagerTest extends DbManagerTestFixture
 {
     private final String title = "Tas2324";
     private final String description = "Description for Task 1";
-    private final String status = "Pending";
-    private final String priority = "High";
+    private final String status = "Pending";    // TODO: Remove hardcode, use from generated instead
+    private final String priority = "High";     // TODO: Remove hardcode, use from generated instead
     private final Long unauthorizedUserId = 5L;
 
     private final String userNameAssign = "userNameAssign";
-    private final String roleAssign = "User";
+    private final String roleAssign = "User";   // TODO: Remove hardcode, use from generated instead
     private final String emailAssign = "userNameAssign@example.com";
 
     @BeforeEach
@@ -51,8 +51,7 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     @Test
     public void createTaskByAnUnauthorizedUser_ExpectFailed()
     {
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () ->
-        {
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
             databaseManager.createTask(title, description, status, priority, unauthorizedUserId);
         });
 
@@ -145,7 +144,7 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
 
         List<Task> returnedTasks = assertDoesNotThrow(() -> databaseManager.getTasksByAuthorId(user.getId()));
-        assertEquals(returnedTasks.size(), 1);
+        assertEquals(1, returnedTasks.size());
     }
 
     @Test
@@ -189,7 +188,7 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-        assertEquals(databaseManager.getTasksByStatus(status).size(), 1);
+        assertEquals(1, databaseManager.getTasksByStatus(status).size());
     }
 
     @Test
@@ -209,7 +208,7 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-        assertEquals(databaseManager.getTasksByStatus("Resolved").size(), 0);
+        assertEquals(0, databaseManager.getTasksByStatus("Resolved").size());
     }
 
     @Test
@@ -219,7 +218,7 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-        assertEquals(databaseManager.getTasksByPriority(priority).size(), 1);
+        assertEquals(1, databaseManager.getTasksByPriority(priority).size());
     }
 
     @Test
@@ -230,7 +229,6 @@ public class TasksDbManagerTest extends DbManagerTestFixture
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
         assertThrows(IOException.class, () -> databaseManager.getTasksByPriority("priority"));
-
     }
 
     @Test
@@ -242,6 +240,5 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
         assertThrows(IllegalArgumentException.class, () -> databaseManager.getTasksByPriority(null));
         assertThrows(IllegalArgumentException.class, () -> databaseManager.getTasksByPriority(""));
-
     }
 }

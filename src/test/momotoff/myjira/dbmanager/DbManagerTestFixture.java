@@ -16,7 +16,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class DbManagerTestFixture
 {
     final static String username = "testUser";
-    final static String role = "User";
+    final static String role = "User"; // TODO: Remove hardcode, use from generated instead
     final static String email = "testUser@example.com";
 
     private static final String USER = "postgres";

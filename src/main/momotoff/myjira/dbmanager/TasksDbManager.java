@@ -507,6 +507,4 @@ class TasksDbManager
 
         return getTaskById(connection, taskId);
     }
-
-
 }

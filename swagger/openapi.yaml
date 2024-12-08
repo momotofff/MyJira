@@ -12,6 +12,7 @@ servers:
     description: Dev server
 
 paths:
+  #TODO: Move all task-related API methods to tasks-api.yaml
   /tasks:
     get:
       summary: "Method for getting a list of tasks"
@@ -129,7 +130,7 @@ paths:
           description: "Successful operation"
         '404':
           description: "Task not found"
-
+  # TODO: /tasks/by-assignee/{userName}, or just remove - we should use id
   /tasks/by-username/{assigneeName}:
     get:
       operationId: getTasksByAssigneeName
@@ -157,7 +158,7 @@ paths:
           description: 'No tasks found for the specified assigneeName'
         '500':
           description: 'Internal server error'
-
+  # TODO: /tasks/by-author/{userName}, or just remove - we should use id
   /tasks/by-username/author/{authorName}:
     get:
       operationId: getTasksByAuthorName
@@ -214,7 +215,7 @@ paths:
           description: 'No tasks found for the specified assigneeId'
         '500':
           description: 'Internal server error'
-
+  # TODO: remove, we set assignee via simple task update
   /tasks/{taskId}/assign/{userId}:
     post:
       summary: "Assign a user to a task"
@@ -255,7 +256,7 @@ paths:
           description: 'Task not found or user not found'
         '500':
           description: 'Internal server error'
-
+  #TODO: /tasks/by-author/{userId}:
   /tasks/by-id/author/{authorId}:
     get:
       operationId: getTasksByAuthorId
@@ -313,7 +314,6 @@ paths:
         default:
           description: 'Successful operation'
 
-
   /tasks/search:
     get:
       operationId: searchTasks
@@ -341,7 +341,7 @@ paths:
           description: 'Internal server error'
         default:
           description: 'Successful operation'
-
+  #TODO: Move all user-related API methods to users-api.yaml
   /users:
     get:
       operationId: getAllUsers

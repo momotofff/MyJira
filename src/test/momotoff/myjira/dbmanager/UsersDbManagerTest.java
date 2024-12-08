@@ -64,13 +64,13 @@ public class UsersDbManagerTest extends DbManagerTestFixture
         User updatedUser = databaseManager.updateUserByName(username, updateRequest);
         assertNotNull(updatedUser);
         assertEquals("new_email@example.com", updatedUser.getEmail());
-        assertEquals("Viewer", updatedUser.getRole().toString());
+        assertEquals("Viewer", updatedUser.getRole().toString()); // TODO: Remove hardcode, use from generated instead
 
         // Проверяем, что данные обновлены в базе данных
         User fetchedUser = databaseManager.getUserByName(username);
         assertNotNull(fetchedUser);
         assertEquals("new_email@example.com", fetchedUser.getEmail());
-        assertEquals("Viewer", fetchedUser.getRole().toString());
+        assertEquals("Viewer", fetchedUser.getRole().toString()); // TODO: Remove hardcode, use from generated instead
     }
 
     @Test
@@ -83,7 +83,7 @@ public class UsersDbManagerTest extends DbManagerTestFixture
 
         // Подготовим запрос на обновление
         UpdateUserRequest updateRequest = new UpdateUserRequest();
-        updateRequest.setRole(UserRole.VIEWER);
+        updateRequest.setRole(UserRole.VIEWER); // TODO: Remove hardcode, use from generated instead
         updateRequest.setEmail("new_email@example.com");
 
         // Обновляем пользователя и проверяем успешность операции
