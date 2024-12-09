@@ -186,29 +186,6 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
-
-    @GetMapping("/tasks/by-username/{assigneeName}")
-    public ResponseEntity<List<Task>> getTasksByAssigneeName(@Parameter(in = ParameterIn.PATH,
-                                                                        description = "The username of the user whose tasks are to be retrieved.",
-                                                                        required = true,
-                                                                        schema = @Schema())
-                                                            @PathVariable("assigneeName") String assigneeName)
-    {
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json"))
-        {
-            try {
-                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAssigneeName(assigneeName), HttpStatus.OK);
-            }
-            catch (SQLException e) {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
     @GetMapping("/tasks/by-assignee/{assigneeId}")
     public ResponseEntity<List<Task>> getTasksByAssigneeId(@Parameter(in = ParameterIn.PATH,
                                                                       description = "The ID of the user whose tasks are to be retrieved.",
@@ -223,29 +200,6 @@ public class TasksApiController implements TasksApi
             try
             {
                 return new ResponseEntity<List<Task>>(databaseManager.getTasksByAssigneeId(userId), HttpStatus.OK);
-            }
-            catch (SQLException e)
-            {
-                throw new RuntimeException(e);
-            }
-        }
-
-        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    @GetMapping("/tasks/by-username/author/{authorName}")
-    public ResponseEntity<List<Task>> getTasksByAuthorName(@Parameter(in = ParameterIn.PATH,
-                                                                      description = "The username of the user whose tasks are to be retrieved.",
-                                                                      required = true,
-                                                                      schema = @Schema())
-                                                           @PathVariable("authorName") String authorName)
-    {
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json"))
-        {
-            try {
-                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAuthorName(authorName), HttpStatus.OK);
             }
             catch (SQLException e)
             {
@@ -336,26 +290,5 @@ public class TasksApiController implements TasksApi
         }
 
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
-    }
-
-    @PostMapping("/tasks/{taskId}/assign/{userId}")
-    public ResponseEntity<Task> assignUser(@PathVariable("taskId") long taskId,
-                                           @PathVariable("userId") long userId)
-    {
-        String accept = request.getHeader("Accept");
-
-        if (accept != null && accept.contains("application/json"))
-        {
-            try
-            {
-                return new ResponseEntity<>(databaseManager.assignUser(taskId, userId), HttpStatus.OK);
-            }
-            catch (SQLException e)
-            {
-                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-            }
-        }
-
-        return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 }

@@ -17,49 +17,6 @@ import java.util.List;
 
 class TasksDbManager
 {
-    public static List<Task> getTasksByAssigneeName(Connection connection, String assigneeName)
-    {
-        String sql = "SELECT * FROM tasks WHERE assignee = ?";
-        List<Task> list = new ArrayList<>();
-
-        long assigneeId;
-
-        try
-        {
-            assigneeId = getUserIdByName(connection, assigneeName);
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
-        {
-            preparedStatement.setLong(1, assigneeId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next())
-            {
-                Task task = new Task();
-                task.setId(resultSet.getLong("id"));
-                task.setTitle(resultSet.getString("title"));
-                task.setAssignee(JsonNullable.of(resultSet.getLong("assignee")));
-                task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
-                task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
-                task.setAuthor(resultSet.getLong("author"));
-                task.setDescription(resultSet.getString("description"));
-                list.add(task);
-            }
-
-        }
-        catch (SQLException e)
-        {
-            e.printStackTrace();
-        }
-
-        return list;
-    }
-
     public static List<Task> getTasksByAssigneeId(Connection connection, long assigneeId)
     {
         List<Task> tasks = new ArrayList<>();
@@ -335,49 +292,6 @@ class TasksDbManager
         return tasks;
     }
 
-    public static List<Task> getTasksByAuthorName(Connection connection, String authorName)
-    {
-        List<Task> list = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE author = ?";
-
-        long authorId;
-
-        try
-        {
-            authorId = getUserIdByName(connection, authorName);
-        }
-        catch (SQLException e)
-        {
-            throw new RuntimeException(e);
-        }
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
-        {
-            preparedStatement.setLong(1, authorId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            while (resultSet.next())
-            {
-                Task task = new Task();
-                task.setId(resultSet.getLong("id"));
-                task.setTitle(resultSet.getString("title"));
-                task.setAssignee(JsonNullable.of(resultSet.getLong("assignee")));
-                task.setStatus(TaskStatus.fromValue(resultSet.getString("status")));
-                task.setPriority(TaskPriority.fromValue(resultSet.getString("priority")));
-                task.setAuthor(resultSet.getLong("author"));
-                task.setDescription(resultSet.getString("description"));
-                list.add(task);
-            }
-
-        }
-        catch (SQLException e)
-        {
-            System.err.println("Error retrieving tasks for author name = " + authorName + ": " + e.getMessage());
-        }
-
-        return list;
-    }
-
     public static List<Task> searchTasks(Connection connection, String keyword) throws IOException
     {
         if (keyword == null || keyword.trim().isEmpty())
@@ -488,23 +402,5 @@ class TasksDbManager
         }
 
         return list;
-    }
-
-    public static Task assignUser(Connection connection, long taskId, long userId) throws SQLException
-    {
-        String sql = "UPDATE tasks SET assignee = ? WHERE id = ?";
-        try (PreparedStatement statement = connection.prepareStatement(sql))
-        {
-            statement.setLong(1, userId);
-            statement.setLong(2, taskId);
-            int affectedRows = statement.executeUpdate();
-
-            if (affectedRows == 0)
-            {
-                throw new SQLException("No task found with given ID: " + taskId);
-            }
-        }
-
-        return getTaskById(connection, taskId);
     }
 }

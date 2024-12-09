@@ -130,62 +130,6 @@ paths:
           description: "Successful operation"
         '404':
           description: "Task not found"
-  # TODO: /tasks/by-assignee/{userName}, or just remove - we should use id
-  /tasks/by-username/{assigneeName}:
-    get:
-      operationId: getTasksByAssigneeName
-      summary: "Get tasks by Assignee name"
-      tags:
-        - Task
-      parameters:
-        - name: assigneeName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Tasks found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '400':
-          description: 'Bad request, invalid assigneeName'
-        '404':
-          description: 'No tasks found for the specified assigneeName'
-        '500':
-          description: 'Internal server error'
-  # TODO: /tasks/by-author/{userName}, or just remove - we should use id
-  /tasks/by-username/author/{authorName}:
-    get:
-      operationId: getTasksByAuthorName
-      summary: "Get tasks by Author name"
-      tags:
-        - Task
-      parameters:
-        - name: authorName
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Tasks found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '400':
-          description: 'Bad request, invalid authorName'
-        '404':
-          description: 'No tasks found for the specified authorName'
-        '500':
-          description: 'Internal server error'
 
   /tasks/by-assignee/{assigneeId}:
     get:
@@ -213,47 +157,6 @@ paths:
           description: 'Bad request, invalid assigneeId'
         '404':
           description: 'No tasks found for the specified assigneeId'
-        '500':
-          description: 'Internal server error'
-  # TODO: remove, we set assignee via simple task update
-  /tasks/{taskId}/assign/{userId}:
-    post:
-      summary: "Assign a user to a task"
-      tags:
-        - Task
-      operationId: assignUser
-      parameters:
-        - name: taskId
-          in: path
-          required: true
-          description: "ID of the task to be assigned"
-          schema:
-            type: integer
-            format: int64
-        - name: userId
-          in: path
-          required: true
-          description: "ID of the user to assign to the task"
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTaskRequest'
-      responses:
-        '200':
-          description: 'Successful task assignment'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-        '400':
-          description: 'Bad request, invalid taskId or userId'
-        '404':
-          description: 'Task not found or user not found'
         '500':
           description: 'Internal server error'
   #TODO: /tasks/by-author/{userId}:

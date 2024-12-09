@@ -112,22 +112,10 @@ public class DatabaseManager
         TasksDbManager.deleteTaskById(connection, id);
     }
 
-    public List<Task> getTasksByAssigneeName(String userName) throws SQLException
-    {
-        Connection connection = getConnection();
-        return TasksDbManager.getTasksByAssigneeName(connection, userName);
-    }
-
     public List<Task> getTasksByAssigneeId(long assigneeId) throws SQLException
     {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByAssigneeId(connection, assigneeId);
-    }
-
-    public List<Task> getTasksByAuthorName(String userName) throws SQLException
-    {
-        Connection connection = getConnection();
-        return TasksDbManager.getTasksByAuthorName(connection, userName);
     }
 
     public List<Task> getTasksByAuthorId(long userid) throws SQLException
@@ -152,11 +140,5 @@ public class DatabaseManager
     {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByPriority(connection, priority);
-    }
-
-    public Task assignUser(long taskId, long userId) throws SQLException
-    {
-        Connection connection = getConnection();
-        return TasksDbManager.assignUser(connection, taskId, userId);
     }
 }
