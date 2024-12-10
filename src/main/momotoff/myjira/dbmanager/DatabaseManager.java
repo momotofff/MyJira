@@ -130,8 +130,7 @@ public class DatabaseManager
         return TasksDbManager.searchTasks(connection, keyword);
     }
 
-    public List<Task> getTasksByStatus(String status) throws SQLException, IOException
-    {
+    public List<Task> getTasksByStatus(String status) throws SQLException, IOException {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByStatus(connection, status);
     }

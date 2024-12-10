@@ -6,8 +6,18 @@ services:
       - "8081:8080"
     volumes:
       - ./swagger/openapi.yaml:/openapi.yaml
-      - ./swagger/users.yaml:/users.yaml
-      - ./swagger/tasks.yaml:/tasks.yaml
+      - ./swagger/components/user.yaml:/user.yaml
+      - ./swagger/components/task.yaml:/task.yaml
+      - ./swagger/components/error.yaml:/error.yaml
+      - ./swagger/paths/tasks.yaml:/tasks.yaml
+      - ./swagger/paths/tasksByTaskId.yaml:/tasksByTaskId.yaml
+      - ./swagger/paths/tasksByAssigneeId.yaml:/tasksByAssigneeId.yaml
+      - ./swagger/paths/tasksByAuthorId.yaml:/tasksByAuthorId.yaml
+      - ./swagger/paths/tasksByStatus.yaml:/tasksByStatus.yaml
+      - ./swagger/paths/tasksSearch.yaml:/tasksSearch.yaml
+      - ./swagger/paths/users.yaml:/users.yaml
+      - ./swagger/paths/usersUserName.yaml:/usersUserName.yaml
+      - ./swagger/paths/usersUserId.yaml:/usersUserId.yaml
     environment:
       SWAGGER_FILE: /openapi.yaml
 
@@ -18,8 +28,18 @@ services:
       - "8082:8080"
     volumes:
       - ./swagger/openapi.yaml:/openapi.yaml
-      - ./swagger/users.yaml:/users.yaml
-      - ./swagger/tasks.yaml:/tasks.yaml
+      - ./swagger/components/user.yaml:/user.yaml
+      - ./swagger/components/task.yaml:/task.yaml
+      - ./swagger/components/error.yaml:/error.yaml
+      - ./swagger/paths/tasks.yaml:/tasks.yaml
+      - ./swagger/paths/tasksByTaskId.yaml:/tasksByTaskId.yaml
+      - ./swagger/paths/tasksByAssigneeId.yaml:/tasksByAssigneeId.yaml
+      - ./swagger/paths/tasksByAuthorId.yaml:/tasksByAuthorId.yaml
+      - ./swagger/paths/tasksByStatus.yaml:/tasksByStatus.yaml
+      - ./swagger/paths/tasksSearch.yaml:/tasksSearch.yaml
+      - ./swagger/paths/users.yaml:/users.yaml
+      - ./swagger/paths/usersUserName.yaml:/usersUserName.yaml
+      - ./swagger/paths/usersUserId.yaml:/usersUserId.yaml
     environment:
       SWAGGER_JSON: /openapi.yaml
 

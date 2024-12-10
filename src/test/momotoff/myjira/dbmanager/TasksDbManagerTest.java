@@ -152,9 +152,19 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void searchTasks()
+    public void searchTasks() throws SQLException, IOException
     {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
 
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertDoesNotThrow(() -> databaseManager.createTask(title, "description", status, priority, user.getId()));
+        assertDoesNotThrow(() -> databaseManager.createTask(title, "new test task", status, priority, user.getId()));
+
+        List<Task> returnedTasks = assertDoesNotThrow(() -> databaseManager.getTasksByAuthorId(user.getId()));
+        assertEquals(3, returnedTasks.size());
+        assertEquals(2, databaseManager.searchTasks("description").size());
+        assertEquals(2, databaseManager.searchTasks("task").size());
     }
 
     @Test
@@ -168,7 +178,7 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void getTasksByStatus_ExpectFailed_IOException() throws SQLException, IOException
+    public void getTasksByStatus_ExpectFailed_IOException() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);

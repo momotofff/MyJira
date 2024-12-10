@@ -12,467 +12,62 @@ servers:
     description: Dev server
 
 paths:
-  #TODO: Move all task-related API methods to tasks-api.yaml
   /tasks:
-    get:
-      summary: "Method for getting a list of tasks"
-      description: "The method is intended to obtain a list of all tasks saved in the database."
-      tags:
-        - Task
-      operationId: getAllTasks
-      responses:
-        '200':
-          description: "List of tasks"
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        default:
-          description: 'Successful operation'
-        '501':
-          description: 'Method not implemented in code'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-    post:
-      summary: "Task creation method"
-      tags:
-        - Task
-      operationId: createTask
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateTaskRequest'
-      responses:
-        '201':
-          description: 'Successful task creation'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-        default:
-          description: "Successful operation"
+    $ref: './paths/tasks.yaml'
 
   /tasks/{taskId}:
-    get:
-      operationId: getTaskById
-      summary: "Get task by ID"
-      tags:
-        - Task
-      parameters:
-        - name: taskId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Task found
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-        '404':
-          description: 'Task not found'
-        default:
-          description: 'Successful operation'
+    $ref: './paths/tasksByTaskId.yaml'
 
-    put:
-      operationId: updateTaskById
-      summary: "Update task"
-      tags:
-        - Task
-      parameters:
-        - name: taskId
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateTaskRequest'
-      responses:
-        '200':
-          description: 'Update task'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Task'
-        default:
-          description: 'Successful operation'
-        '404':
-          description: 'Task not found'
+  /tasks/by-assignee/{userId}:
+    $ref: './paths/tasksByAssigneeId.yaml'
 
-    delete:
-      operationId: deleteTaskById
-      summary: "Task deleted"
-      tags:
-        - Task
-      parameters:
-        - name: taskId
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: "Task deleted"
-        default:
-          description: "Successful operation"
-        '404':
-          description: "Task not found"
-
-  /tasks/by-assignee/{assigneeId}:
-    get:
-      operationId: getTasksByAssigneeId
-      summary: "Get tasks by Assignee ID"
-      tags:
-        - Task
-      parameters:
-        - name: assigneeId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Tasks found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '400':
-          description: 'Bad request, invalid assigneeId'
-        '404':
-          description: 'No tasks found for the specified assigneeId'
-        '500':
-          description: 'Internal server error'
-  #TODO: /tasks/by-author/{userId}:
-  /tasks/by-id/author/{authorId}:
-    get:
-      operationId: getTasksByAuthorId
-      summary: "Get tasks by Author ID"
-      tags:
-        - Task
-      parameters:
-        - name: authorId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: Tasks found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '400':
-          description: 'Bad request, invalid authorId'
-        '404':
-          description: 'No tasks found for the specified authorId'
-        '500':
-          description: 'Internal server error'
+  /tasks/by-author/{userId}:
+    $ref: './paths/tasksByAuthorId.yaml'
 
   /tasks/by-status/{status}:
-    get:
-      operationId: getTasksByStatus
-      summary: "Get tasks by status"
-      tags:
-        - Task
-      parameters:
-        - name: status
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Tasks found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '404':
-          description: 'No tasks found for this status'
-        '500':
-          description: 'Internal server error'
-        default:
-          description: 'Successful operation'
+    $ref: './paths/tasksByStatus.yaml'
 
   /tasks/search:
-    get:
-      operationId: searchTasks
-      summary: "Search for tasks by keyword"
-      tags:
-        - Task
-      parameters:
-        - name: keyword
-          in: query
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: Tasks found
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/Task'
-        '404':
-          description: 'No tasks found matching the keyword'
-        '500':
-          description: 'Internal server error'
-        default:
-          description: 'Successful operation'
-  #TODO: Move all user-related API methods to users-api.yaml
+    $ref: './paths/tasksSearch.yaml'
+
   /users:
-    get:
-      operationId: getAllUsers
-      summary: "Get list of users"
-      tags:
-        - User
-      responses:
-        '200':
-          description: list of users
-          content:
-            application/json:
-              schema:
-                type: array
-                items:
-                  $ref: '#/components/schemas/User'
-        '400':
-          description: 'Bad request'
-        '500':
-          description: 'Internal server error'
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/Error'
-
-        default:
-          description: "successful operation"
-
-    post:
-      operationId: postUser
-      summary: "Create user"
-      tags:
-        - User
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/CreateUserRequest'
-      responses:
-        '201':
-          description: Пользователь создан
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: "successful operation"
+    $ref: './paths/users.yaml'
 
   /users/{username}:
-    get:
-      operationId: getUserByName
-      summary: "Get user by name"
-      tags:
-        - User
-      parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '200':
-          description: "User found"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          description: "User not found"
-        default:
-          description: "successful operation"
-
-    put:
-      operationId: updateUserByName
-      summary: "Update user"
-      tags:
-        - User
-      parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserRequest'
-      responses:
-        '200':
-          description: "User updated"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        default:
-          description: "successful operation"
-        '404':
-          description: "User not found"
-
-    delete:
-      operationId: deleteUserByName
-      summary: "Deleted User"
-      tags:
-        - User
-      parameters:
-        - name: username
-          in: path
-          required: true
-          schema:
-            type: string
-      responses:
-        '204':
-          description: "User deleted"
-        default:
-          description: "successful operation"
-        '404':
-          description: "User not found"
+    $ref: './paths/usersUserName.yaml'
 
   /users/{userId}:
-    get:
-      operationId: getUserById
-      summary: "Get user by ID"
-      tags:
-        - User
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '200':
-          description: "User found"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          description: "User not found"
-        default:
-          description: "successful operation"
-
-    put:
-      operationId: updateUserById
-      summary: "Update user by ID"
-      tags:
-        - User
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      requestBody:
-        required: true
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UpdateUserRequest'
-      responses:
-        '200':
-          description: "User updated"
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/User'
-        '404':
-          description: "User not found"
-        default:
-          description: "successful operation"
-
-    delete:
-      operationId: deleteUserById
-      summary: "Delete User by ID"
-      tags:
-        - User
-      parameters:
-        - name: userId
-          in: path
-          required: true
-          schema:
-            type: integer
-            format: int64
-      responses:
-        '204':
-          description: "User deleted"
-        '404':
-          description: "User not found"
-        default:
-          description: "successful operation"
+    $ref: './paths/usersUserId.yaml'
 
 components:
   schemas:
     TaskStatus:
-      $ref: tasks.yaml#/components/schemas/TaskStatus
+      $ref: components/task.yaml#/components/schemas/TaskStatus
 
     TaskPriority:
-      $ref: tasks.yaml#/components/schemas/TaskPriority
+      $ref: components/task.yaml#/components/schemas/TaskPriority
 
     Task:
-      $ref: tasks.yaml#/components/schemas/Task
+      $ref: components/task.yaml#/components/schemas/Task
 
     CreateTaskRequest:
-      $ref: tasks.yaml#/components/schemas/CreateTaskRequest
+      $ref: components/task.yaml#/components/schemas/CreateTaskRequest
 
     UpdateTaskRequest:
-      $ref: tasks.yaml#/components/schemas/UpdateTaskRequest
+      $ref: components/task.yaml#/components/schemas/UpdateTaskRequest
 
     UserRole:
-      $ref: users.yaml#/components/schemas/UserRole
+      $ref: components/user.yaml#/components/schemas/UserRole
 
     User:
-      $ref: users.yaml#/components/schemas/User
+      $ref: components/user.yaml#/components/schemas/User
 
     CreateUserRequest:
-      $ref: users.yaml#/components/schemas/CreateUserRequest
+      $ref: components/user.yaml#/components/schemas/CreateUserRequest
 
     UpdateUserRequest:
-      $ref: users.yaml#/components/schemas/UpdateUserRequest
+      $ref: components/user.yaml#/components/schemas/UpdateUserRequest
 
     Error:
-      type: object
-      properties:
-        code:
-          type: integer
-        message:
-          type: string
+      $ref: components/error.yaml#/components/schemas/Error
+

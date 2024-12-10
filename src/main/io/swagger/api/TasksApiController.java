@@ -186,7 +186,7 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @GetMapping("/tasks/by-assignee/{assigneeId}")
+    @GetMapping("/tasks/by-assignee/{userId}")
     public ResponseEntity<List<Task>> getTasksByAssigneeId(@Parameter(in = ParameterIn.PATH,
                                                                       description = "The ID of the user whose tasks are to be retrieved.",
                                                                       required = true,
@@ -210,12 +210,12 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping("/tasks/by-id/author/{authorId}")
+    @GetMapping("/tasks/by-author/{userId}")
     public ResponseEntity<List<Task>> getTasksByAuthorId(@Parameter(in = ParameterIn.PATH,
                                                                     description = "The ID of the user whose tasks are to be retrieved.",
                                                                     required = true,
                                                                     schema = @Schema())
-                                                         @PathVariable("authorId") long authorId)
+                                                         @PathVariable("userId") long userId)
     {
         String accept = request.getHeader("Accept");
 
@@ -223,7 +223,7 @@ public class TasksApiController implements TasksApi
         {
             try
             {
-                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAuthorId(authorId), HttpStatus.OK);
+                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAuthorId(userId), HttpStatus.OK);
             }
             catch (SQLException e)
             {

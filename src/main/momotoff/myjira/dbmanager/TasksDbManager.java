@@ -264,7 +264,8 @@ class TasksDbManager
         return false;
     }
 
-    public static List<Task> getTasksByAuthorId(Connection connection, long authorId) {
+    public static List<Task> getTasksByAuthorId(Connection connection, long authorId)
+    {
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE author = ?";
 
