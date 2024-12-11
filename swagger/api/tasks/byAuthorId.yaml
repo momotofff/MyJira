@@ -1,0 +1,28 @@
+/tasks/by-author/{userId}:
+  get:
+    operationId: getTasksByAuthorId
+    summary: "Get tasks by Author ID"
+    tags:
+      - Task
+    parameters:
+      - name: userId
+        in: path
+        required: true
+        schema:
+          type: integer
+          format: int64
+    responses:
+      '200':
+        description: Tasks found
+        content:
+          application/json:
+            schema:
+              type: array
+              items:
+                $ref: '#/components/schemas/Task'
+      '400':
+        description: 'Bad request, invalid authorId'
+      '404':
+        description: 'No tasks found for the specified authorId'
+      '500':
+        description: 'Internal server error'

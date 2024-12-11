@@ -55,7 +55,7 @@ class UsersDbManager
         return user;
     }
 
-    public static User updatingUserByName(Connection connection, String username, UpdateUserRequest body)
+    public static User updatingUserByName(Connection connection, String username, UpdateUserRequest body) throws SQLException
     {
         String sql = "UPDATE users SET role = ?::userrole, email = ? WHERE username = ?";
         User updatedUser = null;
@@ -86,13 +86,13 @@ class UsersDbManager
         }
         catch (SQLException e)
         {
-            System.err.println("Error updating user: " + e.getMessage());
+            throw new SQLException("Error updating user", e);
         }
 
         return updatedUser;
     }
 
-    public static User updatingUserById(Connection connection, long userId, UpdateUserRequest body)
+    public static User updatingUserById(Connection connection, long userId, UpdateUserRequest body) throws SQLException
     {
         String sql = "UPDATE users SET role = ?::userrole, email = ? WHERE id = ?";
         User updatedUser = null;
@@ -123,7 +123,7 @@ class UsersDbManager
         }
         catch (SQLException e)
         {
-            System.err.println("Error updating user: " + e.getMessage());
+            throw new SQLException("Error updating user", e);
         }
 
         return updatedUser;
@@ -212,42 +212,37 @@ class UsersDbManager
         return user;
     }
 
-    public static void deleteUserByName(Connection connection, String userName)
+    public static void deleteUserByName(Connection connection, String userName) throws SQLException
     {
-        if (!isUserExists(connection, userName))
-            return;
-
         String sql = "DELETE FROM users WHERE userName = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
             preparedStatement.setString(1, userName);
-            preparedStatement.executeUpdate(); // Выполнение запроса на удаление
+            preparedStatement.executeUpdate();
         }
         catch (SQLException e)
         {
-            throw new RuntimeException(e);
+            throw new SQLException("Error while trying to delete user by name", e);
         }
     }
-    public static void deleteUserById(Connection connection, Long userId)
-    {
-        if (!isUserExists(connection, userId))
-            return;
 
+    public static void deleteUserById(Connection connection, Long userId) throws SQLException
+    {
         String sql = "DELETE FROM users WHERE id = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
             preparedStatement.setLong(1, userId);
-            preparedStatement.executeUpdate(); // Выполнение запроса на удаление
+            preparedStatement.executeUpdate();
         }
         catch (SQLException e)
         {
-            throw new RuntimeException(e);
+            throw new SQLException("Error while trying to delete user by id", e);
         }
     }
 
-    public static boolean isUserExists(Connection connection, String userName)
+    public static boolean isUserExists(Connection connection, String userName) throws SQLException
     {
         String sql = "SELECT COUNT(*) FROM users WHERE userName = ?";
 
@@ -263,13 +258,13 @@ class UsersDbManager
         }
         catch (SQLException e)
         {
-            throw new RuntimeException(e);
+            throw new SQLException("Error while trying to check user by name", e);
         }
 
         return false;
     }
 
-    public static boolean isUserExists(Connection connection, Long userId)
+    public static boolean isUserExists(Connection connection, Long userId) throws SQLException
     {
         String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
 
@@ -283,10 +278,9 @@ class UsersDbManager
                     return resultSet.getInt(1) > 0;
             }
         }
-
         catch (SQLException e)
         {
-            throw new RuntimeException(e);
+            throw new SQLException("Error while trying to check user by id", e);
         }
 
         return false;

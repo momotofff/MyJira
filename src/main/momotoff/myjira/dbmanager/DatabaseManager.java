@@ -112,22 +112,10 @@ public class DatabaseManager
         TasksDbManager.deleteTaskById(connection, id);
     }
 
-    public List<Task> getTasksByAssigneeName(String userName) throws SQLException
-    {
-        Connection connection = getConnection();
-        return TasksDbManager.getTasksByAssigneeName(connection, userName);
-    }
-
     public List<Task> getTasksByAssigneeId(long assigneeId) throws SQLException
     {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByAssigneeId(connection, assigneeId);
-    }
-
-    public List<Task> getTasksByAuthorName(String userName) throws SQLException
-    {
-        Connection connection = getConnection();
-        return TasksDbManager.getTasksByAuthorName(connection, userName);
     }
 
     public List<Task> getTasksByAuthorId(long userid) throws SQLException
@@ -136,13 +124,13 @@ public class DatabaseManager
         return TasksDbManager.getTasksByAuthorId(connection, userid);
     }
 
-    public List<Task> searchTasks(String keyword) throws SQLException, IOException
+    public List<Task> searchTasks(String keyword) throws SQLException
     {
         Connection connection = getConnection();
         return TasksDbManager.searchTasks(connection, keyword);
     }
 
-    public List<Task> getTasksByStatus(String status) throws SQLException, IOException
+    public List<Task> getTasksByStatus(String status) throws SQLException
     {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByStatus(connection, status);
@@ -152,11 +140,5 @@ public class DatabaseManager
     {
         Connection connection = getConnection();
         return TasksDbManager.getTasksByPriority(connection, priority);
-    }
-
-    public Task assignUser(long taskId, long userId) throws SQLException
-    {
-        Connection connection = getConnection();
-        return TasksDbManager.assignUser(connection, taskId, userId);
     }
 }
