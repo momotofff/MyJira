@@ -1,45 +1,46 @@
-/tasks:
-  get:
-    summary: "Method for getting a list of tasks"
-    description: "The method is intended to obtain a list of all tasks saved in the database."
-    tags:
-      - Task
-    operationId: getAllTasks
-    responses:
-      '200':
-        description: "List of tasks"
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/Task'
-      default:
-        description: 'Successful operation'
-      '501':
-        description: 'Method not implemented in code'
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Error'
+paths:
+  /tasks:
+    get:
+      summary: "Method for getting a list of tasks"
+      description: "The method is intended to obtain a list of all tasks saved in the database."
+      tags:
+        - Task
+      operationId: getAllTasks
+      responses:
+        '200':
+          description: "List of tasks"
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../../schemas/task.yaml#/components/schemas/Task'
+        default:
+          description: 'Successful operation'
+        '501':
+          description: 'Method not implemented in code'
+          content:
+            application/json:
+              schema:
+                $ref: '../../schemas/error.yaml#/components/schemas/Error'
 
-  post:
-    summary: "Task creation method"
-    tags:
-      - Task
-    operationId: createTask
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/CreateTaskRequest'
-    responses:
-      '201':
-        description: 'Successful task creation'
+    post:
+      summary: "Task creation method"
+      tags:
+        - Task
+      operationId: createTask
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Task'
-      default:
-        description: "Successful operation"
+              $ref: '../../schemas/task.yaml#/components/schemas/CreateTaskRequest'
+      responses:
+        '201':
+          description: 'Successful task creation'
+          content:
+            application/json:
+              schema:
+                $ref: '../../schemas/task.yaml#/components/schemas/Task'
+        default:
+          description: "Successful operation"

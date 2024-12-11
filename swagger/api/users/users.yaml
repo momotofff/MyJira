@@ -1,47 +1,48 @@
-/users:
-  get:
-    operationId: getAllUsers
-    summary: "Get list of users"
-    tags:
-      - User
-    responses:
-      '200':
-        description: list of users
-        content:
-          application/json:
-            schema:
-              type: array
-              items:
-                $ref: '#/components/schemas/User'
-      '400':
-        description: 'Bad request'
-      '500':
-        description: 'Internal server error'
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Error'
+paths:
+  /users:
+    get:
+      operationId: getAllUsers
+      summary: "Get list of users"
+      tags:
+        - User
+      responses:
+        '200':
+          description: list of users
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../../schemas/user.yaml#/components/schemas/User'
+        '400':
+          description: 'Bad request'
+        '500':
+          description: 'Internal server error'
+          content:
+            application/json:
+              schema:
+                $ref: '../../schemas/error.yaml#/components/schemas/Error'
 
-      default:
-        description: "successful operation"
+        default:
+          description: "successful operation"
 
-  post:
-    operationId: postUser
-    summary: "Create user"
-    tags:
-      - User
-    requestBody:
-      required: true
-      content:
-        application/json:
-          schema:
-            $ref: '#/components/schemas/CreateUserRequest'
-    responses:
-      '201':
-        description: Пользователь создан
+    post:
+      operationId: postUser
+      summary: "Create user"
+      tags:
+        - User
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
-      default:
-        description: "successful operation"
+              $ref: '../../schemas/user.yaml#/components/schemas/CreateUserRequest'
+      responses:
+        '201':
+          description: Пользователь создан
+          content:
+            application/json:
+              schema:
+                $ref: '../../schemas/user.yaml#/components/schemas/User'
+        default:
+          description: "successful operation"

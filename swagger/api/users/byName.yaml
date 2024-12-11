@@ -1,71 +1,72 @@
-/users/{username}:
-  get:
-    operationId: getUserByName
-    summary: "Get user by name"
-    tags:
-      - User
-    parameters:
-      - name: username
-        in: path
-        required: true
-        schema:
-          type: string
-    responses:
-      '200':
-        description: "User found"
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/User'
-      '404':
-        description: "User not found"
-      default:
-        description: "successful operation"
-
-  put:
-    operationId: updateUserByName
-    summary: "Update user"
-    tags:
-      - User
-    parameters:
-      - name: username
-        in: path
-        required: true
-        schema:
-          type: string
-    requestBody:
-      required: true
-      content:
-        application/json:
+paths:
+  /users/{username}:
+    get:
+      operationId: getUserByName
+      summary: "Get user by name"
+      tags:
+        - User
+      parameters:
+        - name: username
+          in: path
+          required: true
           schema:
-            $ref: '#/components/schemas/UpdateUserRequest'
-    responses:
-      '200':
-        description: "User updated"
+            type: string
+      responses:
+        '200':
+          description: "User found"
+          content:
+            application/json:
+              schema:
+                $ref: '../../schemas/user.yaml#/components/schemas/User'
+        '404':
+          description: "User not found"
+        default:
+          description: "successful operation"
+
+    put:
+      operationId: updateUserByName
+      summary: "Update user"
+      tags:
+        - User
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/User'
-      default:
-        description: "successful operation"
-      '404':
-        description: "User not found"
+              $ref: '../../schemas/user.yaml#/components/schemas/UpdateUserRequest'
+      responses:
+        '200':
+          description: "User updated"
+          content:
+            application/json:
+              schema:
+                $ref: '../../schemas/user.yaml#/components/schemas/User'
+        default:
+          description: "successful operation"
+        '404':
+          description: "User not found"
 
-  delete:
-    operationId: deleteUserByName
-    summary: "Deleted User"
-    tags:
-      - User
-    parameters:
-      - name: username
-        in: path
-        required: true
-        schema:
-          type: string
-    responses:
-      '204':
-        description: "User deleted"
-      default:
-        description: "successful operation"
-      '404':
-        description: "User not found"
+    delete:
+      operationId: deleteUserByName
+      summary: "Deleted User"
+      tags:
+        - User
+      parameters:
+        - name: username
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: "User deleted"
+        default:
+          description: "successful operation"
+        '404':
+          description: "User not found"
