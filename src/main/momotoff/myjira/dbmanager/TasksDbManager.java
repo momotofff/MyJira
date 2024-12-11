@@ -4,9 +4,7 @@ import io.swagger.model.Task;
 import io.swagger.model.TaskPriority;
 import io.swagger.model.TaskStatus;
 import org.openapitools.jackson.nullable.JsonNullable;
-import org.springframework.http.ResponseEntity;
 
-import java.io.IOException;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -17,10 +15,10 @@ import java.util.List;
 
 class TasksDbManager
 {
-    public static List<Task> getTasksByAssigneeId(Connection connection, long assigneeId)
+    public static List<Task> getTasksByAssigneeId(Connection connection, long assigneeId) throws SQLException
     {
         List<Task> tasks = new ArrayList<>();
-        String sql = "SELECT * FROM tasks WHERE assignee = ?"; // Предполагаем, что задачи присваиваются пользователям через поле assignee.
+        String sql = "SELECT * FROM tasks WHERE assignee = ?";
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
@@ -40,25 +38,20 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-            System.err.println("Error retrieving tasks for user ID = " + assigneeId + ": " + e.getMessage());
+            throw new SQLException("Error retrieving tasks by assignee id", e);
         }
 
         return tasks;
     }
 
-    public static Task createTask(Connection connection, String title, String description, String status, String priority, Long authorId)
+    public static Task createTask(Connection connection, String title, String description, String status, String priority, Long authorId) throws SQLException
     {
-        if (!isUserExists(connection, authorId))
-            throw new IllegalArgumentException("User with ID " + authorId + " does not exist.");
-
         String sql =
-                "INSERT INTO tasks " +
-                        "(title, description, status,        priority,        author) VALUES " +
-                        "(?,     ?,           ?::taskstatus, ?::taskpriority, ?)";
+            "INSERT INTO tasks " +
+            "(title, description, status,        priority,        author) VALUES " +
+            "(?,     ?,           ?::taskstatus, ?::taskpriority, ?)";
 
         Task task = null;
-
-
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql, Statement.RETURN_GENERATED_KEYS))
         {
@@ -91,17 +84,20 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-            System.err.println("Error creating task: " + e.getMessage());
+            if (e.getMessage().contains("violates foreign key constraint"))
+                throw new SQLException("User with ID " + authorId + " does not exist", e);
+
+            throw new SQLException("Error creating task", e);
         }
         catch (IllegalArgumentException e)
         {
-            System.err.println("Invalid status or priority: " + e.getMessage());
+            throw new IllegalArgumentException("Invalid status or priority: " + e.getMessage());
         }
 
         return task;
     }
 
-    public static List<Task> getTasks(Connection connection)
+    public static List<Task> getTasks(Connection connection) throws SQLException
     {
         List<Task> list = new ArrayList<>();
         String sql = "SELECT * FROM tasks";
@@ -122,16 +118,15 @@ class TasksDbManager
                 list.add(task);
             }
         }
-
         catch (SQLException e)
         {
-            System.err.println("Error retrieving tasks: " + e.getMessage());
+            throw new SQLException("Error retrieving tasks list", e);
         }
 
         return list;
     }
 
-    public static Task getTaskById(Connection connection, long taskId)
+    public static Task getTaskById(Connection connection, long taskId) throws SQLException
     {
         String sql = "SELECT * FROM tasks WHERE id = ?";
         Task task = null;
@@ -157,17 +152,17 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-            System.err.println("Error retrieving task: " + e.getMessage());
+            throw new SQLException("Error retrieving task by id", e);
         }
 
         return task;
     }
 
-    public static Task updateTask(Connection connection, long taskId, String title, String description, String status, String priority, Long assigneeId)
+    public static Task updateTask(Connection connection, long taskId, String title, String description, String status, String priority, Long assigneeId) throws SQLException
     {
         String sql =
-            "UPDATE tasks" +
-            "SET title = ?, description = ?, status = ?::taskstatus, assignee = ?, priority = ?::taskpriority" +
+            "UPDATE tasks " +
+            "SET title = ?, description = ?, status = ?::taskstatus, assignee = ?, priority = ?::taskpriority " +
             "WHERE id = ?";
 
         Task task = null;
@@ -196,33 +191,17 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-            System.err.println("Error updating task: " + e.getMessage());
+            throw new SQLException("Error updating task", e);
         }
         catch (IllegalArgumentException e)
         {
-            System.err.println("Invalid status or priority: " + e.getMessage());
+            throw new IllegalArgumentException("Invalid status or priority: " + e.getMessage());
         }
 
         return task;
     }
 
-    private static long getUserIdByName(Connection connection, String userName) throws SQLException
-    {
-        String sql = "SELECT * FROM users WHERE userName = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
-        {
-            preparedStatement.setString(1, userName);
-            ResultSet rs = preparedStatement.executeQuery();
-
-            if (rs.next())
-                return rs.getLong("id");
-            else
-                throw new SQLException("User not found: " + userName);
-        }
-    }
-
-    public static void deleteTaskById(Connection connection, long id)
+    public static void deleteTaskById(Connection connection, long id) throws SQLException
     {
         String sql = "DELETE FROM tasks WHERE id = ?";
 
@@ -239,38 +218,14 @@ class TasksDbManager
                 System.out.printf("Task with ID = %d deleted successfully!%n", id);
             else
                 System.out.printf("No task found with ID = %d.%n", id);
-
         }
         catch (SQLException e)
         {
-            System.err.println("Error deleting task: " + e.getMessage());
+            throw new SQLException("Error deleting task", e);
         }
     }
 
-
-
-    private static boolean isUserExists(Connection connection, Long userId)
-    {
-        String sql = "SELECT COUNT(*) FROM users WHERE id = ?";
-
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
-        {
-            preparedStatement.setLong(1, userId);
-            ResultSet resultSet = preparedStatement.executeQuery();
-
-            if (resultSet.next())
-                return resultSet.getInt(1) > 0;
-
-        }
-        catch (SQLException e)
-        {
-            System.err.println("Error checking if user exists: " + e.getMessage());
-        }
-
-        return false;
-    }
-
-    public static List<Task> getTasksByAuthorId(Connection connection, long authorId)
+    public static List<Task> getTasksByAuthorId(Connection connection, long authorId) throws SQLException
     {
         List<Task> tasks = new ArrayList<>();
         String sql = "SELECT * FROM tasks WHERE author = ?";
@@ -292,18 +247,16 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-
-            System.err.println("Error retrieving tasks for author ID = " + authorId + ": " + e.getMessage());
+            throw new SQLException("Error retrieving tasks by author id", e);
         }
 
         return tasks;
     }
 
-    public static List<Task> searchTasks(Connection connection, String keyword) throws IOException
+    public static List<Task> searchTasks(Connection connection, String keyword) throws SQLException
     {
         if (keyword == null || keyword.trim().isEmpty())
             throw new IllegalArgumentException("Keyword cannot be null or empty");
-
 
         List<Task> matchingTasks = new ArrayList<>();
 
@@ -333,18 +286,23 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-            throw new IOException("Database error during task search", e);
+            throw new SQLException("Database error during task search", e);
         }
-
-        if (matchingTasks.isEmpty())
-            throw new IOException("No tasks found matching the provided keyword");
-
 
         return matchingTasks;
     }
 
-    public static List<Task> getTasksByStatus(Connection connection, String status)
+    public static List<Task> getTasksByStatus(Connection connection, String status) throws SQLException
     {
+        try
+        {
+            TaskStatus.fromValue(status);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new IllegalArgumentException("Bad task status: " + status);
+        }
+
         List<Task> matchingTasks = new ArrayList<>();
 
         String sql = "SELECT * FROM tasks WHERE status = ?::taskstatus";
@@ -370,25 +328,23 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-            try
-            {
-                throw new IOException("Database error during task search", e);
-            }
-            catch (IOException ex)
-            {
-                throw new RuntimeException("Database error during task search");
-            }
+            throw new SQLException("Database error during task search by priority", e);
         }
 
         return matchingTasks;
     }
 
-    public static List<Task> getTasksByPriority(Connection connection, String priority) throws IOException
+    public static List<Task> getTasksByPriority(Connection connection, String priority) throws SQLException
     {
         List<Task> list = new ArrayList<>();
-
-        if (priority == null || priority.trim().isEmpty())
-            throw new IllegalArgumentException("Priority must not be null or empty");
+        try
+        {
+            TaskPriority.fromValue(priority);
+        }
+        catch (IllegalArgumentException e)
+        {
+            throw new IllegalArgumentException("Bad task priority: " + priority);
+        }
 
         String sql = "SELECT * FROM tasks WHERE priority = ?::taskpriority";
 
@@ -413,7 +369,7 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-            throw new IOException("Database error during task search", e);
+            throw new SQLException("Database error during task search", e);
         }
 
         return list;

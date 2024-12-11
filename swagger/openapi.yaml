@@ -13,61 +13,61 @@ servers:
 
 paths:
   /tasks:
-    $ref: './paths/tasks.yaml'
+    $ref: api/tasks/tasks.yaml
 
   /tasks/{taskId}:
-    $ref: './paths/tasksByTaskId.yaml'
+    $ref: api/tasks/byTaskId.yaml
 
   /tasks/by-assignee/{userId}:
-    $ref: './paths/tasksByAssigneeId.yaml'
+    $ref: api/tasks/byAssigneeId.yaml
 
   /tasks/by-author/{userId}:
-    $ref: './paths/tasksByAuthorId.yaml'
+    $ref: api/tasks/byAuthorId.yaml
 
   /tasks/by-status/{status}:
-    $ref: './paths/tasksByStatus.yaml'
+    $ref: api/tasks/byStatus.yaml
 
   /tasks/search:
-    $ref: './paths/tasksSearch.yaml'
+    $ref: api/tasks/search.yaml
 
   /users:
-    $ref: './paths/users.yaml'
+    $ref: api/users/users.yaml
 
   /users/{username}:
-    $ref: './paths/usersUserName.yaml'
+    $ref: api/users/byName.yaml
 
   /users/{userId}:
-    $ref: './paths/usersUserId.yaml'
+    $ref: api/users/byId.yaml
 
 components:
   schemas:
     TaskStatus:
-      $ref: components/task.yaml#/components/schemas/TaskStatus
+      $ref: schemas/task.yaml#/components/schemas/TaskStatus
 
     TaskPriority:
-      $ref: components/task.yaml#/components/schemas/TaskPriority
+      $ref: schemas/task.yaml#/components/schemas/TaskPriority
 
     Task:
-      $ref: components/task.yaml#/components/schemas/Task
+      $ref: schemas/task.yaml#/components/schemas/Task
 
     CreateTaskRequest:
-      $ref: components/task.yaml#/components/schemas/CreateTaskRequest
+      $ref: schemas/task.yaml#/components/schemas/CreateTaskRequest
 
     UpdateTaskRequest:
-      $ref: components/task.yaml#/components/schemas/UpdateTaskRequest
+      $ref: schemas/task.yaml#/components/schemas/UpdateTaskRequest
 
     UserRole:
-      $ref: components/user.yaml#/components/schemas/UserRole
+      $ref: schemas/user.yaml#/components/schemas/UserRole
 
     User:
-      $ref: components/user.yaml#/components/schemas/User
+      $ref: schemas/user.yaml#/components/schemas/User
 
     CreateUserRequest:
-      $ref: components/user.yaml#/components/schemas/CreateUserRequest
+      $ref: schemas/user.yaml#/components/schemas/CreateUserRequest
 
     UpdateUserRequest:
-      $ref: components/user.yaml#/components/schemas/UpdateUserRequest
+      $ref: schemas/user.yaml#/components/schemas/UpdateUserRequest
 
     Error:
-      $ref: components/error.yaml#/components/schemas/Error
+      $ref: schemas/error.yaml#/components/schemas/Error
 

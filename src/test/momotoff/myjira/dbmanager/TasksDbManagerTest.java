@@ -21,7 +21,6 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     private final String description = "Description for Task 1";
     private final String status = TaskStatus.PENDING.getValue();
     private final String priority = TaskPriority.HIGH.getValue();
-    private final Long unauthorizedUserId = 5L;
 
     private final String userNameAssign = "userNameAssign";
     private final String roleAssign = UserRole.USER.toString();
@@ -52,100 +51,98 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void createTaskByAnUnauthorizedUser_ExpectFailed()
+    public void createTaskByAnInvalidUser_ExpectFailed()
     {
-        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-            databaseManager.createTask(title, description, status, priority, unauthorizedUserId);
+        final Long InvalidUserId = Long.MAX_VALUE;
+
+        SQLException thrown = assertThrows(SQLException.class, () -> {
+            databaseManager.createTask(title, description, status, priority, InvalidUserId);
         });
 
-        assertEquals("User with ID " + unauthorizedUserId + " does not exist.", thrown.getMessage());
+        assertEquals("User with ID " + InvalidUserId + " does not exist", thrown.getMessage());
     }
 
     @Test
-    public void getTasksByAuthorId() throws SQLException
+    public void getTasksByAuthorId_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        List<Task> tasks = assertDoesNotThrow(() -> databaseManager.getTasksByAuthorId(user.getId()));
 
-        List<Task> returnedTasks = assertDoesNotThrow(() -> databaseManager.getTasksByAuthorId(user.getId()));
-
-        for (Task task : returnedTasks)
-        {
-            assertEquals(task.getTitle(), title);
-            assertEquals(task.getDescription(), description);
-            assertEquals(task.getStatus().getValue(), status);
-            assertEquals(task.getPriority().getValue(), priority);
-        }
+        assertEquals(1, tasks.size());
+        assertEquals(tasks.get(0).getTitle(), title);
+        assertEquals(tasks.get(0).getDescription(), description);
+        assertEquals(tasks.get(0).getStatus().getValue(), status);
+        assertEquals(tasks.get(0).getPriority().getValue(), priority);
     }
 
     @Test
-    public void getTasksByAssigneeId() throws SQLException {
-        User user = databaseManager.createUser(username, role, email);
-        assertNotNull(user);
-        User assignUser = databaseManager.createUser(userNameAssign, roleAssign, emailAssign);
-        assertNotNull(assignUser);
-
-        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-        List<Task> returnedTasks = assertDoesNotThrow(() -> databaseManager.getTasksByAssigneeId(assignUser.getId()));
-
-        for (Task task : returnedTasks) {
-            assertEquals(task.getTitle(), title);
-            assertEquals(task.getDescription(), description);
-            assertEquals(task.getStatus().getValue(), status);
-            assertEquals(task.getPriority().getValue(), priority);
-
-        }
-    }
-
-    @Test
-    public void UpdatedTask() throws SQLException
+    public void getTasksByAssigneeId_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
-        User assignUser = databaseManager.createUser(userNameAssign, roleAssign, emailAssign);
-        assertNotNull(assignUser);
+        User assignee = databaseManager.createUser(userNameAssign, roleAssign, emailAssign);
+        assertNotNull(assignee);
 
-        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        Task task = assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertDoesNotThrow(() -> databaseManager.updateTask(task.getId(), title, description, status, priority, assignee.getId()));
+        List<Task> tasks = assertDoesNotThrow(() -> databaseManager.getTasksByAssigneeId(assignee.getId()));
 
+        assertEquals(1, tasks.size());
+        assertEquals(tasks.get(0).getTitle(), title);
+        assertEquals(tasks.get(0).getDescription(), description);
+        assertEquals(tasks.get(0).getStatus().getValue(), status);
+        assertEquals(tasks.get(0).getPriority().getValue(), priority);
     }
 
     @Test
-    public void getTasks() throws SQLException
+    public void UpdateTask_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
+        User assignee = databaseManager.createUser(userNameAssign, roleAssign, emailAssign);
+        assertNotNull(assignee);
 
-        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        Task task = assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
 
-        List<Task> returnedTasks = assertDoesNotThrow(() -> databaseManager.getTasksByAuthorId(user.getId()));
-        assertEquals(1, returnedTasks.size());
+        final String newTitle = "WAAAGH";
+        final String newDescription = "For the Gorka and Morka";
+        final String newStatus = TaskStatus.ACTIVE.getValue();
+        final String newPriority = TaskPriority.MEDIUM.getValue();
+        Task updated = assertDoesNotThrow(() -> databaseManager.updateTask(task.getId(), newTitle, newDescription, newStatus, newPriority, assignee.getId()));
+
+        assertEquals(newTitle, updated.getTitle());
+        assertEquals(newDescription, updated.getDescription());
+        assertEquals(newStatus, updated.getStatus().getValue());
+        assertEquals(newPriority, updated.getPriority().getValue());
     }
 
     @Test
-    public void getTaskById() throws SQLException
+    public void getTaskById_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
 
         long taskId = (assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()))).getId();
-        assertNotNull(assertDoesNotThrow(() -> databaseManager.getTaskById(taskId)));
+        Task task = assertDoesNotThrow(() -> databaseManager.getTaskById(taskId));
+
+        assertNotNull(task);
+        assertEquals(task.getTitle(), title);
+        assertEquals(task.getDescription(), description);
+        assertEquals(task.getStatus().getValue(), status);
+        assertEquals(task.getPriority().getValue(), priority);
+        assertEquals(task.getAuthor(), user.getId());
     }
 
     @Test
-    public void updateTask()
-    {
-
-    }
-
-    @Test
-    public void deleteTaskById_ExpectSuccess() throws SQLException
+    public void deleteTaskById_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
 
-        long taskId = (assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()))).getId();
+        long taskId = assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId())).getId();
 
         assertDoesNotThrow(() -> databaseManager.deleteTaskById(taskId));
         assertNull(databaseManager.getTaskById(taskId));
@@ -154,16 +151,17 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     @Test
     public void deleteTaskById_ExpectFailed() throws SQLException
     {
+        final long InvalidTaskId = Long.MAX_VALUE;
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () ->databaseManager.deleteTaskById(unauthorizedUserId));
-        assertEquals("Task with ID " + unauthorizedUserId + " does not exist.", runtimeException.getMessage());
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> databaseManager.deleteTaskById(InvalidTaskId));
+        assertEquals("Task with ID " + InvalidTaskId + " does not exist.", runtimeException.getMessage());
     }
 
     @Test
-    public void searchTasks() throws SQLException, IOException
+    public void searchTasks_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
@@ -178,7 +176,7 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertEquals(2, databaseManager.searchTasks("task").size());
     }
     @Test
-    public void searchTasksNullKeyboard() throws SQLException
+    public void searchTasksNullKeyword_ExpectThrows() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
@@ -186,23 +184,21 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
 
         IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
-            databaseManager.searchTasks("");});
+            databaseManager.searchTasks("");
+        });
 
         assertEquals("Keyword cannot be null or empty", thrown.getMessage());
     }
 
     @Test
-    public void searchTasksNoTask() throws SQLException
+    public void searchTasks_NoTask_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-
-        IOException thrown = assertThrows(IOException.class, () -> {
-            databaseManager.searchTasks("Fuck");});
-
-        assertEquals("No tasks found matching the provided keyword", thrown.getMessage());
+        List<Task> tasks = assertDoesNotThrow(() -> databaseManager.searchTasks("Fuck"));
+        assertTrue(tasks.isEmpty());
     }
 
     @Test
@@ -216,24 +212,25 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void getTasksByStatus_ExpectFailed_IOException() throws SQLException
+    public void getTasksByStatus_ExpectThrows() throws SQLException
     {
+        final String badStatus = "WAAAAGH";
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> databaseManager.getTasksByStatus("status"));
-        assertEquals("Database error during task search", runtimeException.getMessage());
+        IllegalArgumentException exception = assertThrows(IllegalArgumentException.class, () -> databaseManager.getTasksByStatus(badStatus));
+        assertEquals("Bad task status: " + badStatus, exception.getMessage());
     }
 
     @Test
-    public void getTasksByStatus_ExpectFailed() throws SQLException
+    public void getTasksByStatus_NoTaskFound_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-        assertEquals(0, databaseManager.getTasksByStatus("Resolved").size());
+        assertTrue(databaseManager.getTasksByStatus(TaskStatus.RESOLVED.getValue()).isEmpty());
     }
 
     @Test
@@ -247,22 +244,14 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void getTasksByPriority_ExpectFailed_IOException() throws SQLException
+    public void getTasksByPriority_ExpectThrows() throws SQLException
     {
+        final String badPriority = "WAAAAGH";
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-        assertThrows(IOException.class, () -> databaseManager.getTasksByPriority("priority"));
-    }
-
-    @Test
-    public void getTasksByPriority_ExpectFailed_IllegalArgumentException() throws SQLException
-    {
-        User user = databaseManager.createUser(username, role, email);
-        assertNotNull(user);
-
-        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertThrows(IllegalArgumentException.class, () -> databaseManager.getTasksByPriority(badPriority));
         assertThrows(IllegalArgumentException.class, () -> databaseManager.getTasksByPriority(null));
         assertThrows(IllegalArgumentException.class, () -> databaseManager.getTasksByPriority(""));
     }

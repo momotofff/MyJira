@@ -124,7 +124,7 @@ public class DatabaseManager
         return TasksDbManager.getTasksByAuthorId(connection, userid);
     }
 
-    public List<Task> searchTasks(String keyword) throws SQLException, IOException
+    public List<Task> searchTasks(String keyword) throws SQLException
     {
         Connection connection = getConnection();
         return TasksDbManager.searchTasks(connection, keyword);

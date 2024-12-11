@@ -252,15 +252,13 @@ public class TasksApiController implements TasksApi
             }
             catch (SQLException e)
             {
-                throw new RuntimeException(e);
-            }
-            catch (IOException e)
-            {
-                throw new RuntimeException(e);
+                // TODO: Log exception!
+                // TODO: All methods should do it like that
+                return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
-        return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
+        return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @GetMapping("/tasks/by-status/{status}")
