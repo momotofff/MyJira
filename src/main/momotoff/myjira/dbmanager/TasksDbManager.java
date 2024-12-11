@@ -226,10 +226,14 @@ class TasksDbManager
     {
         String sql = "DELETE FROM tasks WHERE id = ?";
 
-        try (PreparedStatement preparedStatement = connection.prepareStatement(sql)) {
+        try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
+        {
             preparedStatement.setLong(1, id);
 
             int affectedRows = preparedStatement.executeUpdate();
+
+            if (affectedRows == 0)
+                throw new RuntimeException("Task with ID " + id + " does not exist.");
 
             if (affectedRows > 0)
                 System.out.printf("Task with ID = %d deleted successfully!%n", id);
@@ -242,6 +246,8 @@ class TasksDbManager
             System.err.println("Error deleting task: " + e.getMessage());
         }
     }
+
+
 
     private static boolean isUserExists(Connection connection, Long userId)
     {
@@ -305,7 +311,6 @@ class TasksDbManager
 
         try (PreparedStatement preparedStatement = connection.prepareStatement(sql))
         {
-            // Устанавливаем параметры запроса
             String searchKeyword = "%" + keyword.toLowerCase() + "%";
 
             preparedStatement.setString(1, searchKeyword);
@@ -325,18 +330,20 @@ class TasksDbManager
                     matchingTasks.add(task);
                 }
             }
-        } catch (SQLException e) {
+        }
+        catch (SQLException e)
+        {
             throw new IOException("Database error during task search", e);
         }
 
-        if (matchingTasks.isEmpty()) {
+        if (matchingTasks.isEmpty())
             throw new IOException("No tasks found matching the provided keyword");
-        }
+
 
         return matchingTasks;
     }
 
-    public static List<Task> getTasksByStatus(Connection connection, String status) throws IOException
+    public static List<Task> getTasksByStatus(Connection connection, String status)
     {
         List<Task> matchingTasks = new ArrayList<>();
 
@@ -363,7 +370,14 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-            throw new IOException("Database error during task search", e);
+            try
+            {
+                throw new IOException("Database error during task search", e);
+            }
+            catch (IOException ex)
+            {
+                throw new RuntimeException("Database error during task search");
+            }
         }
 
         return matchingTasks;

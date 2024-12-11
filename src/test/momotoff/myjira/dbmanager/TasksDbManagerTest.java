@@ -17,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 
 public class TasksDbManagerTest extends DbManagerTestFixture
 {
-    private final String title = "Tas2324";
+    private final String title = "Title1";
     private final String description = "Description for Task 1";
     private final String status = TaskStatus.PENDING.getValue();
     private final String priority = TaskPriority.HIGH.getValue();
@@ -140,7 +140,7 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    public void deleteTaskById() throws SQLException
+    public void deleteTaskById_ExpectSuccess() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
@@ -149,6 +149,17 @@ public class TasksDbManagerTest extends DbManagerTestFixture
 
         assertDoesNotThrow(() -> databaseManager.deleteTaskById(taskId));
         assertNull(databaseManager.getTaskById(taskId));
+    }
+
+    @Test
+    public void deleteTaskById_ExpectFailed() throws SQLException
+    {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () ->databaseManager.deleteTaskById(unauthorizedUserId));
+        assertEquals("Task with ID " + unauthorizedUserId + " does not exist.", runtimeException.getMessage());
     }
 
     @Test
@@ -166,9 +177,36 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertEquals(2, databaseManager.searchTasks("description").size());
         assertEquals(2, databaseManager.searchTasks("task").size());
     }
+    @Test
+    public void searchTasksNullKeyboard() throws SQLException
+    {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+
+        IllegalArgumentException thrown = assertThrows(IllegalArgumentException.class, () -> {
+            databaseManager.searchTasks("");});
+
+        assertEquals("Keyword cannot be null or empty", thrown.getMessage());
+    }
 
     @Test
-    public void getTasksByStatus_ExpectSuccess() throws SQLException, IOException
+    public void searchTasksNoTask() throws SQLException
+    {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+
+        IOException thrown = assertThrows(IOException.class, () -> {
+            databaseManager.searchTasks("Fuck");});
+
+        assertEquals("No tasks found matching the provided keyword", thrown.getMessage());
+    }
+
+    @Test
+    public void getTasksByStatus_ExpectSuccess() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
@@ -184,11 +222,12 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertNotNull(user);
 
         assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
-        assertThrows(IOException.class, () -> databaseManager.getTasksByStatus("status"));
+        RuntimeException runtimeException = assertThrows(RuntimeException.class, () -> databaseManager.getTasksByStatus("status"));
+        assertEquals("Database error during task search", runtimeException.getMessage());
     }
 
     @Test
-    public void getTasksByStatus_ExpectFailed() throws SQLException, IOException
+    public void getTasksByStatus_ExpectFailed() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
