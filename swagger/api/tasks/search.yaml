@@ -1,0 +1,28 @@
+paths:
+  /tasks/search:
+    get:
+      operationId: searchTasks
+      summary: "Search for tasks by keyword"
+      tags:
+        - Task
+      parameters:
+        - name: keyword
+          in: query
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tasks found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../../schemas/task.yaml#/components/schemas/Task'
+        '404':
+          description: 'No tasks found matching the keyword'
+        '500':
+          description: 'Internal server error'
+        default:
+          description: 'Successful operation'

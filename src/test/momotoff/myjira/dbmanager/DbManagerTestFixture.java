@@ -1,5 +1,6 @@
 package momotoff.myjira.dbmanager;
 
+import io.swagger.model.UserRole;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.testcontainers.containers.PostgreSQLContainer;
@@ -16,7 +17,7 @@ import static org.junit.jupiter.api.Assertions.*;
 public abstract class DbManagerTestFixture
 {
     final static String username = "testUser";
-    final static String role = "User";
+    final static String role = UserRole.USER.toString();
     final static String email = "testUser@example.com";
 
     private static final String USER = "postgres";

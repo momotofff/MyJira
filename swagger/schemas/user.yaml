@@ -23,7 +23,7 @@ components:
         tasks:
           type: array
           items:
-           $ref: ./tasks.yaml#/components/schemas/Task
+           $ref: ./task.yaml#/components/schemas/Task
 
     CreateUserRequest:
       type: object

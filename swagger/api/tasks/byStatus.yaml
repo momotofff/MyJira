@@ -1,0 +1,28 @@
+paths:
+  /tasks/by-status/{status}:
+    get:
+      operationId: getTasksByStatus
+      summary: "Get tasks by status"
+      tags:
+        - Task
+      parameters:
+        - name: status
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '200':
+          description: Tasks found
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '../../schemas/task.yaml#/components/schemas/Task'
+        '404':
+          description: 'No tasks found for this status'
+        '500':
+          description: 'Internal server error'
+        default:
+          description: 'Successful operation'
