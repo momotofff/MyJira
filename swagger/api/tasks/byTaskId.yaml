@@ -1,71 +1,72 @@
-/tasks/{taskId}:
-  get:
-    operationId: getTaskById
-    summary: "Get task by ID"
-    tags:
-      - Task
-    parameters:
-      - name: taskId
-        in: path
-        required: true
-        schema:
-          type: string
-    responses:
-      '200':
-        description: Task found
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/Task'
-      '404':
-        description: 'Task not found'
-      default:
-        description: 'Successful operation'
-
-  put:
-    operationId: updateTaskById
-    summary: "Update task"
-    tags:
-      - Task
-    parameters:
-      - name: taskId
-        in: path
-        required: true
-        schema:
-          type: string
-    requestBody:
-      required: true
-      content:
-        application/json:
+paths:
+  /tasks/{taskId}:
+    get:
+      operationId: getTaskById
+      summary: "Get task by ID"
+      tags:
+        - Task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
           schema:
-            $ref: '#/components/schemas/UpdateTaskRequest'
-    responses:
-      '200':
-        description: 'Update task'
+            type: string
+      responses:
+        '200':
+          description: Task found
+          content:
+            application/json:
+              schema:
+                $ref: '../../schemas/task.yaml#/components/schemas/Task'
+        '404':
+          description: 'Task not found'
+        default:
+          description: 'Successful operation'
+
+    put:
+      operationId: updateTaskById
+      summary: "Update task"
+      tags:
+        - Task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      requestBody:
+        required: true
         content:
           application/json:
             schema:
-              $ref: '#/components/schemas/Task'
-      default:
-        description: 'Successful operation'
-      '404':
-        description: 'Task not found'
+              $ref: '../../schemas/task.yaml#/components/schemas/UpdateTaskRequest'
+      responses:
+        '200':
+          description: 'Update task'
+          content:
+            application/json:
+              schema:
+                $ref: '../../schemas/task.yaml#/components/schemas/Task'
+        default:
+          description: 'Successful operation'
+        '404':
+          description: 'Task not found'
 
-  delete:
-    operationId: deleteTaskById
-    summary: "Task deleted"
-    tags:
-      - Task
-    parameters:
-      - name: taskId
-        in: path
-        required: true
-        schema:
-          type: string
-    responses:
-      '204':
-        description: "Task deleted"
-      default:
-        description: "Successful operation"
-      '404':
-        description: "Task not found"
+    delete:
+      operationId: deleteTaskById
+      summary: "Task deleted"
+      tags:
+        - Task
+      parameters:
+        - name: taskId
+          in: path
+          required: true
+          schema:
+            type: string
+      responses:
+        '204':
+          description: "Task deleted"
+        default:
+          description: "Successful operation"
+        '404':
+          description: "Task not found"

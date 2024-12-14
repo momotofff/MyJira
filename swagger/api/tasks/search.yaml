@@ -1,3 +1,4 @@
+paths:
   /tasks/search:
     get:
       operationId: searchTasks
@@ -18,7 +19,7 @@
               schema:
                 type: array
                 items:
-                  $ref: '#/components/schemas/Task'
+                  $ref: '../../schemas/task.yaml#/components/schemas/Task'
         '404':
           description: 'No tasks found matching the keyword'
         '500':

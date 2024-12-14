@@ -16,19 +16,19 @@ paths:
     $ref: api/tasks/tasks.yaml#/paths/~1tasks
 
   /tasks/{taskId}:
-    $ref: api/tasks/byTaskId.yaml
+    $ref: api/tasks/byTaskId.yaml#/paths/~1tasks~1{taskId}
 
   /tasks/by-assignee/{userId}:
-    $ref: api/tasks/byAssigneeId.yaml
+    $ref: api/tasks/byAssigneeId.yaml#/paths/~1tasks~1by-assignee~1{userId}
 
   /tasks/by-author/{userId}:
-    $ref: api/tasks/byAuthorId.yaml
+    $ref: api/tasks/byAuthorId.yaml#/paths/~1tasks~1by-author~1{userId}
 
   /tasks/by-status/{status}:
-    $ref: api/tasks/byStatus.yaml
+    $ref: api/tasks/byStatus.yaml#/paths/~1tasks~1by-status~1{status}
 
   /tasks/search:
-    $ref: api/tasks/search.yaml
+    $ref: api/tasks/search.yaml#/paths/~1tasks~1search
 
   /users:
     $ref: api/users/users.yaml#/paths/~1users
