@@ -33,7 +33,7 @@ import java.util.List;
 @RequestMapping("/tasks")
 public class TasksApiController implements TasksApi
 {
-    private static final Logger log = LoggerFactory.getLogger(TasksApiController.class);
+    private static final Logger logger = LoggerFactory.getLogger(TasksApiController.class);
     private final ObjectMapper objectMapper;
     private final HttpServletRequest request;
 
@@ -59,6 +59,7 @@ public class TasksApiController implements TasksApi
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String author = authentication.getName();
         long authorId;
+        logger.info("Received request to create task by author: {}", author);
 
         try
         {
@@ -66,6 +67,7 @@ public class TasksApiController implements TasksApi
         }
         catch (SQLException e)
         {
+            logger.error("Failed to get user ID for author: {}", author, e);
             throw new RuntimeException(e);
         }
 
@@ -73,14 +75,18 @@ public class TasksApiController implements TasksApi
         {
             try
             {
-                return new ResponseEntity<Task>(databaseManager.createTask(body.getTitle(), body.getDescription(), TaskStatus.PENDING.getValue(), TaskPriority.MEDIUM.getValue(), authorId), HttpStatus.OK);
+                Task task = databaseManager.createTask(body.getTitle(), body.getDescription(), TaskStatus.PENDING.getValue(), TaskPriority.MEDIUM.getValue(), authorId);
+                logger.info("Task created successfully with ID: {}", task.getId());
+                return new ResponseEntity<Task>(task, HttpStatus.OK);
             }
             catch (SQLException e)
             {
+                logger.error("Failed to create task: {}", body, e);
                 throw new RuntimeException(e);
             }
         }
 
+        logger.warn("Unsupported media type received: {}", accept);
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
@@ -88,20 +94,24 @@ public class TasksApiController implements TasksApi
     public ResponseEntity<List<Task>> getAllTasks()
     {
         String accept = request.getHeader("Accept");
+        logger.info("Received request to get all tasks. Accept: {}", accept);
 
         if (accept != null && accept.contains("application/json"))
         {
             try
             {
-                return new ResponseEntity(databaseManager.getTasks(), HttpStatus.OK);
+                List<Task> tasks = databaseManager.getTasks();
+                logger.info("Successfully retrieved {} tasks.", tasks.size());
+                return new ResponseEntity<List<Task>>(tasks, HttpStatus.OK);
             }
             catch (SQLException e)
             {
-                log.error("Couldn't serialize response for content type application/json", e);
+                logger.error("Couldn't serialize response for content type application/json", e);
                 return new ResponseEntity<List<Task>>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
+        logger.warn("Unsupported media type for getAllTasks: {}", accept);
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
@@ -114,19 +124,24 @@ public class TasksApiController implements TasksApi
     )
     {
         String accept = request.getHeader("Accept");
+        logger.info("Received request to get task by ID: {}. Accept: {}", taskId, accept);
 
         if (accept != null && accept.contains("application/json"))
         {
             try
             {
-                return new ResponseEntity<Task>(databaseManager.getTaskById(taskId), HttpStatus.OK);
+                Task task = databaseManager.getTaskById(taskId);
+                logger.info("Successfully retrieved task with ID: {}", taskId);
+                return new ResponseEntity<Task>(task, HttpStatus.OK);
             }
             catch (SQLException e)
             {
+                logger.error("Error retrieving task with ID: {}: {}", taskId, e.getMessage());
                 throw new RuntimeException(e);
             }
         }
 
+        logger.warn("Unsupported media type for getTaskById: {}", accept);
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
@@ -143,45 +158,53 @@ public class TasksApiController implements TasksApi
                                                @Valid @RequestBody UpdateTaskRequest body)
     {
         String accept = request.getHeader("Accept");
+        logger.info("Received request to update task with ID: {}. Accept: {}", taskId, accept);
 
         if (accept != null && accept.contains("application/json"))
         {
             try
             {
-                return new ResponseEntity<Task>(databaseManager.updateTask(taskId, body.getTitle(), body.getDescription(), body.getStatus().toString(), body.getPriority().getValue(), taskId), HttpStatus.OK);
+                Task updatedTask = databaseManager.updateTask(taskId, body.getTitle(), body.getDescription(), body.getStatus().toString(), body.getPriority().getValue(), taskId);
+                logger.info("Successfully updated task with ID: {}", taskId);
+                return new ResponseEntity<Task>(updatedTask, HttpStatus.OK);
             }
             catch (SQLException e)
             {
-                throw new RuntimeException(e);
+                logger.error("Error updating task with ID: {}: {}", taskId, e.getMessage());
+                return new ResponseEntity<Task>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
+        logger.warn("Unsupported media type for updateTaskById: {}", accept);
         return new ResponseEntity<Task>(HttpStatus.NOT_IMPLEMENTED);
     }
 
     @DeleteMapping("/tasks/{taskId}")
     public ResponseEntity<Void> deleteTasksById(@Parameter(in = ParameterIn.PATH,
-                                                                description = "",
-                                                                required = true,
-                                                                schema = @Schema())
+                                                           description = "",
+                                                           required = true,
+                                                           schema = @Schema())
                                                 @PathVariable("taskId") long taskId) throws SQLException
     {
         String accept = request.getHeader("Accept");
+        logger.info("Received request to delete task with ID: {}. Accept: {}", taskId, accept);
 
         if (accept != null && accept.contains("application/json"))
         {
             try
             {
                 databaseManager.deleteTaskById(taskId);
+                logger.info("Successfully deleted task with ID: {}", taskId);
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
             catch (SQLException e)
             {
-                log.error("Error deleting task with ID: " + taskId, e);
+                logger.error("Error deleting task with ID: " + taskId, e);
                 return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
+        logger.warn("Unsupported media type for deleteTasksById: {}", accept);
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
@@ -193,19 +216,24 @@ public class TasksApiController implements TasksApi
                                                            @PathVariable("userId") long userId)
     {
         String accept = request.getHeader("Accept");
+        logger.info("Received request to get tasks by assignee ID: {}. Accept: {}", userId, accept);
 
         if (accept != null && accept.contains("application/json"))
         {
             try
             {
-                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAssigneeId(userId), HttpStatus.OK);
+                List<Task> tasks = databaseManager.getTasksByAssigneeId(userId);
+                logger.info("Successfully retrieved {} tasks for assignee ID: {}", tasks.size(), userId);
+                return new ResponseEntity<List<Task>>(tasks, HttpStatus.OK);
             }
             catch (SQLException e)
             {
-                throw new RuntimeException(e);
+                logger.error("Error retrieving tasks by assignee ID: {}: {}", userId, e.getMessage());
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
+        logger.warn("Unsupported media type for getTasksByAssigneeId: {}", accept);
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
@@ -217,19 +245,24 @@ public class TasksApiController implements TasksApi
                                                          @PathVariable("userId") long userId)
     {
         String accept = request.getHeader("Accept");
+        logger.info("Received request to get tasks by author ID: {}. Accept: {}", userId, accept);
 
         if (accept != null && accept.contains("application/json"))
         {
             try
             {
-                return new ResponseEntity<List<Task>>(databaseManager.getTasksByAuthorId(userId), HttpStatus.OK);
+                List<Task> tasks = databaseManager.getTasksByAuthorId(userId);
+                logger.info("Successfully retrieved {} tasks for author ID: {}", tasks.size(), userId);
+                return new ResponseEntity<List<Task>>(tasks, HttpStatus.OK);
             }
             catch (SQLException e)
             {
-                throw new RuntimeException(e);
+                logger.error("Error retrieving tasks by author ID: {}: {}", userId, e.getMessage());
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
+        logger.warn("Unsupported media type for getTasksByAuthorId: {}", accept);
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
@@ -238,25 +271,27 @@ public class TasksApiController implements TasksApi
                                                                       description = "" ,
                                                                       required = true,
                                                                       schema = @Schema())
-                                                  @Valid @RequestParam(value = "keyword",
-                                                                       required = true) String keyword)
+                                                  @Valid @RequestParam(value = "keyword", required = true) String keyword)
     {
         String accept = request.getHeader("Accept");
+        logger.info("Received request to search tasks with keyword: {}. Accept: {}", keyword, accept);
 
         if (accept != null && accept.contains("application/json"))
         {
             try
             {
-                return new ResponseEntity<List<Task>>(databaseManager.searchTasks(keyword), HttpStatus.OK);
+                List<Task> tasks = databaseManager.searchTasks(keyword);
+                logger.info("Successfully retrieved {} tasks for keyword: {}", tasks.size(), keyword);
+                return new ResponseEntity<List<Task>>(tasks, HttpStatus.OK);
             }
             catch (SQLException e)
             {
-                // TODO: Log exception!
-                // TODO: All methods should do it like that
+                logger.error("Couldn't serialize response for keyword: {} content type application/json", keyword, e);
                 return new ResponseEntity(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
+        logger.warn("Unsupported media type for searchTasks: {}", accept);
         return new ResponseEntity(HttpStatus.NOT_IMPLEMENTED);
     }
 
@@ -268,19 +303,24 @@ public class TasksApiController implements TasksApi
                                                        @PathVariable("status") String status)
     {
         String accept = request.getHeader("Accept");
+        logger.info("Received request to get tasks by status: {}. Accept: {}", status, accept);
 
         if (accept != null && accept.contains("application/json"))
         {
             try
             {
-                return new ResponseEntity<List<Task>>(databaseManager.getTasksByStatus(status), HttpStatus.NOT_IMPLEMENTED);
+                List<Task> tasks = databaseManager.getTasksByStatus(status);
+                logger.info("Successfully retrieved {} tasks for status: {}", tasks.size(), status);
+                return new ResponseEntity<List<Task>>(tasks, HttpStatus.OK);
             }
             catch (SQLException e)
             {
-                throw new RuntimeException(e);
+                logger.error("Error retrieving tasks by status: {}: {}", status, e.getMessage());
+                return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
             }
         }
 
+        logger.warn("Unsupported media type for getTasksByStatus: {}", accept);
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 }
