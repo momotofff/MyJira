@@ -1,13 +1,11 @@
 package io.swagger.api;
 
-import io.swagger.model.UpdateUserRequest;
+import io.swagger.model.*;
 import momotoff.myjira.dbmanager.DatabaseManager;
-import io.swagger.model.UserRole;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.DependsOn;
+import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
-import io.swagger.model.CreateUserRequest;
-import io.swagger.model.User;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import io.swagger.v3.oas.annotations.Parameter;
 import io.swagger.v3.oas.annotations.enums.ParameterIn;
@@ -20,6 +18,7 @@ import org.springframework.web.bind.annotation.RestController;
 
 import javax.validation.Valid;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.constraints.NotNull;
 import java.sql.SQLException;
 import java.util.List;
 

@@ -9,6 +9,8 @@ import org.testcontainers.jdbc.JdbcDatabaseDelegate;
 import java.sql.*;
 import java.util.List;
 
+import static momotoff.myjira.dbmanager.UsersDbManager.isValidEmail;
+import static momotoff.myjira.dbmanager.UsersDbManager.isValidRole;
 import static org.junit.jupiter.api.Assertions.*;
 
 public class UsersDbManagerTest extends DbManagerTestFixture
@@ -37,12 +39,25 @@ public class UsersDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
+    public void createAndGetUser_ExpectFailed()
+    {
+        String roleFailed = "roleFailed";
+        SQLException exceptionRole = assertThrows(SQLException.class, () -> databaseManager.createUser(username, roleFailed, email));
+        assertEquals("Invalid role: " + roleFailed, exceptionRole.getMessage());
+
+        String emailFailed = "emailFailed";
+        SQLException exceptionEmail = assertThrows(SQLException.class, () -> databaseManager.createUser(username, role, emailFailed));
+        assertEquals("Invalid email: " + emailFailed, exceptionEmail.getMessage());
+    }
+
+    @Test
     public void createUserWithDuplicateUsername_ExpectFailed() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
         assertNotNull(user);
 
-        assertThrows(SQLException.class, () -> databaseManager.createUser(username, role, email));
+        SQLException exception = assertThrows(SQLException.class, () -> databaseManager.createUser(username, role, email));
+        assertEquals("Username already exists: " + username, exception.getMessage());
 
         List<User> users = databaseManager.getUsers();
         assertEquals(1, users.size());
@@ -143,5 +158,31 @@ public class UsersDbManagerTest extends DbManagerTestFixture
     {
         assertFalse(assertDoesNotThrow(() -> databaseManager.isUserExists(0L)), "User should no exist after creation");
         assertNull(assertDoesNotThrow(() -> databaseManager.getUserById(0L)));
+    }
+
+    @Test
+    void isValidEmail_ExpectSuccess()
+    {
+        assertTrue(isValidEmail("loh_pidor@druzei.net"));
+    }
+
+    @Test
+    void isValidEmail_ExpectFailed()
+    {
+        assertFalse(isValidEmail("loh_pidor"));
+    }
+
+    @Test
+    void isValidRole_ExpectSuccess()
+    {
+        assertTrue(isValidRole("Admin"));
+        assertTrue(isValidRole("User"));
+        assertTrue(isValidRole("Viewer"));
+    }
+
+    @Test
+    void isValidZRole_ExpectFailed()
+    {
+        assertFalse(isValidEmail("Pidor"));
     }
 }

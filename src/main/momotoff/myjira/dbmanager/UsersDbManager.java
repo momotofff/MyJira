@@ -1,18 +1,31 @@
 package momotoff.myjira.dbmanager;
 
+import io.swagger.api.UsersApiController;
 import io.swagger.model.UpdateUserRequest;
 import io.swagger.model.User;
 import io.swagger.model.UserRole;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.NoSuchElementException;
+import java.util.regex.Pattern;
 
 class UsersDbManager
 {
+    private static final Logger logger = LoggerFactory.getLogger(UsersDbManager.class);
+
     public static User createUser(Connection connection, String username, String role, String email) throws SQLException
     {
+        if (!isValidEmail(email))
+            throw new SQLException("Invalid email: " + email);
+
+        if (!isValidRole(role))
+            throw new SQLException("Invalid role: " + role);
+
+
         String sql = "INSERT INTO users (username, role, email) VALUES (?, ?::userrole, ?)";
         User user = null;
 
@@ -35,21 +48,20 @@ class UsersDbManager
                         user.setUsername(username);
                         user.setRole(UserRole.fromValue(role));
                         user.setEmail(email);
-                        System.out.printf("User with ID = %d created successfully!%n", id);
+                        logger.info("User with ID = %d created successfully!%n" + id);
                     }
                 }
             }
         }
         catch (SQLException e)
         {
-            if (e.getMessage().contains("Duplicate key value violates unique constraint"))
+            String sqlState = e.getSQLState();                                              // Проверяем код SQL состояния для определения причины ошибки
+
+            if ("23505".equals(sqlState))                                                   // Код ошибки для нарушения уникального ограничения для PostgreSQL
                 throw new SQLException("Username already exists: " + username, e);
 
-            throw new SQLException("Error creating user: " + username, e);
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new SQLException("Invalid role: " + role);
+            else
+                throw new SQLException("Error creating user: " + username, e);
         }
 
         return user;
@@ -284,5 +296,21 @@ class UsersDbManager
         }
 
         return false;
+    }
+
+    public static boolean isValidEmail(String email)
+    {
+        String emailRegex = "^[A-Za-z0-9+_.-]+@[A-Za-z0-9.-]+$";
+        Pattern pattern = Pattern.compile(emailRegex);
+        return pattern.matcher(email).matches();
+    }
+
+    public static boolean isValidRole(String role) {
+        try {
+            UserRole.valueOf(role.toUpperCase());
+            return true;
+        } catch (IllegalArgumentException e) {
+            return false;
+        }
     }
 }
