@@ -160,6 +160,7 @@ class TasksDbManager
 
     public static Task updateTask(Connection connection, long taskId, String title, String description, String status, String priority, Long assigneeId) throws SQLException
     {
+
         String sql =
             "UPDATE tasks " +
             "SET title = ?, description = ?, status = ?::taskstatus, assignee = ?, priority = ?::taskpriority " +
@@ -192,10 +193,6 @@ class TasksDbManager
         catch (SQLException e)
         {
             throw new SQLException("Error updating task", e);
-        }
-        catch (IllegalArgumentException e)
-        {
-            throw new IllegalArgumentException("Invalid status or priority: " + e.getMessage());
         }
 
         return task;
@@ -247,7 +244,7 @@ class TasksDbManager
         }
         catch (SQLException e)
         {
-            throw new SQLException("Error retrieving tasks by author id", e);
+            throw new SQLException("Error retrieving tasks by author id: " + authorId, e);
         }
 
         return tasks;

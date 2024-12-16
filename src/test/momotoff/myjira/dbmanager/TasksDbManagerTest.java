@@ -79,6 +79,17 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
+    public void getTasksByInvalidAuthorId_ExpectEmptyList() throws SQLException
+    {
+        final long InvalidUserId = Long.MAX_VALUE;
+        User user = databaseManager.createUser(username, role, email);
+
+        assertNotNull(user);
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertEquals(0, databaseManager.getTasksByAuthorId(InvalidUserId).size());
+    }
+
+    @Test
     public void getTasksByAssigneeId_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
@@ -120,6 +131,23 @@ public class TasksDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
+    public void UpdateTask_ExpectFailed() throws SQLException
+    {
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+        User assignee = databaseManager.createUser(userNameAssign, roleAssign, emailAssign);
+        assertNotNull(assignee);
+
+        Task task = assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+
+        final String newTitle = "WAAAGH";
+        final String newDescription = "For the Gorka and Morka";
+        final String newStatus = "Reserve";
+        final String newPriority = "VeryHard";
+        assertThrows(SQLException.class, () -> databaseManager.updateTask(task.getId(), newTitle, newDescription, newStatus, newPriority, assignee.getId()));
+    }
+
+    @Test
     public void getTaskById_ExpectCorrect() throws SQLException
     {
         User user = databaseManager.createUser(username, role, email);
@@ -134,6 +162,18 @@ public class TasksDbManagerTest extends DbManagerTestFixture
         assertEquals(task.getStatus().getValue(), status);
         assertEquals(task.getPriority().getValue(), priority);
         assertEquals(task.getAuthor(), user.getId());
+    }
+
+    @Test
+    public void getTaskByInvalidId_ExpectEmpty() throws SQLException
+    {
+        final long InvalidTaskId = Long.MAX_VALUE;
+        User user = databaseManager.createUser(username, role, email);
+        assertNotNull(user);
+
+        assertDoesNotThrow(() -> databaseManager.createTask(title, description, status, priority, user.getId()));
+        assertDoesNotThrow(() -> databaseManager.getTaskById(InvalidTaskId));
+
     }
 
     @Test
