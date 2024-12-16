@@ -1,6 +1,5 @@
 package momotoff.myjira.dbmanager;
 
-import io.swagger.api.UsersApiController;
 import io.swagger.model.UpdateUserRequest;
 import io.swagger.model.User;
 import io.swagger.model.UserRole;
