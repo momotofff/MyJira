@@ -1,5 +1,5 @@
 paths:
-  /users/{username}:
+  /users/by-name/{username}:
     get:
       operationId: getUserByName
       summary: "Get user by name"

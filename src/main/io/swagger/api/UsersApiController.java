@@ -60,20 +60,20 @@ public class UsersApiController implements UsersApi
             if (users.isEmpty())
             {
                 logger.info("No users found.");
-                return new ResponseEntity<List<User>>(HttpStatus.NO_CONTENT);
+                return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
             logger.info("Successfully retrieved {} users.", users.size());
-            return new ResponseEntity<List<User>>(users, HttpStatus.OK);
+            return new ResponseEntity<>(users, HttpStatus.OK);
         }
         catch (SQLException e)
         {
             logger.error("Error getting users list: {}", e.getMessage(), e);
-            return new ResponseEntity<List<User>>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PostMapping("/users")
+    @PostMapping
     public ResponseEntity<User> postUser(@Parameter(in = ParameterIn.DEFAULT,
                                                     description = "",
                                                     required = true,
@@ -88,21 +88,21 @@ public class UsersApiController implements UsersApi
             if (accept == null || !accept.contains("application/json"))
             {
                 logger.warn("Invalid accept header: {}. Expected application/json.", accept);
-                return new ResponseEntity<User>(HttpStatus.BAD_REQUEST);
+                return new ResponseEntity<>(HttpStatus.BAD_REQUEST);
             }
 
             User createdUser = databaseManager.createUser(body.getUsername(), UserRole.USER.getValue(), body.getEmail());
             logger.info("Successfully created user with username: {}", body.getUsername());
-            return new ResponseEntity<User>(createdUser, HttpStatus.CREATED);
+            return new ResponseEntity<>(createdUser, HttpStatus.CREATED);
         }
         catch (SQLException e)
         {
             logger.error("Error creating user: {}", e.getMessage(), e);
-            return new ResponseEntity<User>(HttpStatus.INTERNAL_SERVER_ERROR);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
 
-    @PutMapping("/users/{username}")
+    @PutMapping("/by-name/{username}")
     public ResponseEntity<User> updateUserByName(@Parameter(in = ParameterIn.PATH,
                                                             description = "",
                                                             required = true,
@@ -188,7 +188,7 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @GetMapping("/name/{username}")
+    @GetMapping("/by-name/{username}")
     public ResponseEntity<User> getUserByName(@Parameter(in = ParameterIn.PATH,
                                                          description = "Username of the user",
                                                          required = true,
@@ -220,7 +220,7 @@ public class UsersApiController implements UsersApi
         }
     }
 
-    @GetMapping("/id/{userId}")
+    @GetMapping("/{userId}")
     public ResponseEntity<User> getUserById(@Parameter(in = ParameterIn.PATH,
                                                        description = "ID of the user",
                                                        required = true,
@@ -252,7 +252,7 @@ public class UsersApiController implements UsersApi
         }
     }
 
-    @DeleteMapping("/name/{username}")
+    @DeleteMapping("/by-name/{username}")
     public ResponseEntity<Void> deleteUserByName(@Parameter(in = ParameterIn.PATH,
                                                             description = "Username of the user to delete",
                                                             required = true,
@@ -263,17 +263,9 @@ public class UsersApiController implements UsersApi
 
         try
         {
-            if (databaseManager.isUserExists(username))
-            {
-                databaseManager.deleteUserByName(username);
-                logger.info("Successfully deleted user by username: {}", username);
-                return ResponseEntity.noContent().build();
-            }
-            else
-            {
-                logger.info("User not found for deletion by username: {}", username);
-                return ResponseEntity.notFound().build();
-            }
+            databaseManager.deleteUserByName(username);
+            logger.info("Successfully deleted user by username: {}", username);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         catch (SQLException e)
         {
@@ -282,7 +274,7 @@ public class UsersApiController implements UsersApi
         }
     }
 
-    @DeleteMapping("/users/{userId}")
+    @DeleteMapping("/{userId}")
     public ResponseEntity<Void> deleteUserById(@Parameter(in = ParameterIn.PATH,
                                                           description = "",
                                                           required=true,
@@ -294,17 +286,9 @@ public class UsersApiController implements UsersApi
 
         try
         {
-            if (databaseManager.isUserExists(userId))
-            {
-                databaseManager.deleteUserById(userId);
-                logger.info("Successfully deleted user with ID: {}", userId);
-                return ResponseEntity.noContent().build();
-            }
-            else
-            {
-                logger.info("User with ID: {} not found for deletion.", userId);
-                return ResponseEntity.notFound().build();
-            }
+            databaseManager.deleteUserById(userId);
+            logger.info("Successfully deleted user with ID: {}", userId);
+            return new ResponseEntity<>(HttpStatus.OK);
         }
         catch (SQLException e)
         {

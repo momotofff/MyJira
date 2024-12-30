@@ -55,16 +55,18 @@ services:
     depends_on:
       - postgres
 
-#  myjira:
-#    container_name: myjira
-#   build:
-#     context: .
-#     dockerfile: Dockerfile
-#    ports:
-#     - "9000:9000"
-#    restart: no
-#    depends_on:
-#      - postgres
+  myjira:
+    container_name: myjira
+    build:
+      context: .
+      dockerfile: Dockerfile
+    environment:
+      MYJIRA_DB_SERVER_ADDRESS: "postgres"
+    ports:
+      - "9000:9000"
+    restart: no
+    depends_on:
+      - postgres
 
 volumes:
   pgadmin-data:

@@ -181,8 +181,8 @@ public class UsersDbManagerTest extends DbManagerTestFixture
     }
 
     @Test
-    void isValidZRole_ExpectFailed()
+    void isValidRole_ExpectFailed()
     {
-        assertFalse(isValidEmail("Pidor"));
+        assertFalse(isValidRole("Pidor"));
     }
 }

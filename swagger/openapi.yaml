@@ -33,8 +33,8 @@ paths:
   /users:
     $ref: api/users/users.yaml#/paths/~1users
 
-  /users/{username}:
-    $ref: api/users/byName.yaml#/paths/~1users~1{username}
+  /users/by-name/{username}:
+    $ref: api/users/byName.yaml#/paths/~1users~1by-name~1{username}
 
   /users/{userId}:
     $ref: api/users/byId.yaml#/paths/~1users~1{userId}
