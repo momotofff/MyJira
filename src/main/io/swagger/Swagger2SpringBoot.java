@@ -2,6 +2,7 @@ package io.swagger;
 
 import io.swagger.configuration.LocalDateConverter;
 import io.swagger.configuration.LocalDateTimeConverter;
+import momotoff.myjira.appsettings.AppSettings;
 import momotoff.myjira.dbmanager.DatabaseManager;
 import org.springframework.boot.*;
 import org.springframework.boot.autoconfigure.SpringBootApplication;
@@ -32,10 +33,20 @@ public class Swagger2SpringBoot implements CommandLineRunner
     public Module jsonNullableModule() { return new JsonNullableModule(); }
 
     @Bean
+    public AppSettings appSettings()
+    {
+        return new AppSettings();
+    }
+
+    @Bean
+    @DependsOn("appSettings")
     public DatabaseManager dbManager()
     {
-        // TODO: Get DB address, username and pass from environment variables
-        return new DatabaseManager("jdbc:postgresql://localhost:5432/postgres", "postgres", "postgres");
+        return new DatabaseManager(
+            String.format("jdbc:postgresql://%s:%s/postgres", appSettings().getDbServerAddress(), appSettings().getDbServerPort()),
+            appSettings().getDbServerUser(),
+            appSettings().getDbServerPassword()
+        );
     }
 
     @Configuration
