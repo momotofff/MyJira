@@ -129,10 +129,17 @@ public class UsersDbManagerTest extends DbManagerTestFixture
     @Test
     void getUserByName_ExpectSuccess()
     {
-        assertDoesNotThrow(() -> databaseManager.createUser(username, role, email));
+        User createdUser = assertDoesNotThrow(() -> databaseManager.createUser(username, role, email));
+        assertNotNull(createdUser);
+        assertNotNull(createdUser.getId());
         assertTrue(assertDoesNotThrow(() -> databaseManager.isUserExists(username)), "User should exist after creation");
 
-        assertNotNull(assertDoesNotThrow(() -> databaseManager.getUserByName(username)));
+        User user = assertDoesNotThrow(() -> databaseManager.getUserByName(username));
+        assertNotNull(user);
+        assertEquals(email, user.getEmail());
+        assertEquals(UserRole.USER, user.getRole());
+        assertNotNull(user.getId());
+        assertEquals(createdUser.getId(), user.getId());
     }
 
     @Test

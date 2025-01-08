@@ -16,7 +16,7 @@ paths:
     $ref: api/tasks/tasks.yaml#/paths/~1tasks
 
   /tasks/{taskId}:
-    $ref: api/tasks/byTaskId.yaml#/paths/~1tasks~1{taskId}
+    $ref: api/tasks/byTaskId.yaml#/paths/~1tasks~1%7BtaskId%7D
 
   /tasks/by-assignee/{userId}:
     $ref: api/tasks/byAssigneeId.yaml#/paths/~1tasks~1by-assignee~1{userId}
@@ -36,8 +36,8 @@ paths:
   /users/by-name/{username}:
     $ref: api/users/byName.yaml#/paths/~1users~1by-name~1{username}
 
-  /users/{userId}:
-    $ref: api/users/byId.yaml#/paths/~1users~1{userId}
+  /users/by-id/{userId}:
+    $ref: api/users/byId.yaml#/paths/~1users~1by-id~1{userId}
 
 components:
   schemas:
