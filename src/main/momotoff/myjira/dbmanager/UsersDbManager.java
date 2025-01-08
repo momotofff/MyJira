@@ -180,6 +180,7 @@ class UsersDbManager
                 if (rs.next())
                 {
                     user = new User();
+                    user.setId(rs.getLong("id"));
                     user.setUsername(rs.getString("username"));
                     user.setEmail(rs.getString("email"));
                     user.setRole(UserRole.fromValue(rs.getString("role")));
@@ -209,6 +210,7 @@ class UsersDbManager
                 if (rs.next())
                 {
                     user = new User();
+                    user.setId(id);
                     user.setUsername(rs.getString("username"));
                     user.setEmail(rs.getString("email"));
                     user.setRole(UserRole.fromValue(rs.getString("role")));

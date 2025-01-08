@@ -1,5 +1,5 @@
 paths:
-  /users/{userId}:
+  /users/by-id/{userId}:
     get:
       operationId: getUserById
       summary: "Get user by ID"
@@ -21,8 +21,8 @@ paths:
                 $ref: '../../schemas/user.yaml#/components/schemas/User'
         '404':
           description: "User not found"
-        default:
-          description: "successful operation"
+        '500':
+          description: "Internal server error"
 
     put:
       operationId: updateUserById
@@ -51,12 +51,12 @@ paths:
                 $ref: '../../schemas/user.yaml#/components/schemas/User'
         '404':
           description: "User not found"
-        default:
-          description: "successful operation"
+        '500':
+          description: "Internal server error"
 
     delete:
       operationId: deleteUserById
-      summary: "Delete User by ID"
+      summary: "Delete user by ID"
       tags:
         - User
       parameters:
@@ -67,9 +67,7 @@ paths:
             type: integer
             format: int64
       responses:
-        '204':
+        '200':
           description: "User deleted"
-        '404':
-          description: "User not found"
-        default:
-          description: "successful operation"
+        '500':
+          description: "Internal server error"

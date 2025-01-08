@@ -20,12 +20,12 @@ paths:
                 $ref: '../../schemas/user.yaml#/components/schemas/User'
         '404':
           description: "User not found"
-        default:
-          description: "successful operation"
+        '500':
+          description: "Internal server error"
 
     put:
       operationId: updateUserByName
-      summary: "Update user"
+      summary: "Update user by name"
       tags:
         - User
       parameters:
@@ -47,14 +47,14 @@ paths:
             application/json:
               schema:
                 $ref: '../../schemas/user.yaml#/components/schemas/User'
-        default:
-          description: "successful operation"
         '404':
           description: "User not found"
+        '500':
+          description: "Internal server error"
 
     delete:
       operationId: deleteUserByName
-      summary: "Deleted User"
+      summary: "Delete user by name"
       tags:
         - User
       parameters:
@@ -64,9 +64,7 @@ paths:
           schema:
             type: string
       responses:
-        '204':
+        '200':
           description: "User deleted"
-        default:
-          description: "successful operation"
-        '404':
-          description: "User not found"
+        '500':
+          description: "Internal server error"

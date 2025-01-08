@@ -24,7 +24,6 @@ import java.util.List;
 
 @RestController
 @DependsOn("dbManager")
-@RequestMapping("/users")
 public class UsersApiController implements UsersApi
 {
     private static final Logger logger = LoggerFactory.getLogger(UsersApiController.class);
@@ -41,7 +40,7 @@ public class UsersApiController implements UsersApi
         this.request = request;
     }
 
-    @GetMapping
+    @Override
     public ResponseEntity<List<User>> getAllUsers()
     {
         String accept = request.getHeader("Accept");
@@ -73,7 +72,7 @@ public class UsersApiController implements UsersApi
         }
     }
 
-    @PostMapping
+    @Override
     public ResponseEntity<User> postUser(@Parameter(in = ParameterIn.DEFAULT,
                                                     description = "",
                                                     required = true,
@@ -102,17 +101,132 @@ public class UsersApiController implements UsersApi
         }
     }
 
-    @PutMapping("/by-name/{username}")
-    public ResponseEntity<User> updateUserByName(@Parameter(in = ParameterIn.PATH,
-                                                            description = "",
-                                                            required = true,
-                                                            schema = @Schema())
-                                                 @PathVariable("username") String username,
-                                                 @Parameter(in = ParameterIn.DEFAULT,
-                                                            description = "",
-                                                            required = true,
-                                                            schema = @Schema())
-                                                 @Valid @RequestBody UpdateUserRequest body)
+    @Override
+    public ResponseEntity<User> getUserById(
+            @Parameter(name = "userId", description = "", required = true, in = ParameterIn.PATH)
+            @PathVariable("userId") Long userId)
+    {
+        logger.info("Received request to retrieve user by ID: {}", userId);
+        User user = null;
+
+        try
+        {
+            user = databaseManager.getUserById(userId);
+
+            if (user != null)
+            {
+                logger.info("User found by ID: {}", userId);
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            }
+            else
+            {
+                logger.info("User not found by ID: {}", userId);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
+        catch (SQLException e)
+        {
+            logger.error("Error retrieving user by ID: {}. {}", userId, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<User> updateUserById(
+            @Parameter(name = "userId", description = "", required = true, in = ParameterIn.PATH)
+            @PathVariable("userId") Long userId,
+            @Parameter(name = "UpdateUserRequest", description = "", required = true)
+            @Valid
+            @RequestBody UpdateUserRequest updateUserRequest)
+    {
+        String accept = request.getHeader("Accept");
+        logger.info("Received request to update user with ID: {}. Accept: {}", userId, accept);
+
+        if (accept == null || !accept.contains("application/json"))
+        {
+            logger.warn("Invalid accept header for update user: {}. Expected application/json.", accept);
+            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
+        }
+
+        User updatedUser = null;
+
+        try
+        {
+            updatedUser = databaseManager.updateUserById(userId, updateUserRequest);
+            logger.info("Successfully updated user with ID: {}", userId);
+        }
+        catch (SQLException e)
+        {
+            logger.error("Error updating user with ID: {}. {}", userId, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+        if (updatedUser == null)
+        {
+            logger.info("User with ID: {} not found.", userId);
+            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+        }
+
+        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
+    }
+
+    @Override
+    public ResponseEntity<Void> deleteUserById(
+            @Parameter(name = "userId", description = "", required = true, in = ParameterIn.PATH)
+            @PathVariable("userId") Long userId)
+    {
+        logger.info("Received request to delete user with ID: {}", userId);
+
+        try
+        {
+            databaseManager.deleteUserById(userId);
+            logger.info("Successfully deleted user with ID: {}", userId);
+            return new ResponseEntity<>(HttpStatus.OK);
+        }
+        catch (SQLException e)
+        {
+            logger.error("Error deleting user with ID: {}. Error: {}", userId, e.getMessage(), e);
+            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
+        }
+    }
+
+    @Override
+    public ResponseEntity<User> getUserByName(
+            @Parameter(in = ParameterIn.PATH, description = "Username of the user", required = true, schema = @Schema())
+            @PathVariable("username") String username)
+    {
+        logger.info("Received request to retrieve user by username: {}", username);
+        User user = null;
+
+        try
+        {
+            user = databaseManager.getUserByName(username);
+
+            if (user != null)
+            {
+                logger.info("User found by username: {}", username);
+                return new ResponseEntity<>(user, HttpStatus.OK);
+            }
+            else
+            {
+                logger.info("User not found by username: {}", username);
+                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
+            }
+        }
+        catch (SQLException e)
+        {
+            logger.error("Error retrieving user by username: {}. {}", username, e.getMessage(), e);
+            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+    }
+
+    @Override
+    public ResponseEntity<User> updateUserByName(
+            @Parameter(in = ParameterIn.PATH, description = "", required = true, schema = @Schema())
+            @PathVariable("username") String username,
+            @Parameter(in = ParameterIn.DEFAULT, description = "", required = true, schema = @Schema())
+            @Valid
+            @RequestBody UpdateUserRequest body)
     {
         String accept = request.getHeader("Accept");
         logger.info("Received request to update user with username: {}. Accept: {}", username, accept);
@@ -145,119 +259,10 @@ public class UsersApiController implements UsersApi
         return new ResponseEntity<>(updatedUser, HttpStatus.OK);
     }
 
-    @PutMapping("/{id}")
-    public ResponseEntity<User> updateUserById(@Parameter(in = ParameterIn.PATH,
-                                                          description = "",
-                                                          required = true,
-                                                          schema = @Schema())
-                                               @PathVariable("id") long userId,
-                                               @Parameter(in = ParameterIn.DEFAULT,
-                                                          description = "",
-                                                          required = true,
-                                                          schema = @Schema())
-                                               @Valid @RequestBody UpdateUserRequest body)
-    {
-        String accept = request.getHeader("Accept");
-        logger.info("Received request to update user with ID: {}. Accept: {}", userId, accept);
-
-        if (accept == null || !accept.contains("application/json"))
-        {
-            logger.warn("Invalid accept header for update user: {}. Expected application/json.", accept);
-            return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
-        }
-
-        User updatedUser = null;
-
-        try
-        {
-            updatedUser = databaseManager.updateUserById(userId, body);
-            logger.info("Successfully updated user with ID: {}", userId);
-        }
-        catch (SQLException e)
-        {
-            logger.error("Error updating user with ID: {}. {}", userId, e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-
-        if (updatedUser == null)
-        {
-            logger.info("User with ID: {} not found.", userId);
-            return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-        }
-
-        return new ResponseEntity<>(updatedUser, HttpStatus.OK);
-    }
-
-    @GetMapping("/by-name/{username}")
-    public ResponseEntity<User> getUserByName(@Parameter(in = ParameterIn.PATH,
-                                                         description = "Username of the user",
-                                                         required = true,
-                                                         schema = @Schema())
-                                              @PathVariable("username") String username)
-    {
-        logger.info("Received request to retrieve user by username: {}", username);
-        User user = null;
-
-        try
-        {
-            user = databaseManager.getUserByName(username);
-
-            if (user != null)
-            {
-                logger.info("User found by username: {}", username);
-                return new ResponseEntity<>(user, HttpStatus.OK);
-            }
-            else
-            {
-                logger.info("User not found by username: {}", username);
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (SQLException e)
-        {
-            logger.error("Error retrieving user by username: {}. {}", username, e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @GetMapping("/{userId}")
-    public ResponseEntity<User> getUserById(@Parameter(in = ParameterIn.PATH,
-                                                       description = "ID of the user",
-                                                       required = true,
-                                                       schema = @Schema())
-                                            @PathVariable("userId") long userId)
-    {
-        logger.info("Received request to retrieve user by ID: {}", userId);
-        User user = null;
-
-        try
-        {
-            user = databaseManager.getUserById(userId);
-
-            if (user != null)
-            {
-                logger.info("User found by ID: {}", userId);
-                return new ResponseEntity<>(user, HttpStatus.OK);
-            }
-            else
-            {
-                logger.info("User not found by ID: {}", userId);
-                return new ResponseEntity<>(HttpStatus.NOT_FOUND);
-            }
-        }
-        catch (SQLException e)
-        {
-            logger.error("Error retrieving user by ID: {}. {}", userId, e.getMessage(), e);
-            return new ResponseEntity<>(HttpStatus.INTERNAL_SERVER_ERROR);
-        }
-    }
-
-    @DeleteMapping("/by-name/{username}")
-    public ResponseEntity<Void> deleteUserByName(@Parameter(in = ParameterIn.PATH,
-                                                            description = "Username of the user to delete",
-                                                            required = true,
-                                                            schema = @Schema())
-                                                 @PathVariable("username") String username)
+    @Override
+    public ResponseEntity<Void> deleteUserByName(
+            @Parameter(in = ParameterIn.PATH, description = "Username of the user to delete", required = true, schema = @Schema())
+            @PathVariable("username") String username)
     {
         logger.info("Received request to delete user by username: {}", username);
 
@@ -270,29 +275,6 @@ public class UsersApiController implements UsersApi
         catch (SQLException e)
         {
             logger.error("Error deleting user by username: {}. {}", username, e.getMessage(), e);
-            return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
-        }
-    }
-
-    @DeleteMapping("/{userId}")
-    public ResponseEntity<Void> deleteUserById(@Parameter(in = ParameterIn.PATH,
-                                                          description = "",
-                                                          required=true,
-                                                          schema=@Schema())
-                                                 @PathVariable("userId") Long userId,
-                                                 @RequestHeader(required = false) String accept)
-    {
-        logger.info("Received request to delete user with ID: {}", userId);
-
-        try
-        {
-            databaseManager.deleteUserById(userId);
-            logger.info("Successfully deleted user with ID: {}", userId);
-            return new ResponseEntity<>(HttpStatus.OK);
-        }
-        catch (SQLException e)
-        {
-            logger.error("Error deleting user with ID: {}. Error: {}", userId, e.getMessage(), e);
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
     }
