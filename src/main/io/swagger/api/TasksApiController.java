@@ -115,12 +115,10 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<List<Task>>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping("/{taskId}")
-    public ResponseEntity<Task> getTaskById(@Parameter(in = ParameterIn.PATH,
-                                                       description = "",
-                                                       required = true,
-                                                       schema = @Schema())
-                                                @PathVariable("taskId") long taskId
+    @Override
+    public ResponseEntity<Task> getTaskById(
+            @Parameter(name = "taskId", description = "", required = true, in = ParameterIn.PATH)
+            @PathVariable("taskId") Long taskId
     )
     {
         String accept = request.getHeader("Accept");
@@ -145,17 +143,13 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @PostMapping("/{taskId}")
-    public ResponseEntity<Task> updateTaskById(@Parameter(in = ParameterIn.PATH,
-                                                          description = "",
-                                                          required = true,
-                                                          schema = @Schema())
-                                               @PathVariable("taskId") long taskId,
-                                               @Parameter(in = ParameterIn.DEFAULT,
-                                                          description = "",
-                                                          required = true,
-                                                          schema = @Schema())
-                                               @Valid @RequestBody UpdateTaskRequest body)
+    @Override
+    public ResponseEntity<Task> updateTaskById(
+            @Parameter(name = "taskId", description = "", required = true, in = ParameterIn.PATH)
+            @PathVariable("taskId") Long taskId,
+
+            @Parameter(name = "UpdateTaskRequest", description = "", required = true)
+            @Valid @RequestBody UpdateTaskRequest body)
     {
         String accept = request.getHeader("Accept");
         logger.info("Received request to update task with ID: {}. Accept: {}", taskId, accept);
@@ -180,11 +174,10 @@ public class TasksApiController implements TasksApi
     }
 
     @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTasksById(@Parameter(in = ParameterIn.PATH,
-                                                           description = "",
-                                                           required = true,
-                                                           schema = @Schema())
-                                                @PathVariable("taskId") long taskId) throws SQLException
+    public ResponseEntity<Void> deleteTasksById(
+            @Parameter(name = "taskId", description = "", required = true, in = ParameterIn.PATH)
+            @PathVariable("taskId") Long taskId
+    ) throws SQLException
     {
         String accept = request.getHeader("Accept");
         logger.info("Received request to delete task with ID: {}. Accept: {}", taskId, accept);
@@ -208,12 +201,11 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_ACCEPTABLE);
     }
 
-    @GetMapping("/by-assignee/{userId}")
-    public ResponseEntity<List<Task>> getTasksByAssigneeId(@Parameter(in = ParameterIn.PATH,
-                                                                      description = "The ID of the user whose tasks are to be retrieved.",
-                                                                      required = true,
-                                                                      schema = @Schema())
-                                                           @PathVariable("userId") long userId)
+    @Override
+    public ResponseEntity<List<Task>> getTasksByAssigneeId(
+            @Parameter(name = "userId", description = "", required = true, in = ParameterIn.PATH)
+            @PathVariable("userId") Long userId
+    )
     {
         String accept = request.getHeader("Accept");
         logger.info("Received request to get tasks by assignee ID: {}. Accept: {}", userId, accept);
@@ -237,12 +229,11 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping("/by-author/{userId}")
-    public ResponseEntity<List<Task>> getTasksByAuthorId(@Parameter(in = ParameterIn.PATH,
-                                                                    description = "The ID of the user whose tasks are to be retrieved.",
-                                                                    required = true,
-                                                                    schema = @Schema())
-                                                         @PathVariable("userId") long userId)
+    @Override
+    public ResponseEntity<List<Task>> getTasksByAuthorId(
+            @Parameter(name = "userId", description = "", required = true, in = ParameterIn.PATH)
+            @PathVariable("userId") Long userId
+    )
     {
         String accept = request.getHeader("Accept");
         logger.info("Received request to get tasks by author ID: {}. Accept: {}", userId, accept);
