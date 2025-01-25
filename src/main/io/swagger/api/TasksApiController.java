@@ -144,7 +144,6 @@ public class TasksApiController implements TasksApi
     public ResponseEntity<Task> updateTaskById(
             @Parameter(name = "taskId", description = "", required = true, in = ParameterIn.PATH)
             @PathVariable("taskId") Long taskId,
-
             @Parameter(name = "UpdateTaskRequest", description = "", required = true)
             @Valid @RequestBody UpdateTaskRequest body)
     {
