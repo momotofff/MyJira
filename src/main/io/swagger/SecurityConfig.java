@@ -15,6 +15,11 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Override
     protected void configure(AuthenticationManagerBuilder auth) throws Exception {
+        // TODO: auth.userDetailsService(authService).passwordEncoder(passwordEncoder());
+        // TODO: authService implements UserDetailsService
+        // TODO: public UserDetails loadUserByUsername(String username) gets into DB and returns UserDetails
+        // TODO: see: https://habr.com/ru/articles/482552/
+
         auth.inMemoryAuthentication()
                 .withUser("user").password(passwordEncoder().encode("password")).roles("USER")
                 .and()
