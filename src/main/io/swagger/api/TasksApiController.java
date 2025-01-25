@@ -26,11 +26,8 @@ import javax.validation.constraints.NotNull;
 import java.sql.SQLException;
 import java.util.List;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
-
 @RestController
 @DependsOn("dbManager")
-@RequestMapping("/tasks")
 public class TasksApiController implements TasksApi
 {
     private static final Logger logger = LoggerFactory.getLogger(TasksApiController.class);
@@ -47,8 +44,8 @@ public class TasksApiController implements TasksApi
         this.request = request;
     }
 
-    @PostMapping
-    public ResponseEntity<Task> postTask(@Parameter(in = ParameterIn.DEFAULT,
+    @Override
+    public ResponseEntity<Task> createTask(@Parameter(in = ParameterIn.DEFAULT,
                                                       description = "",
                                                       required = true,
                                                       schema = @Schema())
@@ -90,7 +87,7 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping
+    @Override
     public ResponseEntity<List<Task>> getAllTasks()
     {
         String accept = request.getHeader("Accept");
@@ -173,11 +170,10 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTasksById(
-            @Parameter(name = "taskId", description = "", required = true, in = ParameterIn.PATH)
-            @PathVariable("taskId") Long taskId
-    ) throws SQLException
+    @Override
+    public ResponseEntity<Void> deleteTaskById(
+            @Parameter(name = "taskId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("taskId") Long taskId
+    )
     {
         String accept = request.getHeader("Accept");
         logger.info("Received request to delete task with ID: {}. Accept: {}", taskId, accept);
