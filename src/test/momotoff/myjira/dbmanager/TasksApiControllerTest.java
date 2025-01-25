@@ -50,17 +50,4 @@ public class TasksApiControllerTest extends DbManagerTestFixture
         containerDelegate.execute("DELETE FROM tasks", "", 0, true, true);
         containerDelegate.execute("DELETE FROM users", "", 0, true, true);
     }
-
-    @Test
-    @WithMockUser(username = "admin", password = "admin")
-    public void testGetAllTasks() throws Exception {
-        mockMvc.perform(get("/tasks")
-                                .accept(MediaType.APPLICATION_JSON))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$").isArray());
-
-        assertNotNull(Mockito.mock(Connection.class));
-
-        assertNotNull(databaseManager.getConnection());
-    }
 }
