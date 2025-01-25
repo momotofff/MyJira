@@ -28,7 +28,6 @@ import java.util.List;
 
 @RestController
 @DependsOn("dbManager")
-@RequestMapping("/tasks")
 public class TasksApiController implements TasksApi
 {
     private static final Logger logger = LoggerFactory.getLogger(TasksApiController.class);
@@ -88,7 +87,7 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @GetMapping
+    @Override
     public ResponseEntity<List<Task>> getAllTasks()
     {
         String accept = request.getHeader("Accept");
@@ -171,11 +170,10 @@ public class TasksApiController implements TasksApi
         return new ResponseEntity<>(HttpStatus.NOT_IMPLEMENTED);
     }
 
-    @DeleteMapping("/{taskId}")
-    public ResponseEntity<Void> deleteTasksById(
-            @Parameter(name = "taskId", description = "", required = true, in = ParameterIn.PATH)
-            @PathVariable("taskId") Long taskId
-    ) throws SQLException
+    @Override
+    public ResponseEntity<Void> deleteTaskById(
+            @Parameter(name = "taskId", description = "", required = true, in = ParameterIn.PATH) @PathVariable("taskId") Long taskId
+    )
     {
         String accept = request.getHeader("Accept");
         logger.info("Received request to delete task with ID: {}. Accept: {}", taskId, accept);

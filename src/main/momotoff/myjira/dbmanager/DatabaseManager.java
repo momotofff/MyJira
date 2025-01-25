@@ -1,6 +1,6 @@
 package momotoff.myjira.dbmanager;
 import io.swagger.model.*;
-import org.springframework.http.ResponseEntity;
+
 
 import java.io.IOException;
 import java.sql.*;
