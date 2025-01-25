@@ -26,8 +26,6 @@ import javax.validation.constraints.NotNull;
 import java.sql.SQLException;
 import java.util.List;
 
-@javax.annotation.Generated(value = "io.swagger.codegen.v3.generators.java.SpringCodegen", date = "2024-10-03T12:07:30.310865165Z[GMT]")
-
 @RestController
 @DependsOn("dbManager")
 @RequestMapping("/tasks")
@@ -47,8 +45,8 @@ public class TasksApiController implements TasksApi
         this.request = request;
     }
 
-    @PostMapping
-    public ResponseEntity<Task> postTask(@Parameter(in = ParameterIn.DEFAULT,
+    @Override
+    public ResponseEntity<Task> createTask(@Parameter(in = ParameterIn.DEFAULT,
                                                       description = "",
                                                       required = true,
                                                       schema = @Schema())
